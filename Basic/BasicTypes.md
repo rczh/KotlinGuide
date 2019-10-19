@@ -103,5 +103,95 @@ println(boxedA == anotherBoxedA) // Prints 'true'
 使用==时编译器仅仅比较两个原始类型值
 
 ### 5.显示转换
+kotlin不支持自动将小类型转换成到大类型，下面的操作是非法的
 
-## 2.字符
+```kotlin
+fun main() {
+    val b: Byte = 1 // OK, literals are checked statically
+    val i: Int = b // ERROR
+}
+```
+
+可以使用Byte.toInt方法明确的将Byte转换成Int
+
+```kotlin
+fun main() {
+    val b: Byte = 1
+    val i: Int = b.toInt() // OK: explicitly widened
+    print(i)
+}
+```
+
+### 6.运算符
+kotlin支持标准的数字算数运算符，这些运算符对应相应类中的方法
+
+kotlin不支持单独的二进制运算符，二进制运算符是以中缀形式命名的方法
+
+```kotlin
+val x = (1 shl 2) and 0x000FF000
+```
+
+### 7.浮点数比较
+如果已知操作数a和b为Float或者Double时，浮点数的比较遵循浮点算数标准。否则使用Float或者Double的equals和compareTo方法
+
+## 字符
+kotlin使用Char类型表示字符，在kotlin中字符不能直接作为数值使用，只能通过toInt方法显示转换
+
+```kotlin
+fun check(c: Char) {
+    if (c == 1) { // ERROR: incompatible types
+        // ...
+    }
+}
+```
+
+字符使用单引号来表示'1'，特殊字符可以使用反斜杠转义\t, \b, \n, \r, \', \", \\, \$
+
+## boolean
+kotlin使用Boolean类型表示布尔值，支持三种操作符：||, &&, !
+
+## 数组
+kotlin中使用Array类来表示数组，Array类中包含set,get方法，[]操作符会重载为相应的set,get方法
+
+创建数组的几种方式：
+* 使用arrayOf方法
+```kotlin
+var a = arrayOf(1, 2, 3)
+```
+
+* 使用arrayOfNulls方法
+```kotlin
+//create an array of a given size filled with null elements
+var b = arrayOfNulls<Int>(3)
+```
+
+* 使用Array构造方法
+```kotlin
+// Creates an Array<String> with values ["0", "1", "4", "9", "16"]
+val asc = Array(5) { i -> (i * i).toString() }
+asc.forEach { println(it) }
+```
+
+kotlin中数组是不变的，不能将Array<String>数组赋值给Array<Any>
+
+kotlin也提供原始类型数组ByteArray, ShortArray, IntArray等等，这些数组并不继承Array类，但是它们包含和Array类相同的方法和属性
+```kotlin
+val x: IntArray = intArrayOf(1, 2, 3)
+
+// Array of int of size 5 with values [0, 0, 0, 0, 0]
+val arr = IntArray(5)
+```
+
+## 无符号整形
+注意：无符号整形目前处于实验状态，并且仅在kotin1.3中可用
+
+无符号类型支持大部分有符号操作符
+
+类型|大小bit|最大值
+---|:--:|---:
+kotlin.UByte|8| 255
+kotlin.UShort|16|65535
+kotlin.UInt|32| 2^32 - 1
+kotlin.ULong|64|2^64 - 1
+
+
