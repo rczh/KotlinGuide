@@ -23,7 +23,7 @@ import org.test.Message as testMessage // testMessage stands for 'org.test.Messa
 ```
 
 ## top-level declaration
-kotlin支持声明top-level方法或者变量，方法和变量不像java必须声明在类中
+kotlin支持声明top-level方法或者变量，方法和变量不必像java那样必须声明在类中
 
 ```kotlin
 fun sum(a: Int, b: Int) = a + b
