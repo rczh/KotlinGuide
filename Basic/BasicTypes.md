@@ -172,7 +172,7 @@ val asc = Array(5) { i -> (i * i).toString() }
 asc.forEach { println(it) }
 ```
 
-kotlin中数组是不变的，不能将Array<String>数组赋值给Array<Any>
+kotlin中数组是不变的，不能将Array&lt;String>数组赋值给Array&lt;Any>
 
 kotlin也提供原始类型数组ByteArray, ShortArray, IntArray等等，这些数组并不继承Array类，但是它们包含和Array类相同的方法和属性
 ```kotlin
@@ -197,7 +197,7 @@ kotlin.ULong|64|2^64 - 1
 kotlin也提供原始类型的无符号数组UByteArray,UShortArray,UIntArray,ULongArray
 
 ### 无符号常量
-kotlin使用后缀u或者U来表示无符号常量，如果没有提供具体类型kotlin将根据无符号常量大小来选择UInt或者ULong类型
+kotlin使用后缀u或者U来表示无符号常量，如果没有提供具体类型，kotlin将根据无符号常量值的大小来选择UInt或者ULong类型
 
 ```kotlin
 val a1 = 42u // UInt: no expected type provided, constant fits in UInt
@@ -206,7 +206,7 @@ val a = 1UL // ULong, even though no expected type provided and constant fits in
 ```
 
 ## 六. 字符串
-kotlin使用String表示字符串，字符串是不变的，字符串的元素是可以通过索引操作访问的字符
+kotlin使用String表示字符串，字符串是不变的，字符串中的元素是可以通过索引操作符s[i]访问的字符
 
 可以使用for循环遍历字符串
 
@@ -231,7 +231,7 @@ fun main() {
 ### 字符串常量
 kotlin支持两种类型字符串常量，转义字符串和raw原始字符串
 
-raw字符串不支持转义字符，可以包含新行和任意其他字符
+raw字符串使用"""表示，raw字符串不支持转义字符，可以包含新行和任意其他字符
 
 ```kotlin
 val s = "Hello, world!\n"
