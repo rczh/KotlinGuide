@@ -1,7 +1,7 @@
 # basic type
 kotlin中一切都是对象
 
-## 数值
+## 一. 数值
 ### 1.整数
 kotlin提供四种类型表示整数
 
@@ -134,7 +134,7 @@ val x = (1 shl 2) and 0x000FF000
 ### 7.浮点数比较
 如果已知操作数a和b为Float或者Double时，浮点数的比较遵循浮点算数标准。否则使用Float或者Double的equals和compareTo方法
 
-## 字符
+## 二. 字符
 kotlin使用Char类型表示字符，在kotlin中字符不能直接作为数值使用，只能通过toInt方法显示转换
 
 ```kotlin
@@ -147,10 +147,10 @@ fun check(c: Char) {
 
 字符使用单引号来表示'1'，特殊字符可以使用反斜杠转义\t, \b, \n, \r, \', \", \\, \$
 
-## boolean
+## 三. 布尔值
 kotlin使用Boolean类型表示布尔值，支持三种操作符：||, &&, !
 
-## 数组
+## 四. 数组
 kotlin中使用Array类来表示数组，Array类中包含set,get方法，[]操作符会重载为相应的set,get方法
 
 创建数组的几种方式：
@@ -182,7 +182,7 @@ val x: IntArray = intArrayOf(1, 2, 3)
 val arr = IntArray(5)
 ```
 
-## 无符号整形
+## 五. 无符号整形
 注意：无符号整形目前处于实验状态，并且仅在kotin1.3中可用
 
 无符号类型支持大部分有符号操作符
@@ -205,7 +205,7 @@ val a2 = 0xFFFF_FFFF_FFFFu // ULong: no expected type provided, constant doesn't
 val a = 1UL // ULong, even though no expected type provided and constant fits into UInt
 ```
 
-## 字符串
+## 六. 字符串
 kotlin使用String表示字符串，字符串是不变的，字符串的元素是可以通过索引操作访问的字符
 
 可以使用for循环遍历字符串
