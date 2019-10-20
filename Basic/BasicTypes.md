@@ -194,4 +194,69 @@ kotlin.UShort|16|65535
 kotlin.UInt|32| 2^32 - 1
 kotlin.ULong|64|2^64 - 1
 
+kotlin也提供原始类型的无符号数组UByteArray,UShortArray,UIntArray,ULongArray
+
+### 无符号常量
+kotlin使用后缀u或者U来表示无符号常量，如果没有提供具体类型kotlin将根据无符号常量大小来选择UInt或者ULong类型
+
+```kotlin
+val a1 = 42u // UInt: no expected type provided, constant fits in UInt
+val a2 = 0xFFFF_FFFF_FFFFu // ULong: no expected type provided, constant doesn't fit in UInt
+val a = 1UL // ULong, even though no expected type provided and constant fits into UInt
+```
+
+## 字符串
+kotlin使用String表示字符串，字符串是不变的，字符串的元素是可以通过索引操作访问的字符
+
+可以使用for循环遍历字符串
+
+```kotlin
+fun main() {
+val str = "abcd"
+    for (c in str) {
+        println(c)
+    }
+}
+```
+
+可以使用加号运算符连接字符串，运算符的第一个元素必须是字符串
+
+```kotlin
+fun main() {
+    val s = "abc" + 1
+    println(s + "def")
+}
+```
+
+### 字符串常量
+kotlin支持两种类型字符串常量，转义字符串和raw原始字符串
+
+raw字符串不支持转义字符，可以包含新行和任意其他字符
+
+```kotlin
+val s = "Hello, world!\n"
+val text = """
+    for (c in "foo")
+        print(c)
+"""
+```
+
+### 字符串模板
+字符串常量能够包含模板表达式，模板表达式为$变量名，或者${表达式}形式
+
+```kotlin
+val i = 10
+println("i = $i") // prints "i = 10"
+val s = "abc"
+println("$s.length is ${s.length}") // prints "abc.length is 3"
+```
+
+转义字符串和raw字符串都可以使用模板表达式，由于raw字符串不支持转义字符，可以使用模板表达式来显示$字符
+
+```kotlin
+val price = """
+${'$'}9.99
+"""
+```
+
 
