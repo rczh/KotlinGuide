@@ -94,8 +94,16 @@ when {
 ```
 
 ## for循环
+for循环遍历目标集合迭代器的所有内容
 
+```kotlin
+    var ints= intArrayOf(1, 2, 3)
+    for (item: Int in ints) {
+        // ...
+    }
+```
 
+IntArray类提供iterator方法返回一个IntIterator对象，IntIterator对象中包含next和hasNext方法
 
 
 
