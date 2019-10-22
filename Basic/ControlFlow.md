@@ -27,12 +27,12 @@ val max = if (a > b) {
 }
 ```
 
-注意：当使用if作为表达式时，例如为变量赋值，这时需要提供else分支
+注意：当使用if作为表达式为变量赋值时需要提供else分支
 
 ## when表达式
-when表达式用来代替java中的switch语句。when按顺序比较所有分支，直到某个分支的条件与参数相匹配。 同if类似，when也可以被用作表达式或者语句
+when表达式用来代替java中的switch语句。when表达式按顺序比较所有分支，直到某个分支与参数相匹配
 
-如果when作为表达式，需要提供else分支
+当when作为表达式为变量赋值时需要提供else分支
 
 ```kotlin
 var result = when (x) {
@@ -44,7 +44,7 @@ var result = when (x) {
     }
 ```
 
-当多个分支条件共用相同处理语句时，用逗号分割多个条件
+当多个分支条件使用相同处理语句时，可以将多个条件用逗号分隔
 
 ```kotlin
 when (x) {
@@ -53,7 +53,7 @@ when (x) {
 }
 ```
 
-使用任意表达式作为分支条件
+可以使用表达式作为分支条件
 
 ```kotlin
 when (x) {
@@ -62,7 +62,7 @@ when (x) {
 }
 ```
 
-使用in作为分支条件
+可以使用检查值是否在某个范围或者集合中的in语句作为分支条件
 
 ```kotlin
 when (x) {
@@ -74,7 +74,7 @@ when (x) {
 }
 ```
 
-当使用is作为分支条件时，kotlin能够直接访问相应类型的方法和属性而不需要进行类型转换
+可以使用检查值是否为某个特定类型的is语句作为分支条件，kotlin能够直接访问相应类型的方法或属性而不需要进行类型转换
 
 ```kotlin
 fun hasPrefix(x: Any) = when(x) {
@@ -83,7 +83,7 @@ fun hasPrefix(x: Any) = when(x) {
 }
 ```
 
-when可以用来代替if-else-if语句链。如果when语句不带参数，每个分支条件都应该是一个布尔表达式，when按顺序比较所有分支，直到某个分支的条件为true时执行相应处理语句
+when表达式可以用来代替if-else-if语句链，当when语句不带参数时，每个分支条件都应该是一个布尔表达式。when表达式顺序比较所有分支条件，当某个分支条件为true时执行相应的处理语句
 
 ```kotlin
 when {
@@ -91,6 +91,16 @@ when {
     x.isEven() -> print("x is even")
     else -> print("x is funny")
 }
+```
+
+从kotlin1.3开始when语句参数允许使用变量定义的方式，变量的作用域被限定在when语句中
+
+```kotlin
+fun Request.getBody() =
+        when (val response = executeRequest()) {
+            is Success -> response.body
+            is HttpError -> throw HttpException(response.status)
+        }
 ```
 
 ## for循环
