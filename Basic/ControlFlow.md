@@ -107,13 +107,51 @@ fun Request.getBody() =
 for循环遍历目标集合迭代器的所有内容
 
 ```kotlin
-    var ints= intArrayOf(1, 2, 3)
+    var ints= listOf<Int>(1, 2, 3)
     for (item: Int in ints) {
-        // ...
+        println(item)
     }
 ```
 
-IntArray类提供iterator方法返回一个IntIterator对象，IntIterator对象中包含next和hasNext方法
+List集合提供iterator方法返回一个Iterator迭代器对象，Iterator迭代器对象中包含next和hasNext方法
 
+使用for循环遍历范围表达式
 
+```kotlin
+for (i in 1..3) {
+    println(i)
+}
+for (i in 6 downTo 0 step 2) {
+    println(i)
+}
+```
 
+for循环中使用索引遍历数组或者列表
+
+```kotlin
+    val array = arrayOf("a", "b", "c")
+    //方式一
+    for (i in array.indices) {
+        println(array[i])
+    }
+    //方式二
+    for ((index, value) in array.withIndex()) {
+        println("the element at $index is $value")
+    }
+```
+
+## while循环
+kotlin支持while和do-while循环
+
+```kotlin
+while (x > 0) {
+    x--
+}
+
+do {
+    val y = retrieveData()
+} while (y != null) // y is visible here!
+```
+
+## Break and continue
+Kotlin支持循环中的break和continue操作符
