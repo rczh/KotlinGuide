@@ -89,6 +89,47 @@ kotlin中的类可以包含:
 * 嵌套类和内联类
 * 对象声明
 
+
 ## 继承
+kotlin中所有类都有一个基类Any，可以在类头中使用冒号来明确的指定父类，并且父类必须被正确的初始化
+
+```kotlin
+open class Base(p: Int)
+class Derived(p: Int) : Base(p)
+```
+
+如果子类没有主构造函数，需要在每个二级构造函数中初始化父类
+
+```kotlin
+class MyView : View {
+    constructor(ctx: Context) : super(ctx)
+    constructor(ctx: Context, attrs: AttributeSet) : super(ctx, attrs)
+}
+```
+
+### 方法覆盖
+kotlin需要对父类中可被覆盖的方法使用open修饰符，对子类中覆盖的方法使用override修饰符
+
+在一个final类中使用open修饰方法是无效的，由于默认情况下类是final的并且不能被继承，需要使用open声明类使它能够被继承
+
+```kotlin
+open class Shape {
+    open fun draw() { /*...*/ }
+    fun fill() { /*...*/ }
+}
+
+class Circle() : Shape() {
+    override fun draw() { /*...*/ }
+}
+```
+
+被override修饰的方法默认是open的并且能够被子类继承。可以使用final来禁止继承
+
+```kotlin
+open class Rectangle() : Shape() {
+    final override fun draw() { /*...*/ }
+}
+```
+
 
 
