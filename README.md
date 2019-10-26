@@ -1,5 +1,7 @@
 # KotlinGuide
 
+## Basic
+
 [CommandLineCompiler](Basic/CommandLineCompiler.md)
 
 [BasicTypes](Basic/BasicTypes.md)
@@ -9,3 +11,7 @@
 [ControlFlow](Basic/ControlFlow.md)
 
 [ReturnAndJump](Basic/ReturnAndJump.md)
+
+## Class and Object
+
+[ClassAndInheritance](ClassAndObject/ClassAndInheritance.md)
