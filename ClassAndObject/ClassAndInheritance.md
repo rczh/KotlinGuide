@@ -183,5 +183,77 @@ class Derived(
 注意，由于在执行父类初始化逻辑时子类中的初始化并没有执行，所以不应该在父类的初始化逻辑中调用任何子类的属性或者方法
 
 ### 调用父类的实现
+子类中可以使用super关键字调用父类的方法或者属性
+
+```kotlin
+open class Rectangle {
+        open fun draw() { println("Drawing a rectangle") }
+        val borderColor: String get() = "black"
+    }
+
+    class FilledRectangle : Rectangle() {
+        override fun draw() {
+            super.draw()
+            println("Filling the rectangle")
+        }
+        val fillColor: String get() = super.borderColor
+    }
+```
+
+在内联类中可以使用"super@外部类名"的形式来访问外部类中父类的成员
+
+```kotlin
+class FilledRectangle: Rectangle() {
+    fun draw() { /* ... */ }
+    val borderColor: String get() = "black"
+    
+    inner class Filler {
+        fun fill() { /* ... */ }
+        fun drawAndFill() {
+            super@FilledRectangle.draw() // Calls Rectangle's implementation of draw()
+            fill()
+            println("Drawn a filled rectangle with color ${super@FilledRectangle.borderColor}") // Uses Rectangle's implementation of borderColor's get()
+        }
+    }
+}
+```
+
+如果子类的父类或者接口中包含了相同的方法定义，子类必须覆盖并实现这个方法。子类中可以使用"super<父类名>"的形式来指定调用哪个父类的成员
+
+```kotlin
+open class Rectangle {
+    open fun draw() { /* ... */ }
+}
+
+interface Polygon {
+    fun draw() { /* ... */ } // interface members are 'open' by default
+}
+
+class Square() : Rectangle(), Polygon {
+    // The compiler requires draw() to be overridden:
+    override fun draw() {
+        super<Rectangle>.draw() // call to Rectangle.draw()
+        super<Polygon>.draw() // call to Polygon.draw()
+    }
+}
+```
+
+## 抽象类
+kotlin中使用abstract来声明抽象类和抽象方法，抽象类和抽象方法不需要加open修饰符
+
+可以使用abstract关键字来声明override方法
+
+```kotlin
+open class Polygon {
+    open fun draw() {}
+}
+
+abstract class Rectangle : Polygon() {
+    override abstract fun draw()
+}
+```
+
+## 伴生对象
+kotlin中并不提供静态方法，如果需要在不创建类对象的情况下访问类的方法或者属性，可以使用对象声明或者伴生对象
 
 
