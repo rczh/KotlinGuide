@@ -15,3 +15,5 @@
 ## Class and Object
 
 [ClassAndInheritance](ClassAndObject/ClassAndInheritance.md)
+
+[PropertiesAndField](ClassAndObject/PropertiesAndField.md)
