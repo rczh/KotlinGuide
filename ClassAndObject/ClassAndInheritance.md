@@ -131,5 +131,57 @@ open class Rectangle() : Shape() {
 }
 ```
 
+### 属性覆盖
+属性覆盖和方法覆盖类似，需要对父类中可被覆盖的属性使用open修饰符，子类中覆盖的属性使用override修饰符，属性的类型必须保持一致
+
+```kotlin
+open class Shape {
+    open val vertexCount: Int = 0
+}
+
+class Rectangle : Shape() {
+    override val vertexCount = 4
+}
+```
+
+由于val类型属性只包含get方法，var类型属性同时包含get和set方法，可以使用var类型属性覆盖val类型属性，但val类型属性不能覆盖var类型属性
+
+可以在子类的主构造函数中使用override关键字覆盖父类中属性
+
+```kotlin
+interface Shape {
+    val vertexCount: Int
+}
+
+class Rectangle(override val vertexCount: Int = 4) : Shape // Always has 4 vertices
+
+class Polygon : Shape {
+    override var vertexCount: Int = 0  // Can be set to any number later
+}
+```
+
+### 子类的初始化顺序
+当创建子类对象实例时，首先执行父类的初始化逻辑，然后执行子类的初始化逻辑
+
+```kotlin
+open class Base(val name: String) {
+    init { println("Initializing Base") }
+    open val size: Int = 
+        name.length.also { println("Initializing size in Base: $it") }
+}
+
+class Derived(
+    name: String,
+    val lastName: String
+) : Base(name.capitalize().also { println("Argument for Base: $it") }) {
+    init { println("Initializing Derived") }
+    override val size: Int =
+        (super.size + lastName.length).also { println("Initializing size in Derived: $it") }
+}
+```
+
+注意，由于在执行父类初始化逻辑时子类中的初始化并没有执行，所以不应该在父类的初始化逻辑中调用任何子类的属性或者方法
+
+### 调用父类的实现
 
 
