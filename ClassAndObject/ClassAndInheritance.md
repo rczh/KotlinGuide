@@ -18,7 +18,7 @@ class Person(firstName: String) { /*...*/ }
 class Customer public @Inject constructor(name: String) { /*...*/ }
 ```
 
-系统默认生成的主构造函数的可见性为public，可以通过声明空的主构造函数并且添加private修饰符来更改默认可见性
+系统默认生成的主构造函数的可见性为public，可以通过声明空的主构造函数并且添加private修饰符来更改默认主构造函数的可见性
 
 ```kotlin
 class DontCreateMe private constructor () { /*...*/ }
