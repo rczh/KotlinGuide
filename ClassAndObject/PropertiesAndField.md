@@ -2,7 +2,7 @@
 ## 属性声明
 kotlin中使用var关键字声明变量，使用val关键字声明常量
 
-### 属性定义格式
+### 属性定义
 属性定义的完整语法格式：
 
 ```kotlin
@@ -13,10 +13,10 @@ var <propertyName>[: <PropertyType>] [= <property_initializer>]
 
 如果能从初始值或者get方法的返回值中推断出类型，则可以省略属性类型
 
-kotlin为每个属性提供默认的set和get方法，对于只读属性只能提供get方法，可变属性可以提供set和get方法。每次访问属性时get方法将被调用，每次为属性赋值时set方法将被调用
+kotlin为每个属性提供默认的set和get方法，对于只读属性只能提供get方法，对于可变属性可以提供set和get方法。每次访问属性时get方法将被调用，每次为属性赋值时set方法将被调用
 
-### 自定义set和get方法
-用户在定义属性时可以自定义set和get方法
+### 自定义set,get方法
+用户在定义属性时可以自定义set,get方法
 
 ```kotlin
 var stringRepresentation: String
@@ -30,7 +30,7 @@ var stringRepresentation: String
 val isEmpty get() = this.size == 0  // has type Boolean
 ```
 
-如果只修改set, get方法的可见性或者增加注解时，可以省略set,get方法的实现
+如果只修改set, get方法的可见性或者增加注解，可以省略set,get方法的实现
 
 ```kotlin
 var setterVisibility: String = "abc"
@@ -41,7 +41,7 @@ var setterWithAnnotation: Any? = null
 ```
 
 ### 幕后字段
-为了在set,get方法中访问属性本身，kotlin定义了幕后字段，用关键字field来表示。如果属性使用了至少一个默认的set,get方法实现，或者自定义的set,get方法中引用了field关键字，将为属性生成幕后字段
+为了在set,get方法中访问属性本身，kotlin提供了幕后字段，用关键字field来表示。如果属性使用了至少一个默认的set,get方法实现，或者自定义的set,get方法中引用了field关键字，将为属性生成幕后字段
 
 ```kotlin
 var counter = 0 // Note: the initializer assigns the backing field directly
@@ -74,6 +74,7 @@ public val table: Map<String, Int>
 对于在编译时已知的属性值，可以使用const关键字将其定义为编译时常量
 
 编译时常量需要满足以下条件：
+
 * Top-level成员，对象声明或者伴生对象的成员
 * 使用原始类型或者字符串类型作为初始值
 * 没有自定义get方法
@@ -85,7 +86,7 @@ const val SUBSYSTEM_DEPRECATED: String = "This subsystem is deprecated"
 @Deprecated(SUBSYSTEM_DEPRECATED) fun foo() { ... }
 ```
 
-## 延迟初始化属性和变量
+## 延迟初始化属性
 kotlin中可以使用lateinit关键字定义延迟初始化属性
 
 ```kotin
@@ -105,7 +106,7 @@ public class MyTest {
 延迟初始化属性需要满足以下条件：
 
 * 没有自定义set,get方法的var类型属性
-* var属性需要为非空，并且类型不能为原始类型
+* var属性必须为非空，并且类型不能为原始类型
 * 类内部的成员变量，并且不能出现在主构造函数中
 * top-level属性或者本地变量
 
