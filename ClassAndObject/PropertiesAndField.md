@@ -71,6 +71,55 @@ public val table: Map<String, Int>
 ```
 
 ## 编译时常量
+对于在编译时已知的属性值，可以使用const关键字将其定义为编译时常量
 
+编译时常量需要满足以下条件：
+* Top-level成员，对象声明或者伴生对象的成员
+* 使用原始类型或者字符串类型作为初始值
+* 没有自定义get方法
 
+可以在注解中使用编译时常量
 
+```kotlin
+const val SUBSYSTEM_DEPRECATED: String = "This subsystem is deprecated"
+@Deprecated(SUBSYSTEM_DEPRECATED) fun foo() { ... }
+```
+
+## 延迟初始化属性和变量
+kotlin中可以使用lateinit关键字定义延迟初始化属性
+
+```kotin
+public class MyTest {
+    lateinit var subject: TestSubject
+
+    @SetUp fun setup() {
+        subject = TestSubject()
+    }
+
+    @Test fun test() {
+        subject.method()  // dereference directly
+    }
+}
+```
+
+延迟初始化属性需要满足以下条件：
+
+* 没有自定义set,get方法的var类型属性
+* var属性需要为非空，并且类型不能为原始类型
+* 类内部的成员变量，并且不能出现在主构造函数中
+* top-level属性或者本地变量
+
+注意，在初始化lateinit属性之前访问它将抛出一个异常
+
+可以使用kotlin属性引用中的isInitialized字段来判断lateinit属性是否已经初始化
+
+```kotlin
+class Foo {
+    lateinit var lateInitVar: String
+    fun checkInit() {
+        if(this::lateInitVar.isInitialized){
+
+        }
+    }
+}
+```
