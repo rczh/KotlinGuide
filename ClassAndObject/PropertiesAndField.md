@@ -41,7 +41,36 @@ var setterWithAnnotation: Any? = null
 ```
 
 ### 幕后字段
+为了在set,get方法中访问属性本身，kotlin定义了幕后字段，用关键字field来表示。如果属性使用了至少一个默认的set,get方法实现，或者自定义的set,get方法中引用了field关键字，将为属性生成幕后字段
 
+```kotlin
+var counter = 0 // Note: the initializer assigns the backing field directly
+    set(value) {
+        if (value >= 0) field = value
+    }
+
+//不会为isEmpty生成幕后字段
+val isEmpty: Boolean
+    get() = this.size == 0
+```
+
+注意，field关键字只能在set,get方法中使用
+
+### 幕后属性
+对于不适合使用幕后字段的情况，可以自定义幕后属性
+
+```kotlin
+private var _table: Map<String, Int>? = null
+public val table: Map<String, Int>
+    get() {
+        if (_table == null) {
+            _table = HashMap() // Type parameters are inferred
+        }
+        return _table ?: throw AssertionError("Set to null by another thread")
+    }
+```
+
+## 编译时常量
 
 
 
