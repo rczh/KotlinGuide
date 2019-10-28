@@ -17,3 +17,5 @@
 [ClassAndInheritance](ClassAndObject/ClassAndInheritance.md)
 
 [PropertiesAndField](ClassAndObject/PropertiesAndField.md)
+
+[Interfaces](ClassAndObject/Interfaces.md)
