@@ -89,7 +89,7 @@ const val SUBSYSTEM_DEPRECATED: String = "This subsystem is deprecated"
 ## 延迟初始化属性
 kotlin中可以使用lateinit关键字定义延迟初始化属性
 
-```kotin
+```kotlin
 public class MyTest {
     lateinit var subject: TestSubject
 
