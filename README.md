@@ -19,3 +19,5 @@
 [PropertiesAndField](ClassAndObject/PropertiesAndField.md)
 
 [Interfaces](ClassAndObject/Interfaces.md)
+
+[VisibilityModifiers](ClassAndObject/VisibilityModifiers.md)
