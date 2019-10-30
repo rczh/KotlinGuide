@@ -1,5 +1,7 @@
 # Visibility Modifiers
-kotlin中提供四种可见性修饰符：private, protected, internal, public。 如果没有明确指定可见性修饰符则默认为public
+kotlin中提供四种可见性修饰符：private, protected, internal, public
+
+如果没有明确指定可见性修饰符则默认为public
 
 ## top-level成员的可见性
 函数、属性、类、对象和接口能够在包中直接声明
@@ -69,4 +71,4 @@ class Unrelated(o: Outer) {
 class C private constructor(a: Int) { ... }
 ```
 
-局部变量，局部方法，局部类不能使用可见性修饰符
+注意，局部变量，局部方法，局部类不能使用可见性修饰符
