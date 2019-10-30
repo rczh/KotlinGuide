@@ -21,3 +21,5 @@
 [Interfaces](ClassAndObject/Interfaces.md)
 
 [VisibilityModifiers](ClassAndObject/VisibilityModifiers.md)
+
+[Extensions](ClassAndObject/Extensions.md)
