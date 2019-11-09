@@ -23,3 +23,5 @@
 [VisibilityModifiers](ClassAndObject/VisibilityModifiers.md)
 
 [Extensions](ClassAndObject/Extensions.md)
+
+[DataClasses](ClassAndObject/DataClasses.md)
