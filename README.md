@@ -25,3 +25,7 @@
 [Extensions](ClassAndObject/Extensions.md)
 
 [DataClasses](ClassAndObject/DataClasses.md)
+
+[SealedClasses](ClassAndObject/SealedClasses.md)
+
+[Generics](ClassAndObject/Generics.md)
