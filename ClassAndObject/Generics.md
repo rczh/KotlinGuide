@@ -35,25 +35,23 @@ class Jonathan extends Apple {}
 class Orange extends Fruit {}
 ```
 
-对于
+由于编译器无法确定传给apples参数的具体泛型类型，apples的实际参数类型可能是List&lt;Apple>或者List&lt;Jonathan>，编译器无法执行add操作
+
+由于泛型类型参数? extends Apple的上界为Apple，apples中的任何数据项都是Apple或者Apple的子类，编译器可以正常执行get操作
+
+也就是说，协变仅支持读操作，不支持写操作
 
 ```java
-
-
-    /**
-     * 协变支持get读,不支持add写
-     * @param apples
-     */
-    static void readFrom(List<? extends Apple> apples) {
-//        apples.add(new Apple());  // 编译错误
-//        apples.add(new Fruit());  // 编译错误
-//        apples.add(new Object());  // 编译错误
+static void readFrom(List<? extends Apple> apples) {
+//apples.add(new Apple());  // 编译错误
+//apples.add(new Fruit());  // 编译错误
+//apples.add(new Object());  // 编译错误
 
         //向上get
-        Apple apple = apples.get(0);
-//        Jonathan jonathan = apples.get(0);  // 编译错误
-        Fruit fruit = apples.get(0);
-    } 
+    Apple apple = apples.get(0);
+//Jonathan jonathan = apples.get(0);  // 编译错误
+    Fruit fruit = apples.get(0);
+} 
 
 readFrom(new ArrayList<Jonathan>());
 ```
@@ -61,3 +59,31 @@ readFrom(new ArrayList<Jonathan>());
 java中的数组默认是协变的
 
 ## 逆变
+java中通过泛型类型参数? super E来声明接收泛型E或者E的父类型，这里的E为泛型类型的下界，也就是说List&lt;Object>是List&lt;? super String>的父类型
+
+带有下界的泛型类型参数使得泛型类型逆变
+
+TODO:
+
+TODO:
+
+也就是说，逆变仅支持写操作，不支持读操作
+
+```java
+void writeTo(List<? super Apple> apples) {
+        //向下add
+    apples.add(new Apple());
+    apples.add(new Jonathan());
+//apples.add(new Fruit());  // 编译错误
+
+    //只能get Object
+    Object obj = apples.get(0);
+}
+
+writeTo(new ArrayList<Fruit>());
+```
+
+## PECS
+
+
+
