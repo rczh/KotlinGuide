@@ -54,19 +54,25 @@ static void readFrom(List<? extends Apple> apples) {
 readFrom(new ArrayList<Jonathan>());
 ```
 
-就是说，协变只支持读操作，不支持写操作
+也就是说，协变只支持读操作，不支持写操作
 
-java中的数组默认是协变的
-//TODO:
+### 数组是协变的
+java中的数组默认是协变的，可以将
+
+```java
+Fruit[] fruit = new Apple[10];
+fruit[0] = new Apple();
+fruit[1] = new Jonathan();
+```
 
 ## 逆变
 java中通过泛型类型参数? super E来声明接收泛型E或者E的父类型，这里的E为泛型类型的下界，也就是说List&lt;? super String>是List&lt;Object>的父类型，可以将List&lt;Object>赋值给List&lt;? super String>
 
 带有下界的泛型类型参数使得泛型类型逆变
 
-由于编译器无法确定传给apples参数的具体泛型类型，apples的实际参数类型可能是List&lt;Apple>或者List&lt;Fruit>，所以编译器无法确定get操作返回结果的具体类型，get操作只能将结果赋值给Object对象
+由于编译器无法确定传给apples参数的具体泛型类型，apples的实际参数类型可能是List&lt;Apple>或者List&lt;Fruit>，所以编译器可以正常执行add操作，将Apple或者Apple的子类添加到apples中
 
-由于泛型类型参数? super Apple的下界为Apple，apples中的任何数据项都是Apple或者Apple的父类，所以编译器可以正常执行add操作，将Apple或者Apple的父类数据项添加到apples中
+由于泛型类型参数? super Apple的下界为Apple，apples中的任何数据项都是Apple或者Apple的父类，所以编译器无法确定get操作返回结果的具体类型，get操作只能将结果赋值给Object对象
 
 ```java
 static void writeTo(List<? super Apple> apples) {
@@ -83,7 +89,7 @@ static void writeTo(List<? super Apple> apples) {
 writeTo(new ArrayList<Fruit>());
 ```
 
-就是说，逆变只支持写操作，不支持读操作
+也就是说，逆变只支持写操作，不支持读操作
 
 ## PECS
 
