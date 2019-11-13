@@ -57,7 +57,7 @@ readFrom(new ArrayList<Jonathan>());
 也就是说，协变只支持读操作，不支持写操作
 
 ### 数组是协变的
-java中的数组默认是协变的，可以将
+java中的数组默认是协变的，可以将String[]赋值给Object[]
 
 ```java
 Fruit[] fruit = new Apple[10];
@@ -92,6 +92,12 @@ writeTo(new ArrayList<Fruit>());
 也就是说，逆变只支持写操作，不支持读操作
 
 ## PECS
+PECS表示为Producer-Extends, Consumer-Super，协变只从生产者读，逆变只从消费者写
+
+## 声明型型变
+
+## 使用型型变
+
 
 
 
