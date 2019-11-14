@@ -163,8 +163,40 @@ fun copy(from: Array<out Any>, to: Array<Any>) { ... }
 
 使用型协变也限制了copy方法中只能调用from对象中的读方法，从而避免在copy方法中对from对象的随意写入，这里的from对象不仅仅是一个普通的Array对象，而是一个受限制的投影对象，因此kotlin中的使用型型变也叫做类型投影
 
+同理，可以在方法中使用in修饰符定义泛型类型逆变
 
+### 星型投影
+kotlin支持为泛型类型定义星型投影
 
+* 对于Foo&lt;out T : TUpper>类型，Foo&lt;*>相当于Foo&lt;out TUpper>
 
+* 对于Foo&lt;in T>类型，Foo&lt;*>相当于Foo&lt;in Nothing>
 
+* 对于Foo&lt;T : TUpper>类型，Foo&lt;*>相当于Foo&lt;out TUpper>
 
+* 对于Foo&lt;out T>类型，Foo&lt;*>相当于Foo&lt;out Any>
+
+```kotlin
+interface Foo<out T : Apple>{
+//    fun set(t: T)// 编译错误
+    fun get(): T
+}
+//Foo<*>相当于Foo<out Apple>
+fun readFoo(from: Foo<*>){
+    from.get()
+}
+
+interface Foo2<T : Apple>{
+    fun set(t: T)
+    fun get(): T
+}
+//Foo<*>相当于Foo<out Apple>
+fun readFoo2(from: Foo2<*>){
+    from.get()
+//    from.set(Jonathan())// 编译错误
+}
+```
+
+如果方法中定义多个泛型类型参数，每个参数都可以独立投影
+
+## 泛型函数
