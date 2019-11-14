@@ -100,7 +100,7 @@ kotlin中通过使用out,in修饰符来定义协变和逆变
 kotlin允许在类定义时对泛型类型声明型变，这种定义方式称为声明型型变
 
 ### 声明型协变
-在定义类时通过泛型类型参数out T来声明泛型T是协变的，类中只能定义返回类型为T的读方法，不能定义参数为T的写方法，可以将Source<String>赋值给Source<Any>
+在定义类时通过泛型类型参数out T来声明泛型T是协变的，类中只能定义返回类型为T的读方法，不能定义参数为T的写方法，可以将Source&lt;String>赋值给Source&lt;Any>
 
 ```kotlin
 interface Source<out T> {
@@ -114,7 +114,7 @@ fun demo(strs: Source<String>) {
 ```
 
 ### 声明型逆变
-同理，在定义类时可以通过泛型类型参数in T来声明泛型T是逆变的，类中只能定义参数为T的写方法，不能定义返回类型为T的读方法，可以将Comparable<Number>赋值给Comparable<Double>
+同理，在定义类时可以通过泛型类型参数in T来声明泛型T是逆变的，类中只能定义参数为T的写方法，不能定义返回类型为T的读方法，可以将Comparable&lt;Number>赋值给Comparable&lt;Double>
 
 ```kotlin
 interface Comparable<in T> {
@@ -129,6 +129,41 @@ fun demo(x: Comparable<Number>) {
 ```
 
 ## 使用型型变
+某些类中既需要参数为T的写方法，又需要返回类型为T的读方法，对于这样的类并不适合使用声明型型变
+
+```kotlin
+class Array<T>(val size: Int) {
+    fun get(index: Int): T { ... }
+    fun set(index: Int, value: T) { ... }
+}
+```
+
+copy方法用来把from中的数据复制到to，由于无法使用声明型协变(Array&lt;T>是不变的)，当from的实际参数类型为Array&lt;Int>时会出现类型不匹配错误
+
+```kotlin
+fun copy(from: Array<Any>, to: Array<Any>) {
+    assert(from.size == to.size)
+    for (i in from.indices)
+        to[i] = from[i]
+}
+
+fun demo(){
+    val ints: Array<Int> = arrayOf(1, 2, 3)
+    val any = Array<Any>(3) { "" } 
+    //copy(ints, any)
+    //   ^ type is Array<Int> but Array<Any> was expected
+}
+```
+
+通过在copy方法中使用out修饰符为from参数定义泛型类型协变，实现将Array&lt;Int>赋值给Array&lt;out Any>，这种定义方式称为使用型协变
+
+```kotlin
+fun copy(from: Array<out Any>, to: Array<Any>) { ... }
+```
+
+使用型协变也限制了copy方法中只能调用from对象中的读方法，从而避免在copy方法中对from对象的随意写入，这里的from对象不仅仅是一个普通的Array对象，而是一个受限制的投影对象，因此kotlin中的使用型型变也叫做类型投影
+
+
 
 
 
