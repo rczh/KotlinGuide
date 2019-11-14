@@ -94,7 +94,39 @@ writeTo(new ArrayList<Fruit>());
 ## PECS
 PECS表示为Producer-Extends, Consumer-Super，协变只从生产者读，逆变只从消费者写
 
+kotlin中通过使用out,in修饰符来定义协变和逆变
+
 ## 声明型型变
+kotlin允许在类定义时对泛型类型声明型变，这种定义方式称为声明型型变
+
+### 声明型协变
+在定义类时通过泛型类型参数out T来声明泛型T是协变的，类中只能定义返回类型为T的读方法，不能定义参数为T的写方法，可以将Source<String>赋值给Source<Any>
+
+```kotlin
+interface Source<out T> {
+    fun nextT(): T
+    //fun add(t: T)// 编译错误
+}
+
+fun demo(strs: Source<String>) {
+    val objects: Source<Any> = strs // This is OK, since T is an out-parameter
+}
+```
+
+### 声明型逆变
+同理，在定义类时可以通过泛型类型参数in T来声明泛型T是逆变的，类中只能定义参数为T的写方法，不能定义返回类型为T的读方法，可以将Comparable<Number>赋值给Comparable<Double>
+
+```kotlin
+interface Comparable<in T> {
+    operator fun compareTo(other: T): Int
+}
+
+fun demo(x: Comparable<Number>) {
+    x.compareTo(1.0)
+    // Number is supertype of Double ,we can assign x to a variable of type Comparable<Double>
+    val y: Comparable<Double> = x // OK!
+}
+```
 
 ## 使用型型变
 
