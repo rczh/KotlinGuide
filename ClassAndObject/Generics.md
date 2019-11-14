@@ -165,6 +165,8 @@ fun copy(from: Array<out Any>, to: Array<Any>) { ... }
 
 同理，可以在方法中使用in修饰符定义泛型类型逆变
 
+java中不支持声明型型变，只能够使用使用型型变
+
 ### 星型投影
 kotlin能够为泛型类型定义星型投影
 
