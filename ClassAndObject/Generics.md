@@ -166,7 +166,7 @@ fun copy(from: Array<out Any>, to: Array<Any>) { ... }
 同理，可以在方法中使用in修饰符定义泛型类型逆变
 
 ### 星型投影
-kotlin支持为泛型类型定义星型投影
+kotlin能够为泛型类型定义星型投影
 
 * 对于Foo&lt;out T : TUpper>类型，Foo&lt;*>相当于Foo&lt;out TUpper>
 
@@ -174,7 +174,7 @@ kotlin支持为泛型类型定义星型投影
 
 * 对于Foo&lt;T : TUpper>类型，Foo&lt;*>相当于Foo&lt;out TUpper>
 
-* 对于Foo&lt;out T>类型，Foo&lt;*>相当于Foo&lt;out Any>
+* 对于Foo&lt;out T>类型，Foo&lt;*>相当于Foo&lt;out Any?>
 
 ```kotlin
 interface Foo<out T : Apple>{
@@ -197,6 +197,6 @@ fun readFoo2(from: Foo2<*>){
 }
 ```
 
-如果方法中定义多个泛型类型参数，每个参数都可以独立投影
+如果方法中定义了多个泛型类型参数，每个参数都可以独立投影
 
 ## 泛型函数
