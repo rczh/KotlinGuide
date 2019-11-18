@@ -202,3 +202,65 @@ fun readFoo2(from: Foo2<*>){
 如果方法中定义了多个泛型类型参数，每个参数都可以独立投影
 
 ## 泛型函数
+kotlin中可以定义泛型函数，泛型类型放在函数名之前
+
+```kotlin
+fun <T> singletonList(item: T): List<T> {
+    // ...
+}
+
+fun <T> T.basicToString(): String {  // extension function
+    // ...
+}
+```
+
+调用泛型函数时需要在函数名后面指定泛型类型参数，如果编译器能够推断出泛型类型时可以省略泛型类型参数
+
+```kotlin
+val l = singletonList<Int>(1)
+
+val m = singletonList(1)
+```
+
+## 泛型约束
+如果所有泛型类型集合都能够被一个特定类型参数替换，这个类型参数称为泛型约束。最常见的约束类型为上界
+
+### 上界
+定义泛型时可以在冒号后面指定上界。如果没有指定，默认上界为Any?
+
+```kotlin
+fun <T : Comparable<T>> sort(list: List<T>) {  ... }
+
+sort(listOf(1, 2, 3)) // OK. Int is a subtype of Comparable<Int>
+sort(listOf(HashMap<Int, String>())) //编译错误，HashMap不是Comparable的子类型
+```
+
+一个泛型类型只能指定一个上界。如果一个泛型类型需要指定多个上界，需要使用where语句
+
+```kotlin
+//泛型类型T必须是CharSequence和Comparable的子类
+fun <T> copyWhenGreater(list: List<T>, threshold: T): List<String>
+    where T : CharSequence,
+          T : Comparable<T> {
+    return list.filter { it > threshold }.map { it.toString() }
+}
+```
+
+## 泛型类型擦除
+Kotlin仅在编译时对泛型声明执行类型安全检查
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
