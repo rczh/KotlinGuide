@@ -247,7 +247,9 @@ fun <T> copyWhenGreater(list: List<T>, threshold: T): List<String>
 ```
 
 ## 泛型类型擦除
-Kotlin仅在编译时对泛型声明执行类型安全检查
+Kotlin仅在编译时对泛型类型执行类型安全检查，在运行时泛型类型不包含实际类型的任何信息，类型信息将被擦除。Foo<Bar>和Foo<Baz>在运行时被擦除为Foo<*>
+
+
 
 
 
