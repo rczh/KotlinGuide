@@ -222,6 +222,8 @@ val l = singletonList<Int>(1)
 val m = singletonList(1)
 ```
 
+java不支持泛型函数
+
 ## 泛型约束
 如果所有泛型类型集合都能够被一个特定类型参数替换，这个类型参数称为泛型约束。最常见的约束类型为上界
 
@@ -247,7 +249,7 @@ fun <T> copyWhenGreater(list: List<T>, threshold: T): List<String>
 ```
 
 ## 泛型类型擦除
-Kotlin仅在编译时对泛型类型执行类型安全检查，在运行时泛型类型不包含实际类型的任何信息，类型信息将被擦除。Foo&lt;Bar>和Foo&lt;Baz>在运行时被擦除为Foo<*>
+Kotlin仅在编译时对泛型类型执行类型安全检查，在运行时泛型类型不包含实际类型的任何信息，类型信息将被擦除。Foo&lt;Bar>和Foo&lt;Baz>在运行时被擦除为Foo&lt;*>
 
 编译器禁止在运行时对泛型类型使用is类型检查
 
