@@ -29,3 +29,5 @@
 [SealedClasses](ClassAndObject/SealedClasses.md)
 
 [Generics](ClassAndObject/Generics.md)
+
+[NestedAndInnerClasses](ClassAndObject/NestedAndInnerClasses.md)
