@@ -31,3 +31,5 @@
 [Generics](ClassAndObject/Generics.md)
 
 [NestedAndInnerClasses](ClassAndObject/NestedAndInnerClasses.md)
+
+[EnumClasses](ClassAndObject/EnumClasses.md)
