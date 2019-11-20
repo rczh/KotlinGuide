@@ -33,3 +33,5 @@
 [NestedAndInnerClasses](ClassAndObject/NestedAndInnerClasses.md)
 
 [EnumClasses](ClassAndObject/EnumClasses.md)
+
+[Objects](ClassAndObject/Objects.md)
