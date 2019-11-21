@@ -101,6 +101,32 @@ DataProviderManager.registerDataProvider(...)
 注意，object声明不能定义在方法内部，object声明能够嵌套在其他object声明或者非内部类中
 
 ### 伴生对象
+使用companion关键字标识的嵌套在类内部的object声明称为伴生对象
+
+```kotlin
+class MyClass {
+    companion object Factory {
+        fun create(): MyClass = MyClass()
+    }
+}
+```
+
+可以直接使用外部类名做为前缀调用伴生对象的成员函数
+
+```kotlin
+val instance = MyClass.create()
+```
+
+定义伴生对象时可以省略名字，这时伴生对象的默认名字为Companion
+
+```kotlin
+class MyClass {
+    companion object { }
+}
+
+val x = MyClass.Companion
+```
+
 
 
 
