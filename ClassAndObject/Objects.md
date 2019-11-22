@@ -111,7 +111,7 @@ class MyClass {
 }
 ```
 
-可以直接使用外部类名做为前缀调用伴生对象的成员函数
+由于外部类本身持有伴生对象的引用，可以直接使用外部类名做为前缀调用伴生对象的成员函数
 
 ```kotlin
 val instance = MyClass.create()
@@ -125,9 +125,14 @@ class MyClass {
 }
 
 val x = MyClass.Companion
+val y = MyClass//外部类本身持有伴生对象的引用，所以x == y
 ```
 
+注意，在编译时伴生对象的成员只是普通成员，如果需要将伴生对象成员编译成静态成员需要使用@JvmStatic注解
 
-
-
+## object表达式和object声明的区别
+* object表达式用来创建匿名类，object声明用来创建单例
+* object表达式在使用时初始化
+* object声明在第一次访问时初始化
+* 伴生对象在外部类加载时初始化
 
