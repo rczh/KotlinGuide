@@ -35,3 +35,7 @@
 [EnumClasses](ClassAndObject/EnumClasses.md)
 
 [Objects](ClassAndObject/Objects.md)
+
+[TypeAliases](ClassAndObject/TypeAliases.md)
+
+[InlineClasses](ClassAndObject/InlineClasses.md)
