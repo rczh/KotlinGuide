@@ -7,18 +7,50 @@
 kotlin使用关键字inline定义内联类，内联类必须在主构造函数中初始化一个属性
 
 ```kotlin
-interface Printable {
-    fun prettyPrint(): String
-}
+inline class Password(val value: String)
 
-inline class Name(val s: String) : Printable{
+//在运行时不会创建Password对象，仅仅将字符串"Don't try this in production"赋值给securePassword，避免了创建对象的开销
+val securePassword = Password("Don't try this in production")
+```
+
+## 成员
+内联类中可以声明属性和方法。内联类中不能有init块，内联类的属性不能有幕后字段
+
+```kotlin
+inline class Name(val s: String) {
     val length: Int
         get() = s.length
 
     fun greet() {
         println("Hello, $s")
     }
+}    
 
-    override fun prettyPrint(): String = "Let's $s!"
+fun main() {
+    val name = Name("Kotlin")
+    name.greet() // method `greet` is called as a static method
+    println(name.length) // property getter is called as a static method
 }
 ```
+
+## 继承
+内联类只能继承接口。内联类不能继承其他类并且必须是final
+
+```kotlin
+interface Printable {
+    fun prettyPrint(): String
+}
+
+inline class Name(val s: String) : Printable {
+    override fun prettyPrint(): String = "Let's $s!"
+}    
+
+fun main() {
+    val name = Name("Kotlin")
+    println(name.prettyPrint()) // Still called as a static method
+}
+```
+
+
+
+
