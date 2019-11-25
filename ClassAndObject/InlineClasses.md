@@ -4,7 +4,7 @@
 注意，内联类只在Kotlin 1.3之后可用，目前处于试验阶段
 
 ## 定义
-kotlin使用关键字inline定义内联类，内联类必须在主构造函数中初始化一个属性
+kotlin使用关键字inline定义内联类，内联类必须在主构造函数中定义一个属性
 
 ```kotlin
 inline class Password(val value: String)
@@ -34,7 +34,7 @@ fun main() {
 ```
 
 ## 继承
-内联类只能继承接口。内联类不能继承其他类并且必须是final
+内联类只能继承接口。内联类不能继承其他类并且必须是final的
 
 ```kotlin
 interface Printable {
