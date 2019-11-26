@@ -39,3 +39,7 @@
 [TypeAliases](ClassAndObject/TypeAliases.md)
 
 [InlineClasses](ClassAndObject/InlineClasses.md)
+
+[Delegation](ClassAndObject/Delegation.md)
+
+[DelegatedProperties](ClassAndObject/DelegatedProperties.md)
