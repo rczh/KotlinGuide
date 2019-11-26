@@ -108,7 +108,7 @@ fun main() {
 注意，由于内联类能够同时表示为基本数据类型或者封装类型，不能对内联类对象使用===操作符
 
 ## 变形
-使用内联类做为函数参数时可能造成函数定义冲突，这时编译器会为这些函数重命名为"functionName-<hashcode>"
+使用内联类做为函数参数时可能造成函数定义冲突，这时编译器会为这些函数重命名为"functionName-&lt;hashcode>"
 
 ```kotlin
 inline class UInt(val x: Int)
