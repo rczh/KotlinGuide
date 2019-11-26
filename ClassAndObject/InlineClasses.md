@@ -1,5 +1,5 @@
 # Inline classes
-内联类用来封装基本数据类型，编译器为每个内联类定义一个封装类。编译时内联类可以表示为基本数据类型或者封装类型，类似于Int可以表示为基本数据类型int或者封装类型Integer。通常情况下为了提升性能，编译器使用基本数据类型来表示内联类
+内联类用来封装基本数据类型，编译器为每个内联类定义一个封装类。编译时内联类可以表示为基本数据类型或者封装类型，类似于Int可以表示为基本数据类型int或者封装类型Integer。通常情况下为了提升性能(避免创建封装对象)，编译器使用基本数据类型来表示内联类
 
 注意，内联类只在Kotlin 1.3之后可用，目前处于试验阶段
 
@@ -105,7 +105,22 @@ fun main() {
 }
 ```
 
+注意，由于内联类能够同时表示为基本数据类型或者封装类型，不能对内联类对象使用===操作符
 
+## 变形
+使用内联类做为函数参数时可能造成函数定义冲突，这时编译器会为这些函数重命名为"functionName-<hashcode>"
+
+```kotlin
+inline class UInt(val x: Int)
+
+// Represented as 'public final void compute(int x)' on the JVM
+fun compute(x: Int) { }
+
+// Also represented as 'public final void compute(int x)' on the JVM!
+fun compute(x: UInt) { }//编译时重命名为public final void compute-<hashcode>(int x)
+```
+
+注意，由于-符号在java中是非法的，不能从java中调用这些使用内联类的方法
 
 
 
