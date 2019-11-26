@@ -51,6 +51,62 @@ fun main() {
 }
 ```
 
+## 自动装箱
+在某些情况下，内联类必须使用封装类型
+
+```kotlin
+interface Amount { val value: Int }
+inline class Points(override val value: Int) : Amount
+
+private var totalScore = 0L
+fun addToScore(amount: Amount) {
+    totalScore += amount.value
+}
+
+fun main() {
+    repeat(1000) {
+        val points = Points(it)//Points类在这是内联的，并被当做Int替换
+        repeat(1000) {
+            addToScore(points)//因为这里不能被传入Int，所以这里必须传入Points实例
+        }
+    }
+}
+```
+
+addToScore方法接收Amount类型的参数，由于Int类型并不是Amount的子类型，这里不能使用Int类型做为addToScore方法的实参，编译器只能进行装箱操作将Points做为实参传给addToScore方法
+
+使用内联类时，由于二级循环中每次都需要执行装箱操作，程序总共执行1000000次装箱操作，而使用普通类时只在一级循环中执行装箱操作，程序执行1000次装箱操作，所以在本例中使用内联类会比使用普通类执行更慢
+
+在以下例子中，当内联类被用作另一种类型时，它们将被自动装箱
+
+```kotlin
+interface I
+
+inline class Foo(val i: Int) : I
+
+fun asInline(f: Foo) {}
+fun <T> asGeneric(x: T) {}
+fun asInterface(i: I) {}
+fun asNullable(i: Foo?) {}
+
+fun <T> id(x: T): T = x
+
+fun main() {
+    val f = Foo(42) 
+    
+    asInline(f)    //不需要装箱: used as Foo itself
+    asGeneric(f)   //自动装箱: used as generic type T
+    asInterface(f) //自动装箱: used as type I
+    asNullable(f)  //自动装箱: used as Foo?, which is different from Foo
+    
+    // below, 'f' first is boxed (while being passed to 'id') and then unboxed (when returned from 'id') 
+    // In the end, 'c' contains unboxed representation (just '42'), as 'f' 
+    val c = id(f)  
+}
+```
+
+
+
 
 
 
