@@ -70,8 +70,24 @@ interface ReadWriteProperty<in R, T> {
 }
 ```
 
+## 实现原理
+编译器为每个委托属性生成一个辅助属性并将set和get方法委托给辅助属性
 
+```kotlin
+class C {
+    var prop: Type by MyDelegate()
+}
 
+//编译器生成的代码
+class C {
+    private val prop$delegate = MyDelegate()
+    var prop: Type
+        get() = prop$delegate.getValue(this, this::prop)
+        set(value: Type) = prop$delegate.setValue(this, this::prop, value)
+}
+```
+
+## 自定义生成委托对象逻辑
 
 
 
