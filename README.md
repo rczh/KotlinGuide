@@ -46,4 +46,4 @@
 
 ## Functions and Lambdas
 
-[Functions](ClassAndObject/Functions.md)
+[Functions](FunctionsAndLambdas/Functions.md)
