@@ -43,3 +43,7 @@
 [Delegation](ClassAndObject/Delegation.md)
 
 [DelegatedProperties](ClassAndObject/DelegatedProperties.md)
+
+## Functions and Lambdas
+
+[Functions](ClassAndObject/Functions.md)
