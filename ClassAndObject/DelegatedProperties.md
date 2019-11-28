@@ -19,7 +19,7 @@ class Delegate {
 
 by关键字后面定义委托对象Delegate，属性p的set和get方法将被委托到Delegate对象的setValue和getValue方法。委托对象不必实现任何接口，但是必须提供相应的setValue和getValue方法(通过成员函数或者扩展函数)
 
-从kotlin1..1开始，可以在方法内部或者代码块中声明委托属性
+从kotlin1.1开始，可以在方法内部或者代码块中声明委托属性
 
 ```kotlin
 fun example(computeFoo: () -> Foo) {
@@ -148,7 +148,7 @@ class C {
 }
 ```
 
-## 标准库提供的属性委托
+## 标准库提供的委托属性
 kotlin标准库提供了几种常用的委托属性方法
 
 ### lazy
@@ -194,7 +194,7 @@ fun main() {
 与observable相对应的是vetoable方法，每次对委托属性赋值之前会调用lambda表达式
 
 ### 委托属性到map
-能够使用map作为委托属性对象，委托属性使用属性名作为key从map中取值
+允许使用map作为委托属性对象，委托属性使用属性名作为key从map中取值
 
 ```kotlin
 class User(val map: Map<String, Any?>) {
@@ -212,13 +212,4 @@ fun main() {
 ```
 
 注意，对于var属性需要使用MutableMap作为委托属性对象
-
-
-
-
-
-
-
-
-
 
