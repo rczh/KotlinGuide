@@ -47,3 +47,5 @@
 ## Functions and Lambdas
 
 [Functions](FunctionsAndLambdas/Functions.md)
+
+[Lambdas](FunctionsAndLambdas/Lambdas.md)
