@@ -1,6 +1,6 @@
 # Functions
 ## 函数声明
-kotlin使用fun关键字来声明函数，函数参数使用name: type定义，参数之间用逗号分隔，每个参数必须明确指定参数类型
+kotlin使用fun关键字来声明函数，函数参数使用name: type形式定义，参数之间用逗号分隔，每个参数必须明确指定参数类型
 
 ```kotlin
 fun powerOf(number: Int, exponent: Int) { /*...*/ }
@@ -42,7 +42,7 @@ foo(qux = { println("hello") }) // Uses both default values bar = 0 and baz = 1
 foo { println("hello") }        // Uses both default values bar = 0 and baz = 1
 ```
 
-### 指定调用参数名称
+### 指定参数名称
 kotlin允许在调用函数时指定参数名称，通过指定参数名称可以使函数调用代码更可读
 
 ```kotlin
