@@ -206,5 +206,31 @@ fun dfs(graph: Graph) {
 ```
 
 ## 尾递归函数
+kotlin使用tailrec关键字声明尾递归函数，编译时编译器将使用循环来代替尾递归实现
+
+尾递归函数使得一些使用循环来编写的算法可以使用尾递归函数来实现，而不会产生堆栈溢出
+
+```kotlin
+val eps = 1E-10 // "good enough", could be 10^-15
+
+tailrec fun findFixPoint(x: Double = 1.0): Double
+        = if (Math.abs(x - Math.cos(x)) < eps) x else findFixPoint(Math.cos(x))
+
+//编译器生成的代码类似于这样
+val eps = 1E-10 // "good enough", could be 10^-15
+
+private fun findFixPoint(): Double {
+    var x = 1.0
+    while (true) {
+        val y = Math.cos(x)
+        if (Math.abs(x - y) < eps) return x
+        x = Math.cos(x)
+    }
+}
+```
+
+注意，尾递归函数要求函数必须在执行最后一个操作时调用自己，当递归调用后面有其它代码时不能使用尾递归，尾递归调用不能放在try,catch块中
+
+
 
 
