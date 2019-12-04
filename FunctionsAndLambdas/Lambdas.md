@@ -65,6 +65,17 @@ typealias ClickHandler = (Button, ClickEvent) -> Unit
 ```
 
 ## 实例化函数类型
+可以使用以下方式实例化函数类型
+
+* 函数文本形式包括lambda表达式和匿名函数
+    * lambda表达式: { a, b -> a + b }
+    * 匿名函数: fun(s: String): Int { return s.toIntOrNull() ?: 0 }
+
+    TODO:
+    
+* 使用函数引用或者属性引用
+
+
 
 
 
