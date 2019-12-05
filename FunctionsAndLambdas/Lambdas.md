@@ -186,9 +186,39 @@ ints.filter {
 }
 ```
 
-尾lambda  TODO:
+使用尾lambda表达式可以很方便的实现链式编程
 
 ```kotlin
 listOf<String>("strings").filter { it.length == 5 }.sortedBy { it }.map { it.toUpperCase() }
 ```
+
+### 使用下划线命名未使用的lambda表达式参数
+如果lambda表达式中某个参数没有使用，可以使用下划线命名该参数
+
+```kotlin
+map.forEach { _, value -> println("$value!") }
+```
+
+### 匿名函数
+由于lambda表达式无法明确指定函数返回类型，如果需要明确指定函数返回类型可以使用匿名函数。定义匿名函数时不需要指定函数名
+
+```kotlin
+fun(x: Int, y: Int): Int = x + y
+
+fun(x: Int, y: Int): Int {
+    return x + y
+}
+```
+
+如果匿名函数的参数类型和返回值类型能够被推断出来，定义匿名函数时可以省略它们
+
+```kotlin
+ints.filter(fun(item) = item > 0)
+```
+
+TODO: 
+注意，当使用
+
+
+
 
