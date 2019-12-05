@@ -144,7 +144,51 @@ fun main() {
 }
 ```
 
+### lambda表达式定义
+lambda表达式的完整语法定义形式如下。如果返回类型不是Unit，最后一条语句作为lambda表达式的返回结果
 
+```kotlin
+val sum: (Int, Int) -> Int = { x: Int, y: Int -> x + y }
+```
 
+### 尾lambda表达式
+如果函数的最后一个参数是函数，作为参数传送的lambda表达式可以放到圆括号外面，这种形式称为尾lambda
 
+```kotlin
+val product = items.fold(1) { acc, e -> acc * e }
+```
+
+如果函数中只有一个函数类型参数，可以省略圆括号
+
+```kotlin
+run { println("...") }
+```
+
+### lambda表达式单个参数的隐含名称it
+如果lambda表达式只有一个参数，可以省略参数声明，默认情况下编译器使用it表示该参数
+
+```kotlin
+ints.filter { it > 0 } // this literal is of type '(it: Int) -> Boolean'
+```
+
+### 从lambda表达式返回结果
+默认情况下最后一个语句的值作为整个lambda表达式的返回结果，也可以使用带有限定符的return语句从lambda表达式中明确返回结果
+
+```kotlin
+ints.filter {
+    val shouldFilter = it > 0 
+    shouldFilter
+}
+
+ints.filter {
+    val shouldFilter = it > 0 
+    return@filter shouldFilter
+}
+```
+
+尾lambda  TODO:
+
+```kotlin
+listOf<String>("strings").filter { it.length == 5 }.sortedBy { it }.map { it.toUpperCase() }
+```
 
