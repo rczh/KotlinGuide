@@ -74,8 +74,75 @@ typealias ClickHandler = (Button, ClickEvent) -> Unit
     TODO:
     
 * 使用函数引用或者属性引用
+    * 顶级函数，本地函数，成员函数或扩展函数引用: ::isOdd, String::toInt
+    * 顶级属性，成员属性或扩展属性引用: List<Int>::size
+    * 构造函数引用: ::Regex
+    
+* 使用将函数类型作为接口实现的类的实例
 
+```kotlin
+class IntTransformer: (Int) -> Int {
+    override operator fun invoke(x: Int): Int = TODO()
+}
 
+val intFunction: (Int) -> Int = IntTransformer()
+```
+
+如果有足够的信息，编译器能够推断出函数类型
+
+```kotlin
+val a = { i: Int -> i + 1 } // The inferred type is (Int) -> Int
+```
+
+带有接收类型和不带接收类型的函数类型值可以相互替换，函数类型值(A, B) -> C和A.(B) -> C能够相互赋值
+
+```kotlin
+fun main() {
+    val repeatFun: String.(Int) -> String = { times -> this.repeat(times) }
+    val twoParameters: (String, Int) -> String = repeatFun // OK
+
+    fun runTransformation(f: (String, Int) -> String): String {
+        return f("hello", 3)
+    }
+    val result = runTransformation(repeatFun) // OK
+
+    println("result = $result")
+}
+```
+
+编译器默认推断的函数类型不带接收类型，如果需要声明带接收类型的函数类型时需要明确指定
+
+## 调用函数类型实例
+能够使用invoke操作符f.invoke(x)或者f(x)来调用函数类型实例
+
+调用带有接收类型的函数类型实例时，接收类型对象应该作为第一个参数，或者将接收类型对象作为函数调用的前缀
+
+```kotlin
+fun main() {
+    val stringPlus: (String, String) -> String = String::plus
+    val intPlus: Int.(Int) -> Int = Int::plus
+
+    println(stringPlus.invoke("<-", "->"))
+    println(stringPlus("Hello, ", "world!")) 
+
+    println(intPlus.invoke(1, 1))
+    println(intPlus(1, 2))
+    println(2.intPlus(3)) // extension-like call
+
+}
+```
+
+## lambda表达式和匿名函数
+lambda表达式和匿名函数称为函数文本，函数文本指没有声明的函数，这些函数可以赋值给函数类型
+
+```kotlin
+fun main() {
+    fun max(str: String, f: (String, String) -> Boolean){
+        
+    }
+    max("strings", { a, b -> a.length < b.length })
+}
+```
 
 
 
