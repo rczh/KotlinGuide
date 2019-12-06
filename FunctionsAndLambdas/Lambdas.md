@@ -216,9 +216,23 @@ fun(x: Int, y: Int): Int {
 ints.filter(fun(item) = item > 0)
 ```
 
-TODO: 
-注意，当使用
+当使用表达式作为匿名函数实现时匿名函数的返回值类型能够被自动推断，当使用代码块作为匿名函数实现时必须明确指定函数返回值类型
 
+注意，匿名函数的参数只能在圆括号内传递，匿名函数不能使用尾lambda表达式传递函数参数
+
+lambda表达式只能使用带有限定符的return语句从lambda表达式返回，匿名函数中可以直接使用return语句从匿名函数返回
+
+匿名函数和lambda表达式可以访问外部作用域中的成员
+
+```kotlin
+var sum = 0
+ints.filter { it > 0 }.forEach {
+    sum += it
+}
+print(sum)
+```
+
+### 带有接收类型的字面函数
 
 
 
