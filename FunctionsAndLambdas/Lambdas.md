@@ -233,6 +233,34 @@ print(sum)
 ```
 
 ### 带有接收类型的字面函数
+带有接收类型的函数类型能够被带有接收类型的字面函数实例化
 
+当接收类型能够被推断时，可以使用lambda表达式作为带有接收类型的字面函数
 
+```kotlin
+val sum: Int.(Int) -> Int = { other -> plus(other) }
+```
 
+如果需要明确指定接收类型，可以使用带有接收类型的匿名函数作为带有接收类型的字面函数
+
+```kotlin
+val sum = fun Int.(other: Int): Int = this + other
+```
+
+在字面函数内部接收类型对象变成了一个隐含的this对象，可以直接访问接收类型对象的成员
+
+```kotlin
+class HTML {
+    fun body() { ... }
+}
+
+fun html(init: HTML.() -> Unit): HTML {
+    val html = HTML()  // create the receiver object
+    html.init()        // pass the receiver object to the lambda
+    return html
+}
+
+html {       // lambda with receiver begins here
+    body()   // calling a method on the receiver object
+}
+```
