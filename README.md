@@ -49,3 +49,5 @@
 [Functions](FunctionsAndLambdas/Functions.md)
 
 [Lambdas](FunctionsAndLambdas/Lambdas.md)
+
+[InlineFunctions](FunctionsAndLambdas/InlineFunctions.md)
