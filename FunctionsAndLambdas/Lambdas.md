@@ -20,7 +20,7 @@ fun <T, R> Collection<T>.fold(
 fun main() {
     val items = listOf(1, 2, 3, 4, 5)
 
-    //lambda表达式(函数文本)作为函数类型的实例
+    //lambda表达式(字面函数)作为函数类型的实例
     items.fold(0, { 
         // When a lambda has parameters, they go first, followed by '->'
         acc: Int, i: Int -> 
@@ -42,16 +42,16 @@ fun main() {
 ## 函数类型
 kotlin使用函数类型来处理函数声明
 
-函数类型满足以下条件
+函数类型满足以下条件：
 * 所有函数类型都有一个圆括号括起来的参数类型列表和一个返回类型：(A, B) -> C，参数类型列表可以为空：( ) -> A，Unit返回类型不能省略
 
-* 函数类型可以有一个额外的接收类型：A.(B) -> C，函数文本内部可以调用接收对象中的方法  TODO:
+* 函数类型可以有一个额外的接收类型：A.(B) -> C，字面函数内部可以调用接收对象中的方法
 
 * 挂起函数属于特殊的函数类型：suspend ( ) -> Unit
 
 函数类型声明能够添加函数参数名称：(x: Int, y: Int) -> Int
 
-函数类型需要注意的问题
+函数类型需要注意的问题：
 * 函数类型可空: ((Int, Int) -> Int)?
 
 * 函数类型可以使用括号组合: (Int) -> ((Int) -> Unit)
@@ -67,11 +67,11 @@ typealias ClickHandler = (Button, ClickEvent) -> Unit
 ## 实例化函数类型
 可以使用以下方式实例化函数类型
 
-* 函数文本形式包括lambda表达式和匿名函数
+* 字面函数，包括lambda表达式和匿名函数
     * lambda表达式: { a, b -> a + b }
     * 匿名函数: fun(s: String): Int { return s.toIntOrNull() ?: 0 }
-
-    TODO:
+    
+* 带有接收类型的字面函数
     
 * 使用函数引用或者属性引用
     * 顶级函数，本地函数，成员函数或扩展函数引用: ::isOdd, String::toInt
@@ -133,7 +133,7 @@ fun main() {
 ```
 
 ## lambda表达式和匿名函数
-lambda表达式和匿名函数称为函数文本，函数文本指没有声明的函数，这些函数可以赋值给函数类型
+lambda表达式和匿名函数统称为字面函数，字面函数指没有声明的函数，这些函数可以赋值给函数类型
 
 ```kotlin
 fun main() {
@@ -144,27 +144,28 @@ fun main() {
 }
 ```
 
-### lambda表达式定义
-lambda表达式的完整语法定义形式如下。如果返回类型不是Unit，最后一条语句作为lambda表达式的返回结果
+## lambda表达式
+### 定义
+lambda表达式的完整语法定义形式如下。如果lambda表达式的返回类型不是Unit，最后一条语句作为lambda表达式的返回结果
 
 ```kotlin
 val sum: (Int, Int) -> Int = { x: Int, y: Int -> x + y }
 ```
 
 ### 尾lambda表达式
-如果函数的最后一个参数是函数，作为参数传送的lambda表达式可以放到圆括号外面，这种形式称为尾lambda
+如果高阶函数的最后一个参数是函数，作为参数传送的lambda表达式可以放到圆括号外面，这种形式称为尾lambda
 
 ```kotlin
 val product = items.fold(1) { acc, e -> acc * e }
 ```
 
-如果函数中只有一个函数类型参数，可以省略圆括号
+如果高阶函数中只有一个函数类型参数，可以省略圆括号
 
 ```kotlin
 run { println("...") }
 ```
 
-### lambda表达式单个参数的隐含名称it
+### lambda表达式单个参数的隐含名称-it
 如果lambda表达式只有一个参数，可以省略参数声明，默认情况下编译器使用it表示该参数
 
 ```kotlin
