@@ -43,7 +43,42 @@ public static final void main() {
 
 内联函数会将函数本身和函数类型参数一起进行替换
 
-## noinline参数
+## noinline
+由于内联函数会将函数类型参数一起内联，如果内联函数中调用以该函数类型参数作为实参的普通函数时会产生编译错误
+
+```kotlin
+inline fun <T> lock(lock: Lock,  body: () -> T): T {
+    lock.lock()
+    try {
+        //编译错误，otherMethod需要() -> T类型的函数类型实例，但是body已经被内联成为一个具体的函数值
+        //return otherMethod(body)
+    }finally {
+        lock.unlock()
+    }
+}
+
+fun <T> otherMethod(body: ()-> T): T{
+    return body()
+}
+```
+
+noinline关键字用来声明函数类型参数不内联
+
+```kotlin
+inline fun <T> lock(lock: Lock, noinline body: () -> T): T {
+    lock.lock()
+    try {
+        //body是() -> T类型的函数类型实例，没有被内联
+        return otherMethod(body)
+    }finally {
+        lock.unlock()
+    }
+}
+```
+
+内联的函数类型参数只能在内联函数内部调用或者作为实参传递给其他内联函数
+
+## 非本地返回
 
 
 
