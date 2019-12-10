@@ -79,6 +79,49 @@ inline fun <T> lock(lock: Lock, noinline body: () -> T): T {
 内联的函数类型参数只能在内联函数内部调用或者作为实参传递给其他内联函数
 
 ## 非本地返回
+默认情况下只允许使用带标签的return语句从lambda表达式中返回，如果接收lambda表达式参数的函数是内联的，则允许在lambda表达式中直接使用return语句
+
+```kotlin
+inline fun inlined(block: () -> Unit) {
+    println("hi!")
+}
+fun foo() {
+    inlined {
+        return // OK: the lambda is inlined
+    }
+}
+fun main() {
+    foo()
+}
+```
+
+这种直接使用return语句从lambda表达式中返回的形式称为非本地返回
+
+## crossinline
+如果内联函数内部不直接调用lambda表达式参数，而是将lambda表达式参数传递给其他成员，比如匿名类，这时lambda表达式中不允许使用非本地返回
+
+```kotlin
+inline fun f(crossinline body: () -> Unit) {
+    val result = object: Runnable {
+        override fun run() = body()
+    }
+    
+    val run = Runnable { body() }
+}
+
+fun main(){
+    f {
+        println("hello")
+        return
+    }
+}
+```
+
+使用crossinline关键字标识lambda表达式中不允许使用非本地返回
+
+## reified
+
+
 
 
 
