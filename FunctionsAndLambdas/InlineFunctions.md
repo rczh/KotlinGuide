@@ -120,7 +120,23 @@ fun main(){
 使用crossinline关键字标识lambda表达式中不允许使用非本地返回
 
 ## reified
+在运行时泛型类型不包含实际类型的任何信息，类型信息将被擦除，编译器禁止在运行时对泛型类型使用is类型检查
 
+内联函数提供了具体化类型参数reified，使用reified关键字声明的类型参数能够像普通类一样允许使用as,is操作符
+
+```kotlin
+inline fun <reified T> TreeNode.findParentOfType(): T? {
+    var p = parent
+    while (p != null && p !is T) {
+        p = p.parent
+    }
+    return p as T?
+}
+```
+
+注意，普通函数不允许使用reified关键字
+
+## 内联属性
 
 
 
