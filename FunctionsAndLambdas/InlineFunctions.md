@@ -137,8 +137,27 @@ inline fun <reified T> TreeNode.findParentOfType(): T? {
 注意，普通函数不允许使用reified关键字
 
 ## 内联属性
+可以将不带幕后字段属性的set,get方法声明为内联函数
 
+```kotlin
+val foo: Foo
+    inline get() = Foo()
 
+var bar: Bar
+    get() = ...
+    inline set(v) { ... }
+```
 
+当使用inline关键字声明内联属性时，内联属性中的set,get方法都是内联函数
 
+```kotlin
+inline var bar: Bar
+    get() = ...
+    set(v) { ... }
+```
+
+## 公共内联函数的限制
+由于公共的内联函数可能被其他模块调用，如果内联函数中调用本地模块的其它私有函数，当私有函数发生变化时必须重新编译调用内联函数的模块。为避免类似情况发生，kotlin不允许公共内联函数调用本地的私有函数
+
+私有内联函数允许调用本地的私有函数
 
