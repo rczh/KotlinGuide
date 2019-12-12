@@ -51,3 +51,9 @@
 [Lambdas](FunctionsAndLambdas/Lambdas.md)
 
 [InlineFunctions](FunctionsAndLambdas/InlineFunctions.md)
+
+## Collections
+
+[CollectionsOverview](Collections/CollectionsOverview.md)
+
+
