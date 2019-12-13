@@ -35,7 +35,7 @@ fun main(){
 }
 ```
 
-//TODO: 图
+![collections-diagram.png](https://github.com/rczh/KotlinGuide/blob/master/Collections/collections-diagram.png)
 
 ## List
 List集合按顺序存储元素，并且提供索引访问集合元素。另外，List集合元素允许重复
