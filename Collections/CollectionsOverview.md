@@ -35,6 +35,8 @@ fun main(){
 }
 ```
 
+kotlin集合接口的流程图：
+
 ![collections-diagram.png](https://github.com/rczh/KotlinGuide/blob/master/Collections/collections-diagram.png)
 
 ## List
@@ -74,5 +76,51 @@ fun main() {
 kotlin中默认的List实现为ArrayList
 
 ## Set
+Set是一个不包含重复元素的无序集合。由于null元素是唯一的，Set集合只能包含一个null元素
 
+如果两个Set集合拥有同样的大小，并且Set集合中的每一个元素在另一个Set集合中都有一个equals相同的元素，则认为两个Set是相等的
 
+```kotlin
+fun main() {
+    val numbers = setOf(1, 2, 3, 4)
+    println("Number of elements: ${numbers.size}")
+    if (numbers.contains(1)) println("1 is in the set")
+
+    val numbersBackwards = setOf(4, 3, 2, 1)
+    println("The sets are equal: ${numbers == numbersBackwards}")
+}
+```
+
+MutableSet是一个带有写方法的Set集合
+
+kotlin中默认的Set实现为LinkedHashSet，它保留了元素插入的顺序
+
+```kotlin
+fun main() {
+    val numbers = setOf(1, 2, 3, 4)  // LinkedHashSet is the default implementation
+    val numbersBackwards = setOf(4, 3, 2, 1)
+
+    println(numbers.first() == numbersBackwards.first())
+    println(numbers.first() == numbersBackwards.last())
+}
+```
+
+另一个Set实现为HashSet，它并不保留元素插入的顺序。比较LinkedHashSet，存储相同数量元素时HashSet需要更少的内存
+
+## Map
+Map是一组key-value集合。Map中的key是唯一的，value可以重复。Map本身并不继承Collection接口
+
+如果两个Map包含相同的key-value元素，不论位置是否相同，都认为两个Map是相等的
+
+```kotlin
+fun main() {
+    val numbersMap = mapOf("key1" to 1, "key2" to 2, "key3" to 3, "key4" to 1)    
+    val anotherMap = mapOf("key2" to 2, "key1" to 1, "key4" to 1, "key3" to 3)
+
+    println("The maps are equal: ${numbersMap == anotherMap}")
+}
+```
+
+MutableMap是一个带有写方法的Map集合
+
+kotlin中默认的Map实现为LinkedHashMap，它保留了元素插入的顺序
