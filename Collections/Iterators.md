@@ -39,7 +39,7 @@ fun main() {
 ## List迭代器
 kotlin为List集合提供了ListIterator迭代器，它能够同时支持向前和向后遍历集合
 
-ListIterator迭代器使用hasPrevious和previous方法向后遍历集合，它还提供nextIndex和previousIndex方法用来获取元素下标
+ListIterator迭代器使用hasPrevious和previous方法向后遍历集合，它还提供了nextIndex和previousIndex方法用来获取元素下标
 
 ```kotlin
 fun main() {
