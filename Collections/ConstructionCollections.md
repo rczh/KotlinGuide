@@ -1,13 +1,13 @@
 # Construction Collections
 ## 使用元素列表创建集合
-通常使用标准库函数listOf,setOf,mapOf,mutableListOf,mutableSetOf,mutableMapOf创建集合。使用逗号分隔的集合元素列表作为参数时，编译器能够自动检测元素类型。创建空集合时需要明确指定元素类型
+通常情况下可以使用标准库函数listOf,setOf,mapOf,mutableListOf,mutableSetOf,mutableMapOf来创建集合。使用逗号分隔的集合元素列表作为参数时，编译器能够自动检测元素类型。创建空集合时需要明确指定元素类型
 
 ```kotlin
 val numbersSet = setOf("one", "two", "three", "four")
 val emptySet = mutableSetOf<String>()
 ```
 
-map集合的key和value使用Pair对象传递，通常使用中缀函数in创建Pair对象
+map集合的key和value使用Pair对象传递，通常使用中缀函数in来创建Pair对象
 
 ```kotlin
 val numbersMap = mapOf("key1" to 1, "key2" to 2, "key3" to 3, "key4" to 1)
@@ -20,7 +20,7 @@ val numbersMap = mutableMapOf<String, String>().apply { this["one"] = "1"; this[
 ```
 
 ## 创建空集合
-可以使用函数emptyList,emptySet,emptyMap创建空集合，创建空集合时需要指定元素类型
+可以使用函数emptyList,emptySet,emptyMap来创建空集合，创建空集合时需要指定元素类型
 
 ```kotlin
 val empty = emptyList<String>()
@@ -38,14 +38,14 @@ fun main() {
 ```
 
 ## 使用具体类型构造函数创建集合
-可以使用具体类型构造函数来创建集合，比如ArrayList或者LinkedList
+可以使用具体类型构造函数来创建集合，比如构造函数ArrayList或者LinkedList
 
 ```kotlin
 val linkedList = LinkedList<String>(listOf("one", "two", "three"))
 val presizedSet = HashSet<Int>(32)
 ```
 
-## 集合复制
+## 复制集合
 kotlin标准库提供toList,toMutableList,toSet等集合复制函数用来创建浅复制集合，对集合中元素的更改会影响所有副本
 
 集合复制函数可以用来将原始集合转换成其它类型集合
@@ -60,7 +60,7 @@ fun main() {
 }
 ```
 
-可以为集合创建一个新的引用，当集合元素更新时所有引用都会更新
+可以为集合创建一个新的引用，当集合元素变化时所有引用都会更新
 
 ```kotlin
 fun main() {
@@ -71,11 +71,10 @@ fun main() {
 }
 ```
 
-使用只读集合对可写集合创建引用时，不能在只读集合引用上执行写操作
+将可写集合引用赋值给只读集合时，不能在只读集合引用上执行写操作
 
 ```kotlin
 fun main() {
-
     val sourceList = mutableListOf(1, 2, 3)
     val referenceList: List<Int> = sourceList
     //referenceList.add(4)            //compilation error
@@ -85,7 +84,7 @@ fun main() {
 ```
 
 ## 在集合上执行各种操作来创建新集合
-创建一个与筛选器元素匹配的新列表
+在原有列表上基础上创建一个与筛选器元素匹配的新列表
 
 ```kotlin
 fun main() {
@@ -95,7 +94,7 @@ fun main() {
 }
 ```
 
-创建一个set集合转换结果的列表
+在原有set集合基础上创建一个map转换后的列表
 
 ```kotlin
 fun main() {
@@ -105,5 +104,3 @@ fun main() {
     println(numbers.mapIndexed { idx, value -> value * idx })
 }
 ```
-
-
