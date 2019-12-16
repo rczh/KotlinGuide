@@ -84,7 +84,7 @@ fun main() {
 ```
 
 ## 在集合上执行各种操作来创建新集合
-在原有列表上基础上创建一个与筛选器元素匹配的新列表
+在原有列表基础上创建一个与筛选器元素匹配的新列表
 
 ```kotlin
 fun main() {
@@ -98,7 +98,6 @@ fun main() {
 
 ```kotlin
 fun main() {
-
     val numbers = setOf(1, 2, 3)
     println(numbers.map { it * 3 })
     println(numbers.mapIndexed { idx, value -> value * idx })
