@@ -1,6 +1,6 @@
 # Iterators
 
-kotlin支持使用迭代器iterator遍历集合元素，可以调用Iterable接口的iterator方法获取迭代器对象，默认迭代器对象指向集合的第一个元素，调用next方法返回当前元素并且将迭代器指针移动到下一个元素
+kotlin支持使用迭代器iterator遍历集合元素，可以调用Iterable接口的iterator方法获取迭代器对象，默认迭代器对象指向集合的第一个元素，调用next方法返回该元素并且将迭代器指针移动到下一个元素
 
 如果迭代器已经遍历到最后一个元素，想要再次遍历集合需要创建一个新的迭代器
 
@@ -25,7 +25,7 @@ fun main() {
 }
 ```
 
-使用forEach函数遍历集合
+使用forEach函数自动遍历集合，并且在每个集合元素上执行lambda表达式
 
 ```kotlin
 fun main() {
@@ -37,9 +37,9 @@ fun main() {
 ```
 
 ## List迭代器
-kotlin为List集合提供了特殊的迭代器接口ListIterator，它同时支持向前和向后迭代List集合
+kotlin为List集合提供了ListIterator迭代器，它能够同时支持向前和向后遍历集合
 
-ListIterator迭代器使用hasPrevious和previous方法实现向后迭代，使用nextIndex和previousIndex方法获取元素下标
+ListIterator迭代器使用hasPrevious和previous方法向后遍历集合，它还提供nextIndex和previousIndex方法用来获取元素下标
 
 ```kotlin
 fun main() {
@@ -54,10 +54,10 @@ fun main() {
 }
 ```
 
-由于ListIterator支持双向迭代，当遍历到最后一个元素时，仍然能够使用它向后迭代
+由于ListIterator迭代器支持双向遍历，当遍历到最后一个元素时仍然能够使用ListIterator迭代器向后遍历
 
 ## Mutable迭代器
-kotlin为可变集合提供了迭代器MutableIterator，它提供了remove方法可以在迭代过程中删除元素
+kotlin为可变集合提供了MutableIterator迭代器，它提供了remove方法可以在迭代过程中删除集合元素
 
 ```kotlin
     val numbers = mutableListOf("one", "two", "three", "four")
@@ -74,7 +74,7 @@ kotlin为可变集合提供了迭代器MutableIterator，它提供了remove方�
     println("After removal: $numbers")
 ```
 
-MutableListIterator继承于MutableIterator迭代器接口并且提供了add和set方法
+MutableListIterator迭代器继承于MutableIterator，并且提供了add和set方法
 
 ```kotlin
 fun main() {
