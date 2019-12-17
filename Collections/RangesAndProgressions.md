@@ -70,7 +70,39 @@ fun main() {
 ```
 
 ## 数列
+由于区间继承于数列，整数类型区间能够作为等差数列。kotlin中定义的整数类型数列包括IntProgression, LongProgression, CharProgression
 
+数列包含三个基本属性：首元素，尾元素，步长
 
+遍历正步长的数列相当于java中的for循环
 
+```kotlin
+for (int i = first; i <= last; i += step) {
+  // ...
+}
+```
+
+可以使用step函数自定义步长。如果步长为正数，数列的最后一个元素为不大于尾元素的最大值。如果步长为负数，数列的最后一个元素为不小于尾元素的最小值
+
+```kotlin
+fun main() {
+    for (i in 1..8 step 2) print(i)
+}
+```
+
+使用downTo函数创建逆序遍历的数列
+
+```kotlin
+fun main() {
+    for (i in 4 downTo 1) print(i)
+}
+```
+
+由于数列实现了Iterable接口，可以在数列上使用集合函数
+
+```kotlin
+fun main() {
+    println((1..10).filter { it % 2 == 0 })
+}
+```
 
