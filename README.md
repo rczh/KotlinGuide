@@ -61,3 +61,7 @@
 [Iterators](Collections/Iterators.md)
 
 [RangesAndProgressions](Collections/RangesAndProgressions.md)
+
+[Sequences](Collections/Sequences.md)
+
+
