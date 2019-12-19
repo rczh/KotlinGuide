@@ -24,5 +24,29 @@ val numbersSequence = numbers.asSequence()
 ```
 
 ### 使用生成函数
+可以使用generateSequence函数并且传一个lambda表达式来创建序列，lambda表达式用来计算每一个序列元素。当lambda表达式返回null时停止生成序列元素
+
+```kotlin
+fun main() {
+    //由于lambda表达式没有返回null，oddNumbers序列是无限的
+    val oddNumbers = generateSequence(1) { it + 2 } // `it` is the previous element
+    println(oddNumbers.take(5).toList())
+    //println(oddNumbers.count())     // error: the sequence is infinite
+}
+```
+
+使用generateSequence函数创建有限序列
+
+```kotlin
+fun main() {
+    val oddNumbersLessThan10 = generateSequence(1) { if (it < 10) it + 2 else null }
+    println(oddNumbersLessThan10.count())
+}
+```
+
+###
+
+
+
 
 
