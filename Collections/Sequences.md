@@ -44,7 +44,41 @@ fun main() {
 }
 ```
 
-###
+### 使用块函数
+使用sequence函数可以逐个或按任意大小的块生成序列元素，sequence函数需要传一个调用yield或者yieldAll函数的lambda表达式，它们为序列消费者返回一个元素然后挂起sequence函数的执行，当序列消费者再次请求序列元素时sequence函数将会继续执行
+
+使用无限序列作为参数的yieldAll函数必须位于lambda表达式的最后位置
+
+```kotlin
+fun main() {
+    val oddNumbers = sequence {
+        yield(1)
+        yieldAll(listOf(3, 5))
+        yieldAll(generateSequence(7) { it + 2 })
+    }
+    println(oddNumbers.take(5).toList())
+}
+```
+
+## 序列操作
+序列操作可以分为无状态操作和有状态操作
+
+* 无状态操作不需要任何状态并且独立的处理每个元素，比如map或filter函数
+
+* 有状态操作需要保存状态。sort为有状态操作，相同的元素在排序后会保持原有顺序
+
+当一个序列操作返回另一个序列时该序列操作称为中间操作，否则称为终点操作。序列元素只能通过终点操作获取
+
+序列可以遍历多次，某些序列实现会限制只能遍历一次
+
+
+
+
+
+
+
+
+
 
 
 
