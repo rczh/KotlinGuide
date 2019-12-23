@@ -71,8 +71,8 @@ fun main() {
 
 序列可以遍历多次，某些序列实现会限制只能遍历一次
 
-## 序列和集合执行多步处理的区别
-### 集合
+## 例子
+### 使用集合执行多步操作
 
 ```kotlin
 fun main() {    
@@ -90,7 +90,7 @@ fun main() {
 
 ![list-processing.png](https://github.com/rczh/KotlinGuide/blob/master/Collections/list-processing.png)
 
-### 序列
+### 使用序列执行多步操作
 
 ```kotlin
 fun main() {
@@ -108,10 +108,10 @@ fun main() {
 }
 ```
 
-只有当请求结果时才真正开始执行序列操作，序列为每一个元素逐个执行所有操作步骤
+只有当请求结果时才真正执行序列操作，序列为每一个元素逐个执行所有操作步骤
 
 ![sequence-processing.png](https://github.com/rczh/KotlinGuide/blob/master/Collections/sequence-processing.png)
 
-在这个例子中，序列操作需要执行18步，而集合操作执行23步
+在本例中，序列操作需要执行18步，而集合操作执行23步
 
 
