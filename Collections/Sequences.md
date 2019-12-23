@@ -86,13 +86,32 @@ fun main() {
 }
 ```
 
+集合操作会被尽快执行，集合为所有元素依次执行每一个操作步骤
 
+![list-processing.png](https://github.com/rczh/KotlinGuide/blob/master/Collections/list-processing.png)
 
+### 序列
 
+```kotlin
+fun main() {
+    val words = "The quick brown fox jumps over the lazy dog".split(" ")
+    //convert the List to a Sequence
+    val wordsSequence = words.asSequence()
 
+    val lengthsSequence = wordsSequence.filter { println("filter: $it"); it.length > 3 }
+        .map { println("length: ${it.length}"); it.length }
+        .take(4)
 
+    println("Lengths of first 4 words longer than 3 chars")
+    // terminal operation: obtaining the result as a List
+    println(lengthsSequence.toList())
+}
+```
 
+只有当请求结果时才真正开始执行序列操作，序列为每一个元素逐个执行所有操作步骤
 
+![sequence-processing.png](https://github.com/rczh/KotlinGuide/blob/master/Collections/sequence-processing.png)
 
+在这个例子中，序列操作需要执行18步，而集合操作执行23步
 
 
