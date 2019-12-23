@@ -64,7 +64,7 @@ fun main() {
 ## 写操作
 对于可变集合，可以使用改变集合状态的写操作。比如add,remove
 
-标准库为某些操作提供一对函数，比如排序操作，sort函数对原始集合进行排序，而sorted函数创建一个新的集合保存排序结果
+标准库为某些操作提供一对函数，比如排序操作，sort函数对原始集合进行排序，而sorted函数会创建一个新的集合用来保存排序结果
 
 ```kotlin
 fun main() {
@@ -75,5 +75,4 @@ fun main() {
     println(numbers == sortedNumbers)  // true
 }
 ```
-
 
