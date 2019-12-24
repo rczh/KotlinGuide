@@ -73,15 +73,50 @@ fun main() {
 ```
 
 ## Association
+Association转换允许使用集合元素和与它们相关联的值来创建map
 
+associateWith函数使用原始集合元素作为key，转换函数的结果作为value来创建map。如果原始集合中有两个相同元素，map中只保留最后一个元素
 
+```kotlin
+fun main() {
+    val numbers = listOf("one", "two", "three", "four")
+    println(numbers.associateWith { it.length })
+}
+```
 
+associateBy函数使用原始集合元素作为value，转换函数的结果作为key来创建map。如果原始集合中有两个相同元素，map中只保留最后一个元素
 
+```kotlin
+fun main() {
+    val numbers = listOf("one", "two", "three", "four")
 
+    println(numbers.associateBy { it.first().toUpperCase() })
+    //可以为associateBy函数使用值转换函数
+    println(numbers.associateBy(keySelector = { it.first().toUpperCase() }, valueTransform = { it.length }))
+}
+```
 
+associate函数可以使用原始集合元素同时生成key和value，装换函数返回一个包含key和value的Pair对象
 
+注意，由于associate函数会产生临时的Pair对象，它会影响函数的性能
 
+```kotlin
+data class FullName (val firstName: String, val lastName: String)
+fun parseFullName(fullName: String): FullName {
+    val nameParts = fullName.split(" ")
+    if (nameParts.size == 2) {
+        return FullName(nameParts[0], nameParts[1])
+    } else throw Exception("Wrong name format")
+}
 
+fun main(){
+    val names = listOf("Alice Adams", "Brian Brown", "Clara Campbell")
+    //associate函数会生成临时Pair对象，它会影响性能
+    println(names.associate { name -> parseFullName(name).let { it.lastName to it.firstName } })
+}
+```
+
+## Flattening
 
 
 
