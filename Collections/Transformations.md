@@ -75,7 +75,7 @@ fun main() {
 ## Association
 Association转换允许使用集合元素和与它们相关联的值来创建map
 
-associateWith函数使用原始集合元素作为key，转换函数的结果作为value来创建map。如果原始集合中有两个相同元素，map中只保留最后一个元素
+associateWith函数使用原始集合元素作为key，转换函数的结果作为value。如果原始集合中有两个相同元素，map中只保留最后一个元素
 
 ```kotlin
 fun main() {
@@ -84,7 +84,7 @@ fun main() {
 }
 ```
 
-associateBy函数使用原始集合元素作为value，转换函数的结果作为key来创建map。如果原始集合中有两个相同元素，map中只保留最后一个元素
+associateBy函数使用原始集合元素作为value，转换函数的结果作为key。如果原始集合中有两个相同元素，map中只保留最后一个元素
 
 ```kotlin
 fun main() {
@@ -96,7 +96,7 @@ fun main() {
 }
 ```
 
-associate函数可以使用原始集合元素同时生成key和value，装换函数返回一个包含key和value的Pair对象
+associate函数可以使用原始集合元素同时生成key和value，转换函数返回一个包含key和value的Pair对象
 
 注意，由于associate函数会产生临时的Pair对象，它会影响函数的性能
 
