@@ -66,9 +66,54 @@ fun main() {
 ```
 
 ## Partitioning
+partition函数可以将不满足筛选条件的元素单独保存在一个列表中，它返回一个包含两个列表的Pair对象，第一个为满足筛选条件的列表，第二个为不满足筛选条件的列表
 
+```kotlin
+fun main() {
+    val numbers = listOf("one", "two", "three", "four")
+    val (match, rest) = numbers.partition { it.length > 3 }
 
+    println(match)
+    println(rest)
+}
+```
 
+## 测试筛选条件
+kotlin提供一些函数用来为集合元素测试筛选条件
 
+* any函数：如果集合中至少有一个元素满足筛选条件则返回true
 
+* none函数：如果集合中没有元素满足筛选条件则返回true
+
+* all函数：如果集合中所有元素都满足筛选条件则返回true。注意，在空集合上调用all函数也将返回true
+
+```kotlin
+fun main() {
+    val numbers = listOf("one", "two", "three", "four")
+
+    println(numbers.any { it.endsWith("e") })
+    println(numbers.none { it.endsWith("a") })
+    println(numbers.all { it.endsWith("e") })
+
+    println(emptyList<Int>().all { it > 5 })   // vacuous truth
+}
+```
+
+通常使用不带筛选条件的any和none函数来检查集合是否为空
+
+```kotlin
+fun main() {
+    val numbers = listOf("one", "two", "three", "four")
+    val empty = emptyList<String>()
+    //集合非空时any返回true
+    println(numbers.any())
+    //集合为空时any返回false
+    println(empty.any())
+
+    //集合非空时none返回false
+    println(numbers.none())
+    //集合为空时none返回true
+    println(empty.none())
+}
+```
 
