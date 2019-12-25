@@ -67,3 +67,5 @@
 [OperationsOverview](Collections/OperationsOverview.md)
 
 [Transformations](Collections/Transformations.md)
+
+[Filtering](Collections/Filtering.md)
