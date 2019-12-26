@@ -1,10 +1,10 @@
 # Collection Transformations
-kotlin标准库为集合转换提供了一系列扩展函数，这些扩展函数根据转换规则从原始集合生成新的集合
+kotlin标准库为集合转换提供了一系列扩展函数，这些函数根据转换规则使用原始集合生成新的集合
 
 ## Mapping
-Mapping装换通过在原始集合元素上执行转换函数，将转换函数的结果用来创建新集合
+Mapping转换通过在原始集合元素上执行转换函数，使用转换函数的结果创建新集合
 
-基本的Mapping装换使用map函数，它对每一个集合元素执行转换函数并且返回转换函数执行结果的列表。map函数返回结果的顺序和元素的原始顺序相同
+kotlin中常用的Mapping转换为map函数，它对每一个集合元素执行转换函数并且返回转换函数执行结果的列表。map函数返回结果的顺序和元素的原始顺序相同
 
 ```kotlin
 fun main() {
@@ -15,7 +15,7 @@ fun main() {
 }
 ```
 
-使用mapNotNull或者mapIndexedNotNull函数可以将装换结果中的空值过滤掉
+使用mapNotNull或者mapIndexedNotNull函数可以将转换结果中的空元素过滤掉
 
 ```kotlin
 fun main() {
@@ -25,7 +25,7 @@ fun main() {
 }
 ```
 
-对map进行转换时，可以使用mapKeys函数只转换key保留value不变，或者使用mapValues函数只转换value保留key不变
+对map集合进行转换时，可以使用mapKeys函数只转换key不改变value，或者使用mapValues函数只转换value不改变key
 
 ```kotlin
 fun main() {
@@ -38,7 +38,7 @@ fun main() {
 ## Zipping
 Zipping转换使用两个集合中相同位置的元素来创建Pair
 
-kotlin使用zip函数进行Zipping转换，zip函数返回Pair对象列表，其中接收集合的元素作为Pair对象的第一个元素。如果两个集合的长度不同，返回列表长度为较小集合元素长度，较大集合中超出的元素不会包含在返回结果中
+kotlin使用zip函数进行Zipping转换，zip函数返回Pair对象列表，其中接收集合的元素作为Pair对象的第一个元素。如果两个集合的长度不同，返回结果长度为较小集合元素长度，较大集合中超出的元素不会包含在返回结果中
 
 ```kotlin
 fun main() {
@@ -75,7 +75,7 @@ fun main() {
 ## Association
 Association转换允许使用集合元素和与它们相关联的值来创建map
 
-associateWith函数使用原始集合元素作为key，转换函数的结果作为value。如果原始集合中有两个相同元素，map中只保留最后一个元素
+associateWith函数使用原始集合元素作为key，转换函数结果作为value。如果原始集合中有两个相同元素，返回结果中只保留最后一个元素
 
 ```kotlin
 fun main() {
@@ -84,7 +84,7 @@ fun main() {
 }
 ```
 
-associateBy函数使用原始集合元素作为value，转换函数的结果作为key。如果原始集合中有两个相同元素，map中只保留最后一个元素
+associateBy函数使用原始集合元素作为value，转换函数结果作为key。如果原始集合中有两个相同元素，返回结果中只保留最后一个元素
 
 ```kotlin
 fun main() {
@@ -96,7 +96,7 @@ fun main() {
 }
 ```
 
-associate函数可以使用原始集合元素同时生成key和value，转换函数返回一个包含key和value的Pair对象
+associate函数可以根据原始集合元素同时生成key和value，转换函数返回一个包含key和value的Pair对象
 
 注意，由于associate函数会产生临时的Pair对象，它会影响函数的性能
 
@@ -128,7 +128,7 @@ fun main() {
 }
 ```
 
-flatMap函数能够更加灵活的处理嵌套集合，它将每个集合元素转换成另一个子集合，它的返回结果为所有子集合元素的列表。flatMap函数的行为类似于连续调用map函数和flatten函数
+flatMap函数能够更加灵活的处理嵌套集合，它将每个集合元素转换成另一个子集合，返回结果为所有子集合元素的列表。flatMap函数的行为类似于连续调用map和flatten函数
 
 ```kotlin
 data class StringContainer(val values: List<String>)
@@ -174,7 +174,7 @@ fun main() {
 }
 ```
 
-可以为joinToString函数指定转换元素的个数，超出的部分将使用truncated值来代替
+可以为joinToString函数指定转换元素的个数，超出的部分将使用truncated值代替
 
 ```kotlin
 fun main() {
