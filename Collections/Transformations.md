@@ -117,11 +117,78 @@ fun main(){
 ```
 
 ## Flattening
+Flattening转换用来将嵌套的集合元素转换成一个独立的元素列表
 
+可以在嵌套集合对象上调用flatten函数，它返回一个包含嵌套集合所有元素的列表
 
+```kotlin
+fun main() {
+    val numberSets = listOf(setOf(1, 2, 3), setOf(4, 5, 6), setOf(1, 2))
+    println(numberSets.flatten())
+}
+```
 
+flatMap函数能够更加灵活的处理嵌套集合，它将每个集合元素转换成另一个子集合，它的返回结果为所有子集合元素的列表。flatMap函数的行为类似于连续调用map函数和flatten函数
 
+```kotlin
+data class StringContainer(val values: List<String>)
 
+fun main() {
+    val containers = listOf(
+        StringContainer(listOf("one", "two", "three")),
+        StringContainer(listOf("four", "five", "six")),
+        StringContainer(listOf("seven", "eight"))
+    )
+    println(containers.flatMap { it.values })
+}
+```
 
+## 字符串表示法
+joinToString和joinTo函数允许将集合转换成字符串表示形式
 
+* joinToString函数根据提供的参数使用集合元素创建字符串
+
+* joinTo函数可以将转换结果追加到Appendable对象后面
+
+默认情况下，转换后的元素使用逗号加空格分隔
+
+```kotlin
+fun main() {
+    val numbers = listOf("one", "two", "three", "four")
+
+    println(numbers)         
+    println(numbers.joinToString())
+
+    val listString = StringBuffer("The list of numbers: ")
+    numbers.joinTo(listString)
+    println(listString)
+}
+```
+
+可以为joinToString函数指定参数来自定义字符串表示形式
+
+```kotlin
+fun main() {
+    val numbers = listOf("one", "two", "three", "four")    
+    println(numbers.joinToString(separator = " | ", prefix = "start: ", postfix = ": end"))
+}
+```
+
+可以为joinToString函数指定转换元素的个数，超出的部分将使用truncated值来代替
+
+```kotlin
+fun main() {
+    val numbers = (1..100).toList()
+    println(numbers.joinToString(limit = 10, truncated = "<...>"))
+}
+```
+
+可以为joinToString函数指定转换函数，返回结果为使用逗号分隔的所有集合元素在转换函数上执行的结果
+
+```kotlin
+fun main() {
+    val numbers = listOf("one", "two", "three", "four")
+    println(numbers.joinToString { "Element: ${it.toUpperCase()}"})
+}
+```
 
