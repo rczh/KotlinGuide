@@ -69,3 +69,6 @@
 [Transformations](Collections/Transformations.md)
 
 [Filtering](Collections/Filtering.md)
+
+[PlusAndMinusOperators](Collections/PlusAndMinusOperators.md)
+
