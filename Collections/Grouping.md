@@ -1,7 +1,7 @@
 # Grouping
 kotlin支持对集合元素进行分组
 
-groupBy函数需要传递一个lambda表达式然后返回一个map结果，map中的key为lambda表达式的返回结果，value为返回该lambda结果的元素列表
+groupBy函数需要传递一个lambda表达式，它返回一个map结果，map中的key为lambda表达式的返回结果，value为返回该lambda结果的元素列表
 
 ```kotlin
 fun main() {
@@ -20,7 +20,7 @@ Grouping对象支持以下操作：
 
 * fold和reduce函数，为每个组作执行fold和reduce操作
 
-* aggregate函数，当fold和reduce函数不能满足需求时可以使用aggregate函数实现自定义操作
+* aggregate函数，当fold和reduce不能满足需求时可以使用aggregate函数实现自定义操作
 
 ```kotlin
 fun main() {
