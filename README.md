@@ -73,3 +73,6 @@
 [PlusAndMinusOperators](Collections/PlusAndMinusOperators.md)
 
 [Grouping](Collections/Grouping.md)
+
+[RetrievingCollectionParts](Collections/RetrievingCollectionParts.md)
+
