@@ -49,9 +49,39 @@ fun main() {
  ```
  
  ## Chunked
+ 使用chunked函数可以将集合拆分成指定大小的子集合，它的返回结果是一个子集合列表，其中最后一个子集合的大小可能小于指定大小
  
+  ```kotlin
+ fun main() {
+    val numbers = (0..13).toList()
+    println(numbers.chunked(3))
+}
+ ```
  
+ 可以使用lambda转换函数对返回结果中的子集合进行转换，转换函数的参数为临时的子集合对象
  
+```kotlin
+fun main() {
+    val numbers = (0..13).toList() 
+    println(numbers.chunked(3) { it.sum() })  // `it` is a chunk of the original collection
+}
+```
+
+## Windowed
+使用windowed函数可以从每个集合元素开始返回指定大小的子集合，它类似于通过一个指定大小的滑动窗口来观测集合，返回结果是一个子集合列表
+
+```kotlin
+fun main() {
+    val numbers = listOf("one", "two", "three", "four", "five")    
+    println(numbers.windowed(3))
+}
+```
+
+
+
+
+
+
 
 
 
