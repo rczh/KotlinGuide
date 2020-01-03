@@ -81,7 +81,7 @@ fun main() {
 
 * step参数用来定义两个相邻子集合第一个元素之间的距离
 
-* partialWindows参数用来定义是否包含从集合末尾元素开始的长度小于指定大小的子集合，默认情况下partialWindows为false
+* partialWindows参数用来定义是否包含从集合末尾元素开始长度小于指定大小的子集合，默认情况下partialWindows为false
 
 * 可以使用lambda转换函数对返回结果中的子集合进行转换
 
