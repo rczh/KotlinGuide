@@ -16,17 +16,7 @@ fun main() {
 }
 ```
 
-可以使用first或者last函数用来获取集合中的第一个或者最后一个元素
-
-```kotlin
-fun main() {
-    val numbers = listOf("one", "two", "three", "four", "five")
-    println(numbers.first())    
-    println(numbers.last())    
-}
-```
-
-使用elementAtOrNull或者elementAtOrElse函数可以在获取不存在位置元素时避免出现异常
+elementAtOrNull或者elementAtOrElse函数可以在获取不存在位置元素时避免出现异常
 
 ```kotlin
 fun main() {
@@ -35,6 +25,16 @@ fun main() {
     println(numbers.elementAtOrNull(5))
     //当指定位置不存在时elementAtOrElse函数返回该位置上lambda表达式的结果
     println(numbers.elementAtOrElse(5) { index -> "The value for index $index is undefined"})
+}
+```
+
+可以使用first或者last函数用来获取集合中的第一个或者最后一个元素
+
+```kotlin
+fun main() {
+    val numbers = listOf("one", "two", "three", "four", "five")
+    println(numbers.first())    
+    println(numbers.last())    
 }
 ```
 
