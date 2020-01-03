@@ -49,7 +49,7 @@ fun main() {
 ```
 
 ## 排序函数
-kotlin提供了一些函数用来对集合进行排序，这里将介绍一些用于只读集合的排序函数，这些函数的返回结果是一个按照指定顺序排列原始集合元素的新集合
+kotlin提供了一些函数用来对集合进行排序，这里将介绍一些用于只读集合的排序函数，这些函数的返回结果是一个按照指定顺序排列的原始集合元素的新集合
 
 ### Natural order
 sorted或者sortedDescending函数返回按照Comparable接口定义的升序或者降序排序的集合元素
@@ -90,7 +90,7 @@ fun main() {
 ```
 
 ### Reverse order
-可以使用reversed函数获取逆序集合，reversed函数返回一个包含原始集合元素的新集合，所以对于原始集合的修改不会改变reversed的结果
+可以使用reversed函数获取逆序集合，reversed函数返回一个包含原始集合元素的新集合，因此对于原始集合的修改不会改变reversed的结果
 
 ```kotlin
 fun main() {
