@@ -71,6 +71,7 @@ fun main() {
 ```kotlin
 fun main() {
     val numbers = listOf("one", "two", "three", "four")
+    //compareBy函数返回Comparator实例
     println("Sorted by length ascending: ${numbers.sortedWith(compareBy { it.length })}")
 }
 ```
@@ -88,4 +89,37 @@ fun main() {
 }
 ```
 
+### Reverse order
+可以使用reversed函数获取逆序集合，reversed函数返回一个包含原始集合元素的新集合，所以对于原始集合的修改不会改变reversed的结果
+
+```kotlin
+fun main() {
+    val numbers = listOf("one", "two", "three", "four")
+    println(numbers.reversed())
+}
+```
+
+asReversed函数在原始集合对象基础上返回一个逆序视图对象，逆序视图对象的实现基于原始集合对象，因此对于原始集合的修改会影响asReversed的结果
+
+```kotlin
+fun main() {
+    val numbers = mutableListOf("one", "two", "three", "four")
+    val reversedNumbers = numbers.asReversed()
+    println(reversedNumbers)
+    numbers.add("five")
+    println(reversedNumbers)
+}
+```
+
+总之，reversed的结果不会随着原始集合的改变而改变，asReversed的结果会随着原始集合的改变而改变
+
+### Random order
+可以使用shuffled函数按照随机顺序返回一个包含原始集合元素的新列表
+
+```kotlin
+fun main() {
+    val numbers = listOf("one", "two", "three", "four")
+    println(numbers.shuffled())
+}
+```
 
