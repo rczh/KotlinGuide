@@ -76,3 +76,7 @@
 
 [RetrievingCollectionParts](Collections/RetrievingCollectionParts.md)
 
+[RetrievingSingleElements](Collections/RetrievingSingleElements.md)
+
+[Ordering](Collections/Ordering.md)
+
