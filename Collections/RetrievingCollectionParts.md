@@ -77,13 +77,31 @@ fun main() {
 }
 ```
 
+可以为windowed函数设置参数
 
+* step参数用来定义两个相邻子集合第一个元素之间的距离
 
+* partialWindows参数用来定义是否包含从集合末尾元素开始的长度小于指定大小的子集合，默认情况下partialWindows为false
 
+* 可以使用lambda转换函数对返回结果中的子集合进行转换
 
+```kotlin
+fun main() {
+    val numbers = (1..10).toList()
+    println(numbers.windowed(3, step = 2, partialWindows = true))
+    println(numbers.windowed(3) { it.sum() })
+}
+```
 
+## zipWithNext
+zipWithNext函数是windowed的一种特殊形式用来创建包含两个元素的子集合，它为除集合最后一个元素之外的每个元素创建Pair对象
 
-
-
-
+```kotlin
+fun main() {
+    val numbers = listOf("one", "two", "three", "four", "five")    
+    println(numbers.zipWithNext())
+    //可以为zipWithNext函数使用转换函数，转换函数的参数为两个集合元素
+    println(numbers.zipWithNext() { s1, s2 -> s1.length > s2.length})
+}
+```
 
