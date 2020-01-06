@@ -80,3 +80,5 @@
 
 [Ordering](Collections/Ordering.md)
 
+[AggregateOperations](Collections/AggregateOperations.md)
+
