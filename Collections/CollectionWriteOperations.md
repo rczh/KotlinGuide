@@ -1,5 +1,5 @@
 # Collection Write Operations
-可变集合支持一些修改集合内容的操作，这里将介绍适用于所有MutableCollection子类的写操作
+可变集合支持一些修改集合内容的操作，这里将介绍适用于所有MutableCollection子类的操作
 
 ## 添加元素
 add函数可以将一个元素添加到list或者set集合末尾
@@ -55,7 +55,7 @@ fun main() {
 
 注意，remove函数只能删除集合中第一次出现的元素值，对于集合中包含多个重复元素的情况可以使用以下函数：
 
-* removeAll函数可以将参数中的所有元素一次性从集合中删除。还可以为removeAll函数指定lambda表达式，集合中所有匹配lambda表达式结果的元素都会被删除
+* removeAll函数可以将参数中的所有元素一次性从集合中删除，可以为removeAll函数指定lambda表达式，集合中所有匹配lambda表达式结果的元素都会被删除
 
 * retainAll函数用来删除除了参数元素之外的所有集合元素，可以为retainAll函数指定lambda表达式，集合中所有匹配lambda表达式结果的元素都会被保留
 
