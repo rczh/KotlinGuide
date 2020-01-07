@@ -83,3 +83,5 @@
 [AggregateOperations](Collections/AggregateOperations.md)
 
 [CollectionWriteOperations](Collections/CollectionWriteOperations.md)
+
+[ListSpecificOperations](Collections/ListSpecificOperations.md)
