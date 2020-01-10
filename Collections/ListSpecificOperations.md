@@ -131,6 +131,83 @@ fun main() {
 可以对列表区间执行二分查找
 
 ## List write operations
+可变列表支持一些使用索引访问元素的特殊操作
 
+### Adding
+add或者addAll函数可以将元素添加到指定位置
 
+```kotlin
+fun main() {
+    val numbers = mutableListOf("one", "five", "six")
+    //所有之后的元素右移
+    numbers.add(1, "two")
+    numbers.addAll(2, listOf("three", "four"))
+    println(numbers)
+}
+```
+
+### Updating
+使用set函数或者操作符形式[]可以替换指定位置的元素
+
+```kotlin
+fun main() {
+    val numbers = mutableListOf("one", "five", "three")
+    numbers[1] =  "two"
+    println(numbers)
+}
+```
+
+fill函数可以使用特定值替换列表中的所有元素
+
+```kotlin
+fun main() {
+    val numbers = mutableListOf(1, 2, 3, 4)
+    numbers.fill(3)
+    println(numbers)
+}
+```
+
+### Removing
+removeAt函数可以删除指定位置的元素
+
+```kotlin
+fun main() {
+    val numbers = mutableListOf(1, 2, 3, 4, 3)    
+    //被删除节点之后的所有元素索引-1
+    numbers.removeAt(1)
+    println(numbers)
+}
+```
+
+### Sorting
+kotlin为可变列表提供了一组扩展函数用来执行本地排序操作，本地排序操作用来改变当前列表元素的顺序
+
+相比较应用于只读列表的排序函数，本地排序函数名称不带e/ed后缀
+
+asReversed函数在原始列表对象基础上返回一个逆序视图对象，逆序视图对象的实现基于原始列表对象，因此对于逆序视图对象的修改会影响原始列表对象
+
+```kotlin
+fun main() {
+    val numbers = mutableListOf("one", "two", "three", "four")
+
+    numbers.sort()
+    println("Sort into ascending: $numbers")
+    numbers.sortDescending()
+    println("Sort into descending: $numbers")
+
+    numbers.sortBy { it.length }
+    println("Sort into ascending by length: $numbers")
+    numbers.sortByDescending { it.last() }
+    println("Sort into descending by the last letter: $numbers")
+
+    numbers.sortWith(compareBy<String> { it.length }.thenBy { it })
+    println("Sort by Comparator: $numbers")
+
+    numbers.shuffle()
+    println("Shuffle: $numbers")
+
+    numbers.reverse()
+    println("Reverse: $numbers")
+}
+```
 
