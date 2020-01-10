@@ -85,3 +85,7 @@
 [CollectionWriteOperations](Collections/CollectionWriteOperations.md)
 
 [ListSpecificOperations](Collections/ListSpecificOperations.md)
+
+[SetSpecificOperations](Collections/SetSpecificOperations.md)
+
+[MapSpecificOperations](Collections/MapSpecificOperations.md)
