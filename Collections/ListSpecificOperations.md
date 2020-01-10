@@ -38,7 +38,7 @@ fun main() {
 ```
 
 ## 查找元素位置
-###线性查找
+### 线性查找
 可以使用indexOf或者lastIndexOf函数查找列表中元素的位置，它们返回列表中指定元素参数的第一个或者最后一个位置，如果没有找到指定元素则返回-1
 
 ```kotlin
@@ -130,7 +130,7 @@ fun main() {
 
 可以对列表区间执行二分查找
 
-### List write operations
+## List write operations
 
 
 
