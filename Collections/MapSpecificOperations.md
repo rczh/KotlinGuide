@@ -84,8 +84,91 @@ fun main() {
 ```
 
 ## Map write operations
+kotlin为可变map提供了特殊的写操作，它们满足以下规则：
 
+* map元素的值可以改变，但是key不能改变
 
+* 对于每个key都有一个与之相关联的值，可以添加或者删除map元素
 
+### Adding and updating entries
+可以使用put函数添加一个新的元素，它被加入到LinkedHashMap的最后位置
 
+```koltin
+fun main() {
+    val numbersMap = mutableMapOf("one" to 1, "two" to 2)
+    numbersMap.put("three", 3)
+    println(numbersMap)
+}
+```
+
+可以使用putAll函数一次添加多个元素，它的参数可以是map或者Pair集合
+
+```kotlin
+fun main() {
+    val numbersMap = mutableMapOf("one" to 1, "two" to 2, "three" to 3)
+    numbersMap.putAll(setOf("four" to 4, "five" to 5))
+    println(numbersMap)
+}
+```
+
+如果指定元素的key在map中已经存在，put或者putAll函数会使用指定元素的值覆盖原始map元素的值
+
+```kotlin
+fun main() {
+    val numbersMap = mutableMapOf("one" to 1, "two" to 2)
+    val previousValue = numbersMap.put("one", 11)
+    println("value associated with 'one', before: $previousValue, after: ${numbersMap["one"]}")
+    println(numbersMap)
+}
+```
+
+可以使用简写操作符+=或者[]添加map元素，如果指定元素的key在map中已经存在，简写操作符会使用指定元素的值覆盖原始map元素的值
+
+```kotlin
+fun main() {
+    val numbersMap = mutableMapOf("one" to 1, "two" to 2)
+    numbersMap["three"] = 3     // calls numbersMap.put("three", 3)
+    numbersMap += mapOf("four" to 4, "five" to 5)
+    println(numbersMap)
+}
+```
+
+### Removing entries
+可以使用remove函数删除一个map元素
+
+```kotlin
+fun main() {
+    val numbersMap = mutableMapOf("one" to 1, "two" to 2, "three" to 3)
+    numbersMap.remove("one")
+    println(numbersMap)
+    //如果同时指定参数key和value，remove函数只删除map中同时匹配key和value的元素
+    numbersMap.remove("three", 4)            //doesn't remove anything
+    println(numbersMap)
+}
+```
+
+可以通过在map的keys或者values属性上调用remove函数来删除元素
+
+```kotlin
+fun main() {
+    val numbersMap = mutableMapOf("one" to 1, "two" to 2, "three" to 3, "threeAgain" to 3)
+    numbersMap.keys.remove("one")
+    println(numbersMap)
+    //在values上调用remove函数时，只删除第一个具有指定值的元素
+    numbersMap.values.remove(3)
+    println(numbersMap)
+}
+```
+
+可以使用minusAssign(-=)操作符删除map元素
+
+```kotlin
+fun main() {
+    val numbersMap = mutableMapOf("one" to 1, "two" to 2, "three" to 3)
+    numbersMap -= "two"
+    println(numbersMap)
+    numbersMap -= "five"             //doesn't remove anything
+    println(numbersMap)
+}
+```
 
