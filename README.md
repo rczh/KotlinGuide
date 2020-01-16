@@ -89,3 +89,7 @@
 [SetSpecificOperations](Collections/SetSpecificOperations.md)
 
 [MapSpecificOperations](Collections/MapSpecificOperations.md)
+
+## Other
+
+[DestructuringDeclarations](Other/DestructuringDeclarations.md)
