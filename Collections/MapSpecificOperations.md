@@ -34,7 +34,7 @@ fun main() {
 ```
 
 ## Filtering
-使用filter函数可以过滤map，该函数需要传递一个参数为Pair的lambda表达式，通过Pair可以在lambda表达式中同时使用key和value
+使用filter函数可以过滤map，该函数需要传递一个参数为Pair的lambda表达式，通过Pair对象可以在lambda表达式中同时使用key和value
 
 ```kotlin
 fun main() {
@@ -60,7 +60,7 @@ fun main() {
 ```
 
 ## plus and minus operators
-plus(+)操作符返回一个包含两个操作数元素的map，右侧操作数可以是Pair或者另一个map，如果右侧操作数元素中包含左侧操作数元素的key，返回结果中使用右侧操作数元素
+plus(+)操作符返回一个包含两个操作数元素的map，右侧操作数可以是Pair或者另一个map，如果右侧操作数元素中包含左侧操作数元素的key，返回结果中使用右侧操作数元素值代替左侧操作数元素值
 
 ```kotlin
 fun main() {
@@ -93,7 +93,7 @@ kotlin为可变map提供了特殊的写操作，它们满足以下规则：
 ### Adding and updating entries
 可以使用put函数添加一个新的元素，它被加入到LinkedHashMap的最后位置
 
-```koltin
+```kotlin
 fun main() {
     val numbersMap = mutableMapOf("one" to 1, "two" to 2)
     numbersMap.put("three", 3)
