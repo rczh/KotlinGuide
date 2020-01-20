@@ -93,3 +93,10 @@
 ## Other
 
 [DestructuringDeclarations](Other/DestructuringDeclarations.md)
+
+[TypeChecksAndCasts](Other/TypeChecksAndCasts.md)
+
+[ThisExpressions](Other/ThisExpressions.md)
+
+
+
