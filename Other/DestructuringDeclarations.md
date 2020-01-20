@@ -77,7 +77,7 @@ map.mapValues { entry -> "${entry.value}!" }
 map.mapValues { (key, value) -> "$value!" }
 ```
 
-需要注意，lambda表达式中声明两个参数和使用析构声明的区别
+需要注意，lambda表达式中声明两个参数和使用析构声明之间的区别
 
 ```kotlin
 { a -> ... } // one parameter
