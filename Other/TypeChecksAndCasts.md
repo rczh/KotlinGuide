@@ -90,6 +90,34 @@ val x: String? = y as? String
 ```
 
 ## Type erasure and generic type checks
+由于kotlin仅在编译时对泛型类型执行类型安全检查，在运行时泛型类型实例不包含实际参数类型信息，比如List<Foo>在运行时被擦除为List<*>，通常无法在运行时检查实例是否属于具有特定参数类型的泛型类型
+
+由于泛型类型擦除，编译器禁止在运行时对泛型类型执行is类型检查，但是允许在运行时检查星型投影类型
+
+```kotlin
+//检查星型投影类型
+if (something is List<*>) {
+    something.forEach { println(it) } // The items are typed as `Any?`
+}
+```
+
+如果在编译时已经检查了实例的泛型类型参数，运行时可以对非泛型部分使用is检查或者类型转换
+
+```kotlin
+fun handleStrings(list: List<String>) {
+    //只检查非泛型部分ArrayList
+    if (list is ArrayList<String>) {
+        // `list` is smart-cast to `ArrayList<String>`
+    }
+    //只转换非泛型部分
+    val tmpList = list as ArrayList<String>
+}
+```
+
+
+
+
+
 
 
 
