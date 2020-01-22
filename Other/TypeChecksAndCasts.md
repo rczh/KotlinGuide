@@ -57,6 +57,42 @@ when (x) {
 }
 ```
 
+满足以下规则可以使用自动类型转换：
+
+* val本地变量：除了本地委托属性之外的val本地变量都可以使用自动类型转换
+
+* val属性：除了open属性或者具有自定义get方法之外的val属性都可以使用自动类型转换
+
+* var本地变量：除了在is检查和使用之间发生改变或者在修改它的lambda表达式中使用或者本地委托属性之外的var本地变量都可以使用自动类型转换
+
+* var属性：由于var属性能够在任何时间被修改，所有var属性都不能使用自动类型转换
+
+## "Unsafe" cast operator
+如果无法进行转换时类型转换操作会抛出异常，通常称这种类型转换为不安全的类型转换。kotlin中使用中缀操作符as执行这种不安全的类型转换
+
+```kotlin
+//由于null不能转换成String，如果y为null则y as String会抛出异常
+val x: String = y as String
+```
+
+对于y为null的情况，可以使用可空的转换类型
+
+```kotlin
+val x: String? = y as String?
+```
+
+## "Safe" (nullable) cast operator
+为了避免出现异常可以使用安全类型转换操作符as?，如果转换失败as?返回null
+
+```kotlin
+//对于y为null的情况，虽然as?的转换类型为String，但是y as? String的结果为空
+val x: String? = y as? String
+```
+
+## Type erasure and generic type checks
+
+
+
 
 
 
