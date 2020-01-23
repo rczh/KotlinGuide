@@ -114,8 +114,31 @@ fun handleStrings(list: List<String>) {
 }
 ```
 
+带有具体化类型参数reified的内联函数允许使用is检查，比如arg is B。如果参数本身是一个泛型类型实例，它的类型信息也会被擦除
 
+```kotlin
+inline fun <reified A, reified B> Pair<*, *>.asPairOf(): Pair<A, B>? {
+    if (first !is A || second !is B) return null
+    return first as A to second as B
+}
 
+val somePair: Pair<Any?, Any?> = "items" to listOf(1, 2, 3)
+
+val stringToSomething = somePair.asPairOf<String, Any>()
+val stringToInt = somePair.asPairOf<String, Int>()
+val stringToList = somePair.asPairOf<String, List<*>>()
+//second和具体化类型参数List<String>都被擦除为List<*>，所以这里可以正常执行
+val stringToStringList = somePair.asPairOf<String, List<String>>() // Breaks type safety!
+
+fun main() {
+    println("stringToSomething = " + stringToSomething)
+    println("stringToInt = " + stringToInt)
+    println("stringToList = " + stringToList)
+    println("stringToStringList = " + stringToStringList)
+}
+```
+
+## Unchecked casts
 
 
 
