@@ -139,10 +139,36 @@ fun main() {
 ```
 
 ## Unchecked casts
+由于类型擦除使编译器无法在运行时检查泛型类型实例的实际类型参数，对泛型类型实例执行强制类型转换时编译器会产生一个类型转换不能被完全检查的警告信息
 
+```kotlin
+fun readDictionary(file: File): Map<String, *> = file.inputStream().use { 
+    TODO("Read a mapping of strings to arbitrary elements.")
+}
 
+// We saved a map with `Int`s into that file
+val intsFile = File("ints.dictionary")
 
+//警告，不能保证map中的值是整型的
+// Warning: Unchecked cast: `Map<String, *>` to `Map<String, Int>`
+val intsDictionary: Map<String, Int> = readDictionary(intsFile) as Map<String, Int>
+```
 
+可以使用以下方式来避免未检查的类型转换警告
+
+* 使用高级程序逻辑来代替类型转换，比如使用抽象类将类型转换放到具体实现中
+
+* 对于泛型函数，可以使用具体化类型参数reified执行类型转换。注意，如果参数本身是一个泛型类型实例，它的类型信息也会被擦除
+
+* 可以使用注解@Suppress("UNCHECKED_CAST")来禁止警告信息
+
+```kotlin
+inline fun <reified T> List<*>.asListOfType(): List<T>? =
+    if (all { it is T })
+        @Suppress("UNCHECKED_CAST")
+        this as List<T> else
+        null
+```
 
 
 
