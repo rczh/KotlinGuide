@@ -170,6 +170,26 @@ inline fun <reified T> List<*>.asListOfType(): List<T>? =
         null
 ```
 
+由于数组类型会保留元素类型的信息，对数组执行类型转换时可以进行部分检查
 
+```kotlin
+class Foo{}
+fun main(){
+    //数组类型可以保留元素类型，这里编译后变成new Foo[]，保留了Foo类型
+    val test :Array<Foo> = arrayOf(Foo())
+}
+```
 
+如果数组中包含泛型类型元素，泛型类型元素的实际类型参数仍然被擦除
+
+```kotlin
+fun main(){
+    //如果数组中包含泛型元素，这里编译后变成new List[]，丢弃了具体泛型类型Int
+    val foo: Array<List<Int>> = arrayOf(listOf(1))
+    //允许转换，这里不检查具体泛型类型，也不检查可空性
+    val cast = foo as Array<List<String>?>
+}
+```
+
+另外，对数组执行类型转换时也不会检查元素的可空性
 
