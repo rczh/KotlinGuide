@@ -98,5 +98,5 @@
 
 [ThisExpressions](Other/ThisExpressions.md)
 
-
+[Equality](Other/Equality.md)
 
