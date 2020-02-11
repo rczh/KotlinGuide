@@ -63,8 +63,71 @@ inc()和dec()函数需要返回一个值，该返回值将被赋给使用++或�
 
 ## 二元操作符
 ### 算数操作符
+| 表达式 | 重载函数 |
+| --- | --- |
+| a + b | 	a.plus(b) |
+| a - b	| a.minus(b) |
+| a \* b | a.times(b) |
+| a / b | a.div(b) |
+| a % b | a.rem(b), a.mod(b) (deprecated) |
+| a .. b | a.rangeTo(b) |
 
+注意，从kotlin1.1开始支持rem函数，kotlin1.0使用mob函数
 
+```kotlin
+data class Counter(val dayIndex: Int) {
+    operator fun plus(increment: Int): Counter {
+        return Counter(dayIndex + increment)
+    }
+}
+```
+
+### in操作符
+| 表达式 | 重载函数 |
+| --- | --- |
+| a in b | 	b.contains(a) |
+| a !in b	| !b.contains(a) |
+
+in和!in使用相同的函数，注意b为contains函数对象，a为函数参数
+
+```kotlin
+    var a = listOf(1,2,3)
+    var b = 1
+    if(b in a){
+        println("b in a")
+    }
+```
+
+### 索引访问操作符
+| 表达式 | 重载函数 |
+| --- | --- |
+| a[j] | 	a.get(i) |
+| a[i , j] | a.get(i, j) |
+| a[i_1, ..., i_n] | 	a.get(i_1, ..., i_n) |
+| a[i] = b	| a.set(i, b) |
+| a[i, j] = b | a.set(i, j, b) |
+| a[i_1, ..., i_n] = b	| a.set(i_1, ..., i_n, b) |
+
+方括号被转换成使用适当数量参数的set和get函数调用
+
+### invoke操作符
+| 表达式 | 重载函数 |
+| --- | --- |
+| a() | 	a.invoke() |
+| a(i) | a.invoke(i) |
+| a(i, j) | 	a.invoke(i, j) |
+| a(i_1, ..., i_n) | a.invoke(i_1, ..., i_n) |
+
+圆括号被转换成使用适当数量参数的invoke函数调用
+
+### Augmented assignments
+| 表达式 | 重载函数 |
+| --- | --- |
+| a += b | 	a.plusAssign(b) |
+| a -= b	| a.minusAssign(b) |
+| a \*= b | 	a.timesAssign(b) |
+| a /= b	| a.divAssign(b) |
+| a %= b | 	a.remAssign(b), a.modAssign(b) (deprecated) |
 
 
 
