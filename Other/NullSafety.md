@@ -24,9 +24,25 @@ kotlin类型系统的目标是从代码上解决空引用带来的问题，在�
 
 kotlin中类型系统区分了可以包含空和不能包含空的引用
 
+```kotlin
+fun main(){
+    //普通字符串类型不能包含null
+    var a: String = "abc"
+    a = null // compilation error
+    
+    //可空字符串类型可以包含null
+    var b: String? = "abc"
+    b = null // ok
+    print(b)
+    
+    //对于非空类型对象可以直接访问属性，不会引起空指针异常
+    val lenA = a.length
+    //对于可空类型对象不能直接访问属性
+    val lenB = b.length // error: variable 'b' can be null
+}
+```
 
-
-
+## Checking for null in conditions
 
 
 
