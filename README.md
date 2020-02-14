@@ -104,3 +104,6 @@
 
 [NullSafety](Other/NullSafety.md)
 
+[Exception](Other/Exception.md)
+
+
