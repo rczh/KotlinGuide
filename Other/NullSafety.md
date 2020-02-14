@@ -42,8 +42,35 @@ fun main(){
 }
 ```
 
-## Checking for null in conditions
+## 在条件中检查空
+可以明确的检查b是否为空，并且分别处理两种不同情况。编译器将跟踪检查的执行并且允许在if语句中访问length属性
 
+```kotlin
+fun main() {
+    val b: String? = "Kotlin"
+    val l = if (b != null) b.length else -1
+    
+    if (b != null && b.length > 0) {
+        print("String of length ${b.length}")
+    } else {
+        print("Empty string")
+    }
+}
+```
+
+注意，这种方式只适用于b是不可变的情况(例如在检查和使用之间没有被修改的本地var变量或者val变量)。如果b是可变的，在检查后b可能变成空
+
+## 安全调用操作符
+
+
+```kotlin
+fun main() {
+    val a = "Kotlin"
+    val b: String? = null
+    println(b?.length)
+    println(a?.length) // Unnecessary safe call
+}
+```
 
 
 
