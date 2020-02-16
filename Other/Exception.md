@@ -58,7 +58,7 @@ catch (IOException e) {
 kotlin中不支持异常检查(函数定义时不会抛出异常)
 
 ## Nothing类型
-kotlin中throw是一个表达式，它可以用于elvis操作符中。throw表达式的类型是Nothing类型，该类型没有值用来标记无法到达的代码位置
+kotlin中throw是一个表达式，它可以用于elvis操作符中。throw表达式的类型是Nothing类型，该类型没有值，用来标记无法到达的代码位置
 
 ```kotlin
 val s = person.name ?: throw IllegalArgumentException("Name required")
