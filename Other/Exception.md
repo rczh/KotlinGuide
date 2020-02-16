@@ -79,7 +79,7 @@ val s = person.name ?: fail("Name required")
 println(s)     //执行到这里时s已经被初始化
 ```
 
-由于Nothing?类型的值只可能是null，当使用null初始化一个推断类型值时，并且没有其他信息可用于确定具体的类型，编译器将推断为Nothing?类型
+Nothing?类型的值只可能是null，当使用null初始化一个推断类型值时，由于没有其他可用于确定具体类型的信息，编译器将推断为Nothing?类型
 
 ```kotlin
 val x = null           // 'x' has type `Nothing?`
