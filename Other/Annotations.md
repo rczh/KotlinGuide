@@ -100,6 +100,68 @@ val f = @Suspendable { Fiber.sleep(10) }
 ```
 
 ## Annotation Use-site Targets
+由于编译器会为kotlin类的属性生成set,get方法，为主构造函数参数生成相对应的属性和set,get方法。当注解属性或者主构造函数参数时，可以精确指定注解作用域
+
+```kotlin
+class Example(@field:Ann val foo,    //注解foo属性
+              @get:Ann val bar,      //注解bar get方法
+              @param:Ann val quux)   //注解quux构造函数参数
+```
+
+可以使用类似语法对整个文件注解
+
+```kotlin
+@file:JvmName("Foo")
+package org.jetbrains.demo
+```
+
+为同一个元素定义多个注解时，可以将所有注解添加到中括号中从而避免重复定义注解
+
+```kotlin
+class Example {
+     @set:[Inject VisibleForTesting]
+     var collaborator: Collaborator
+}
+```
+
+kotlin支持的精确注解作用域包含：
+
+* file(注解文件)
+
+* property(该注解对于java代码不可见)
+
+* field(注解属性)
+
+* get(注解属性get方法)
+
+* set(注解属性set方法)
+
+* receiver(注解扩展函数或者扩展属性的接收类型参数)
+
+* param(注解构造函数参数)
+
+* setparam(注解属性set方法的参数)
+
+* delegate(注解委托代理对象属性)
+
+注解扩展函数的接收类型参数
+
+```kotlin
+fun @receiver:Fancy String.myExtension() { ... }
+```
+
+如果没有精确指定注解作用域，则根据所使用注解的元注解@target来选择作用域。如果@target中包含多个可用作用域，则使用以下列表中的第一个可用作用域：
+
+* param
+
+* property
+
+* field
+
+## Java Annotations
+
+
+
 
 
 
