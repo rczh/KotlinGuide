@@ -1,7 +1,7 @@
 # Reflection
 反射是一组语言和库提供的功能，用来在运行时获取程序的结构
 
-kotlin为使用反射功能提供了单独的运行组件kotlin-reflect.jar，这样做是目的为了减小不使用反射功能的应用程序所需运行时库的大小。如果使用反射功能需要将kotlin-reflect.jar文件添加到项目的classpath中
+kotlin为使用反射功能提供了单独的运行组件kotlin-reflect.jar，目的是为了减小不使用反射功能的应用程序所需运行时库的大小。如果使用反射功能需要将kotlin-reflect.jar文件添加到项目的classpath中
 
 ## Class References
 最基本的反射功能是获取kotlin类的运行时引用
