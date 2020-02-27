@@ -159,27 +159,102 @@ fun @receiver:Fancy String.myExtension() { ... }
 * field
 
 ## Java Annotations
+java注解和kotlin完全兼容
 
+```kotlin
+import org.junit.Test
+import org.junit.Assert.*
+import org.junit.Rule
+import org.junit.rules.*
 
+class Tests {
+    //对属性tempFolder的get方法使用java注解Rule
+    @get:Rule val tempFolder = TemporaryFolder()
 
+    @Test fun simple() {
+        val f = tempFolder.newFile()
+        assertEquals(42, getTheAnswer())
+    }
+}
+```
 
+由于java编写的注解没有定义参数顺序，使用注解时需要通过命名参数的形式来传递参数
 
+```java
+// Java
+public @interface Ann {
+    int intValue();
+    String stringValue();
+}
+```
 
+```kotlin
+// Kotlin
+@Ann(intValue = 1, stringValue = "abc") class C
+```
 
+如果注解中包含名字为value的参数，传递参数时可以不指定名称
 
+```java
+// Java
+public @interface AnnWithValue {
+    String value();
+}
+```
 
+```kotlin
+// Kotlin
+@AnnWithValue("abc") class C
+```
 
+### Arrays as annotation parameters
+如果注解中包含名字为value的数组类型参数，传递参数时可以使用vararg类型
 
+```java
+// Java
+public @interface AnnWithArrayValue {
+    String[] value();
+}
+```
 
+```kotlin
+// Kotlin
+@AnnWithArrayValue("abc", "foo", "bar") class C
+```
 
+对于名字为非value的数组类型参数，传递参数时可以使用数组字面形式(kotlin1.2开始)或者arrayOf函数
 
+```java
+// Java
+public @interface AnnWithArrayMethod {
+    String[] names();
+}
+```
 
+```kotlin
+// Kotlin 1.2+:
+@AnnWithArrayMethod(names = ["abc", "foo", "bar"]) 
+class C
 
+// Older Kotlin versions:
+@AnnWithArrayMethod(names = arrayOf("abc", "foo", "bar")) 
+class D
+```
 
+### Accessing properties of an annotation instance
+kotlin中通过属性来访问注解对象的参数值
 
+```java
+// Java
+public @interface Ann {
+    int value();
+}
+```
 
-
-
-
-
+```kotlin
+// Kotlin
+fun foo(ann: Ann) {
+    val i = ann.value
+}
+```
 
