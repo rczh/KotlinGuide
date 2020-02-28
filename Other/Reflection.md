@@ -23,6 +23,23 @@ assert(widget is GoodWidget) { "Bad widget: ${widget::class.qualifiedName}" }
 ```
 
 ## Callable references
+对函数、属性或者构造函数的引用能够做为函数类型的实例被调用或者使用
+
+所有可调用引用的公共父类为KCallable<out R>，其中R为返回类型值，它可以是属性的属性类型，或者是构造函数的构造类型
+
+### Function References
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
