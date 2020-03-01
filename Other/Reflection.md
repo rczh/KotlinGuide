@@ -78,7 +78,24 @@ fun main() {
 ```
 
 ### Example: Function Composition
+compose函数返回两个函数的组合compose(f, g) = f(g(\*))，可以对compose函数的参数使用函数引用
 
+```kotlin
+fun <A, B, C> compose(f: (B) -> C, g: (A) -> B): (A) -> C {
+    return { x -> f(g(x)) }
+}
 
+fun isOdd(x: Int) = x % 2 != 0
 
+fun main() {
+    fun length(s: String) = s.length
+
+    val oddLength = compose(::isOdd, ::length)
+    val strings = listOf("a", "ab", "abc")
+
+    println(strings.filter(oddLength))
+}
+```
+
+### Property References
 
