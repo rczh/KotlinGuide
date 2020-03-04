@@ -98,4 +98,62 @@ fun main() {
 ```
 
 ### Property References
+kotlin中也可以使用::操作符访问全局变量，表达式::x返回KProperty&lt;Int>类型的属性对象，可以使用get()函数获取属性对象的值，或者使用name属性获取属性对象的属性名
+
+```kotlin
+val x = 1
+
+fun main() {
+    println(::x.get())
+    println(::x.name) 
+}
+```
+
+对于可变变量比如var y = 1， 表达式::y返回KMutableProperty&lt;Int>类型的属性对象
+
+```kotlin
+var y = 1
+
+fun main() {
+    ::y.set(2)
+    println(y)
+}
+```
+
+由于KProperty0&lt;out R>和KProperty1&lt;T, out R>属性对象分别实现了() -> R和(T) -> R函数类型接口，可以使用属性引用做为函数类型实现
+
+```kotlin
+fun main() {
+    val strs = listOf("a", "bc", "def")
+    //String::length的属性对象类型为KProperty1<String, Int>
+    println(strs.map(String::length))
+}
+```
+
+引用类属性时需要指定接收类型
+
+```kotlin
+fun main() {
+    class A(val p: Int)
+    //接收类型为A
+    val prop = A::p
+    println(prop.get(A(1)))
+}
+```
+
+引用扩展属性的方式与引用类属性类似
+
+```kotlin
+val String.lastChar: Char
+    get() = this[length - 1]
+
+fun main() {
+    println(String::lastChar.get("abc"))
+}
+```
+
+### Interoperability With Java Reflection
+
+
+
 
