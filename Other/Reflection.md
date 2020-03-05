@@ -153,7 +153,25 @@ fun main() {
 ```
 
 ### Interoperability With Java Reflection
+kotlin标准库为反射类提供了一系列扩展，扩展提供了到java反射对象或者从java反射对象的映射。比如为kotlin属性查找java幕后字段或者java get()方法
 
+```kotlin
+import kotlin.reflect.jvm.*
+class A(val p: Int)
+ 
+fun main() {
+    //javaGetter为扩展属性，返回Method对象
+    println(A::p.javaGetter) // prints "public final int A.getP()"
+    //javaField为扩展属性，返回Field对象
+    println(A::p.javaField)  // prints "private final int A.p"
+}
+```
 
+可以通过Class的扩展属性kotlin获得KClass
 
+```kotlin
+fun getKClass(o: Any): KClass<Any> = o.javaClass.kotlin
+```
+
+### Constructor References
 
