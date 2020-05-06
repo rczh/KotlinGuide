@@ -174,4 +174,78 @@ fun getKClass(o: Any): KClass<Any> = o.javaClass.kotlin
 ```
 
 ### Constructor References
+构造函数可以像方法和属性一样被引用，它们能够在任何需要具有与构造函数相同参数并且返回相应类型对象的函数类型对象处被使用。通过::操作符和类名来引用构造函数
+
+```kotlin
+class Foo
+
+fun function(factory: () -> Foo) {
+    val x: Foo = factory()
+}
+```
+
+使用构造函数引用来调用function函数
+
+```kotlin
+function(::Foo)
+```
+
+根据参数的个数，构造函数引用的类型为KFunction&lt;out R>的子类型
+
+## Bound Function and Property References (since 1.1)
+可以引用对象中的方法
+
+```kotlin
+fun main() {
+    val numberRegex = "\\d+".toRegex()
+    println(numberRegex.matches("29"))
+
+    val isNumber = numberRegex::matches
+    println(isNumber("29"))
+}
+```
+
+该引用被绑定到它的接收类型中，它能够被直接调用或者在需要函数类型表达式时使用
+
+```kotlin
+fun main() {
+    val numberRegex = "\\d+".toRegex()
+    val strings = listOf("abc", "124", "a70")
+    //numberRegex::matches作为函数类型(T) -> Boolean的实例被使用
+    println(strings.filter(numberRegex::matches))
+}
+```
+
+比较绑定和相对应的非绑定引用类型。绑定引用类型附加了它的接收类型，所以接收类型不再是一个参数
+
+```kotlin
+//对于绑定引用类型，函数类型不包含接收类型
+val isNumber: (CharSequence) -> Boolean = numberRegex::matches
+//对于非绑定引用类型，函数类型包含接收类型
+val matches: (Regex, CharSequence) -> Boolean = Regex::matches
+```
+
+可以引用对象中的属性
+
+```kotlin
+fun main() {
+    val prop = "abc"::length
+    println(prop.get())
+}
+```
+
+从kotlin1.2开始，不需要明确指定this作为接收类型，this::foo和::foo相同
+
+### Bound constructor references
+可以通过外部类的对象来获取绑定内部类的构造函数引用
+
+```kotlin
+class Outer {
+    inner class Inner
+}
+
+val o = Outer()
+val boundInnerCtor = o::Inner
+```
+
 
