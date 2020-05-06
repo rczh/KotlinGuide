@@ -174,7 +174,7 @@ fun getKClass(o: Any): KClass<Any> = o.javaClass.kotlin
 ```
 
 ### Constructor References
-构造函数可以像方法和属性一样被引用，它们能够在任何需要具有与构造函数相同参数并且返回相应类型对象的函数类型对象处被使用。通过::操作符和类名来引用构造函数
+构造函数可以像方法和属性一样被引用，它们能够在任何需要具有与构造函数相同参数并且返回相应类型对象的函数类型对象时被使用。通过::操作符和类名来引用构造函数
 
 ```kotlin
 class Foo
@@ -237,7 +237,7 @@ fun main() {
 从kotlin1.2开始，不需要明确指定this作为接收类型，this::foo和::foo相同
 
 ### Bound constructor references
-可以通过外部类的对象来获取绑定内部类的构造函数引用
+可以通过外部类的对象来获取绑定内部类构造函数的引用
 
 ```kotlin
 class Outer {
