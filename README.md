@@ -109,3 +109,5 @@
 [Annotations](Other/Annotations.md)
 
 [Reflection](Other/Reflection.md)
+
+[ScopeFunctions](Other/ScopeFunctions.md)
