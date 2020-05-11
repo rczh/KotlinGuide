@@ -193,7 +193,7 @@ function(::Foo)
 根据参数的个数，构造函数引用的类型为KFunction&lt;out R>的子类型
 
 ## Bound Function and Property References (since 1.1)
-可以引用对象中的方法
+可以引用对象实例中的方法
 
 ```kotlin
 fun main() {
@@ -225,7 +225,7 @@ val isNumber: (CharSequence) -> Boolean = numberRegex::matches
 val matches: (Regex, CharSequence) -> Boolean = Regex::matches
 ```
 
-可以引用对象中的属性
+可以引用对象实例中的属性
 
 ```kotlin
 fun main() {
@@ -237,7 +237,7 @@ fun main() {
 从kotlin1.2开始，不需要明确指定this作为接收类型，this::foo和::foo相同
 
 ### Bound constructor references
-可以通过外部类的对象来获取绑定内部类构造函数的引用
+可以通过外部类的对象实例来获取绑定内部类构造函数的引用
 
 ```kotlin
 class Outer {
