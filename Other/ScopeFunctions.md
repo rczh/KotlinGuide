@@ -62,5 +62,40 @@ fun main() {
 ```
 
 ### it
+let, also函数使用lambda参数引用上下文对象。如果没有指定参数名，可以通过默认名称it来访问上下文对象。当访问上下文对象的成员时，并没有像this关键字那样隐含的对象可用。对于使用上下文对象作为函数调用参数，或者在代码块中多次使用对象时，推荐使用参数it引用上下文对象
 
+```kotlin
+fun writeToLog(message: String) {
+    println("INFO: $message")
+}
 
+fun main() {
+    fun getRandomInt(): Int {
+        return Random.nextInt(100).also {
+            writeToLog("getRandomInt() generated value $it")
+        }
+    }
+
+    val i = getRandomInt()
+}
+```
+
+当使用上下文对象作为参数时，可以为对象提供自定义名称
+
+```kotlin
+fun writeToLog(message: String) {
+    println("INFO: $message")
+}
+
+fun main() {
+    fun getRandomInt(): Int {
+        return Random.nextInt(100).also { value ->
+            writeToLog("getRandomInt() generated value $value")
+        }
+    }
+
+    val i = getRandomInt()
+}
+```
+
+### Return value
