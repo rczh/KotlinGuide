@@ -46,7 +46,8 @@ fun main() {
 }
 ```
 
-### this
+**this**
+
 run, with, apply函数使用this关键字引用上下文对象。在lambda表达式中，上下文对象和在普通类函数中一样可用。通常情况下，当访问上下文对象的成员时可以省略this关键字。另一方面，如果省略this则很难区分上下文对象成员和扩展成员。对于主要操作上下文对象成员的lambda表达式，推荐使用接收类型this引用上下文对象
 
 ```kotlin
@@ -61,7 +62,8 @@ fun main() {
 }
 ```
 
-### it
+**it**
+
 let, also函数使用lambda参数引用上下文对象。如果没有指定参数名，可以通过默认名称it来访问上下文对象。当访问上下文对象的成员时，并没有像this关键字那样隐含的对象可用。对于使用上下文对象作为函数调用参数，或者在代码块中多次使用对象时，推荐使用参数it引用上下文对象
 
 ```kotlin
@@ -99,3 +101,79 @@ fun main() {
 ```
 
 ### Return value
+作用域函数的返回结果不同
+
+* apply, also返回上下文对象
+* let, run, with返回lambda表达式结果
+
+**Context object**
+
+apply, also返回上下文对象，因此他们能够被包含在调用链中。在他们之后你能继续函数链调用
+
+```kotlin
+fun main() {
+    val numberList = mutableListOf<Double>()
+    numberList.also { println("Populating the list") }
+        .apply {
+            add(2.71)
+            add(3.14)
+            add(1.0)
+        }
+        .also { println("Sorting the list") }
+        .sort()
+    println(numberList)
+}
+```
+
+可以在返回上下文对象的函数返回声明中使用
+
+```kotlin
+fun writeToLog(message: String) {
+    println("INFO: $message")
+}
+
+fun main() {
+    fun getRandomInt(): Int {
+        return Random.nextInt(100).also {
+            writeToLog("getRandomInt() generated value $it")
+        }
+    }
+
+    val i = getRandomInt()
+}
+```
+
+**Lambda result**
+
+let, run, with返回lambda表达式结果。你可以将结果赋值到变量中，或者在结果上执行链操作
+
+```kotlin
+fun main() {
+    val numbers = mutableListOf("one", "two", "three")
+    val countEndsWithE = numbers.run { 
+        add("four")
+        add("five")
+        count { it.endsWith("e") }
+    }
+    println("There are $countEndsWithE elements that end with e.")
+}
+```
+
+你可以忽略返回值，仅为对象创建一个临时的作用域
+
+```kotlin
+fun main(){
+    val numbers = mutableListOf("one", "two", "three")
+    //忽略返回结果，为numbers创建临时作用域
+    with(numbers) {
+        val firstItem = first()
+        val lastItem = last()
+        println("First item: $firstItem, last item: $lastItem")
+    }
+}
+```
+
+## Functions
+
+
+
