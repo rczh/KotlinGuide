@@ -174,6 +174,8 @@ fun main(){
 ```
 
 ## Functions
+### let
 
+使用参数it引用上下文对象，返回值为lambda表达式结果
 
 
