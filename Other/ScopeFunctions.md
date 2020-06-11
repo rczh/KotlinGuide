@@ -178,4 +178,56 @@ fun main(){
 
 使用参数it引用上下文对象，返回值为lambda表达式结果
 
+let可以在调用链的结果上执行一个或多个函数
+
+```kotlin
+fun main() {
+    val numbers = mutableListOf("one", "two", "three", "four", "five")
+    numbers.map { it.length }.filter { it > 3 }.let { 
+        println(it)
+        // and more function calls if needed
+    } 
+}
+```
+
+如果代码块只包含一个将it作为参数的函数，可以使用函数引用代替lambda表达式
+
+```kotlin
+fun main() {
+    val numbers = mutableListOf("one", "two", "three", "four", "five")
+    numbers.map { it.length }.filter { it > 3 }.let(::println)
+}
+```
+
+let通常用于执行具有非空上下文对象的代码块
+
+```kotlin
+fun processNonNullString(str: String) {}
+
+fun main() {
+    val str: String? = "Hello"   
+    //processNonNullString(str) // compilation error: str can be null
+    val length = str?.let { 
+        println("let() called on $it")
+        //str可空，但是?.let { }块中it非空
+        processNonNullString(it)    // OK: 'it' is not null inside '?.let { }'
+        it.length
+    }
+}
+```
+
+可以将let结果赋值给局部变量来提高代码的可读性，可以为上下文对象自定义参数名称
+
+```kotlin
+fun main() {
+    val numbers = listOf("one", "two", "three", "four")
+    val modifiedFirstItem = numbers.first().let { firstItem ->
+        println("The first item of the list is '$firstItem'")
+        if (firstItem.length >= 5) firstItem else "!" + firstItem + "!"
+    }.toUpperCase()
+    println("First item after modifications: '$modifiedFirstItem'")
+}
+```
+
+### with
 
