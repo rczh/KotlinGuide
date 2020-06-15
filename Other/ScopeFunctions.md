@@ -175,7 +175,6 @@ fun main(){
 
 ## Functions
 ### let
-
 使用参数it引用上下文对象，返回值为lambda表达式结果
 
 let可以在调用链的结果上执行一个或多个函数
@@ -230,4 +229,102 @@ fun main() {
 ```
 
 ### with
+上下文对象作为参数传递给with，在lambda表达式内部使用接收类型this引用上下文对象，返回值为lambda表达式结果
 
+建议在不提供lambda结果的情况下，调用上下文对象上的函数时使用with
+
+```kotlin
+fun main() {
+    val numbers = mutableListOf("one", "two", "three")
+    with(numbers) {
+        println("'with' is called with argument $this")
+        println("It contains $size elements")
+    }
+}
+```
+
+另一个用例是将接收类型对象作为帮助对象，它的属性或函数将用于计算结果
+
+```kotlin
+fun main() {
+    val numbers = mutableListOf("one", "two", "three")
+    val firstAndLast = with(numbers) {
+        "The first element is ${first()}," +
+        " the last element is ${last()}"
+    }
+    println(firstAndLast)
+}
+```
+
+### run
+使用接收类型this引用上下文对象，返回值为lambda表达式结果
+
+当lambda表达式中包含对象初始化和返回值计算时可以使用run
+
+```kotlin
+class MultiportService(var url: String, var port: Int) {
+    fun prepareRequest(): String = "Default request"
+    fun query(request: String): String = "Result for query '$request'"
+}
+
+fun main() {
+    val service = MultiportService("https://example.kotlinlang.org", 80)
+    val result = service.run {
+        port = 8080
+        query(prepareRequest() + " to port $port")
+    }
+    println(result)
+}
+```
+
+还可以使用非扩展的run，它允许在需要表达式的地方执行多个语句块
+
+```kotlin
+fun main() {
+    //这里的run为非扩展函数
+    val hexNumberRegex = run {
+        val digits = "0-9"
+        val hexDigits = "A-Fa-f"
+        val sign = "+-"
+
+        Regex("[$sign]?[$digits$hexDigits]+")
+    }
+
+    for (match in hexNumberRegex.findAll("+1234 -FFFF not-a-number")) {
+        println(match.value)
+    }
+}
+```
+
+### apply
+使用接收类型this引用上下文对象，返回值为上下文对象
+
+对于不返回值并且主要对接收类型对象的成员进行操作时可以使用apply。它通常的使用情况是对象配置
+
+```kotlin
+data class Person(var name: String, var age: Int = 0, var city: String = "")
+
+fun main() {
+    val adam = Person("Adam").apply {
+        age = 32
+        city = "London"        
+    }
+    println(adam)
+}
+```
+
+由于apply返回上下文对象，可以将apply包含到调用链中从而进行复杂的操作
+
+### also
+使用参数it引用上下文对象，返回值为上下文对象
+
+
+
+```kotlin
+fun main() {
+    val numbers = mutableListOf("one", "two", "three")
+    numbers
+        .also { println("The list elements before adding new one: $it") }
+        .add("four")
+}
+```
