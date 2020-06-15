@@ -318,7 +318,7 @@ fun main() {
 ### also
 使用参数it引用上下文对象，返回值为上下文对象
 
-
+当执行一些以上下文对象作为参数的操作时可以使用also。对于需要引用上下文对象而不是它的属性或函数的操作，或者不想屏蔽来自外部作用域的this引用时，可以使用also
 
 ```kotlin
 fun main() {
@@ -328,3 +328,6 @@ fun main() {
         .add("four")
 }
 ```
+
+## Function selection
+
