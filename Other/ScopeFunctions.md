@@ -341,5 +341,52 @@ with | this | lambda表达式结果 | 否，将上下文对象作为参数
 apply | this | 上下文对象 | 是
 also | it | 上下文对象 | 是
 
+以下是根据预期选择作用域函数的简短指南
+
+* 在非空对象上执行lambda表达式：let
+
+* 将表达式结果赋值给局部变量：let
+
+* 对象配置：apply
+
+* 对象配置和计算结果：run
+
+* 在需要表达式的地方执行语句：非扩展run
+
+* 附加效果：also
+
+* 分组对象上的函数调用：with
+
+不同作用域函数的用例相互重叠，可以根据项目或团队中使用的特定约定来选择作用域函数
+
+避免过度使用作用域函数，它会降低代码的可读性并导致错误。避免嵌套作用域函数，在链接它们时要当心，因为很容易将上下文对象的this或it值混淆
+
+## takeIf and takeUnless
+除了作用域函数之外，标准库还包含takeIf和takeUnless函数，它们允许你在调用链中嵌入对象状态的检查
+
+当在提供匹配条件的对象上调用时，如果匹配则takeIf返回该对象，不匹配则返回空。因此，takeIf是针对对象的过滤函数。相反，如果不匹配则takeUnless返回该对象，匹配则返回空
+
+通过lambda表达式参数it引用对象
+
+```kotlin
+fun main() {
+    val number = Random.nextInt(100)
+        
+    val evenOrNull = number.takeIf { it % 2 == 0 }
+    val oddOrNull = number.takeUnless { it % 2 == 0 }
+    println("even: $evenOrNull, odd: $oddOrNull")
+}
+```
+
+当在takeIf和takeUnless后面链接其他函数时，不要忘记执行空检查或使用安全调用(?.)，因为它们的返回值可能为空
+
+```kotlin
+fun main() {
+    val str = "Hello"
+    val caps = str.takeIf { it.isNotEmpty() }?.toUpperCase()
+    //val caps = str.takeIf { it.isNotEmpty() }.toUpperCase() //compilation error
+    println(caps)
+}
+```
 
 
