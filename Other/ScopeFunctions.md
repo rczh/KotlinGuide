@@ -389,4 +389,18 @@ fun main() {
 }
 ```
 
+takeIf和takeUnless与作用域函数一起特别有用，一个很好的例子是将它们与let链接起来，以便在匹配指定条件的对象上执行代码块。对于不匹配条件的对象，takeIf返回空，let不会执行
 
+```kotlin
+fun main() {
+    fun displaySubstringPosition(input: String, sub: String) {
+        input.indexOf(sub).takeIf { it >= 0 }?.let {
+            println("The substring $sub is found in $input.")
+            println("Its start position is $it.")
+        }
+    }
+
+    displaySubstringPosition("010000011", "11")
+    displaySubstringPosition("010000011", "12")
+}
+```
