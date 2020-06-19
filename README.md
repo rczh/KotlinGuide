@@ -111,3 +111,5 @@
 [Reflection](Other/Reflection.md)
 
 [ScopeFunctions](Other/ScopeFunctions.md)
+
+[TypeSafeBuilders](Other/TypeSafeBuilders.md)
