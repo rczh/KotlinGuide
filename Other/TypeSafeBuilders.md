@@ -1,7 +1,7 @@
 # Type-Safe Builders
-通过使用命名良好的函数结合带有接收类型的函数文本，可以在Kotlin中创建类型安全，静态类型的构建器
+通过使用命名良好的函数结合带有接收类型的函数文本，可以在Kotlin中创建类型安全的，静态类型的构建器
 
-类型安全构建器允许创建基于kotlin的领域特定语言DSL，DSL适合以半声明的方式构建复杂的分层数据结构
+类型安全的构建器允许创建基于kotlin的领域特定语言DSL，DSL适合以半声明的方式构建复杂的分层数据结构
 
 构建器的一些示例用例：
 
@@ -48,7 +48,7 @@ fun result() =
 这是完全合法的kotlin代码
 
 ## How it works
-让我们看一下在kotlin中实现类型安全构建器的原理。首先我们需要定义要构建的模型，在本例中我们需要构建HTML标签。可以使用一些类来实现，比如HTML类用来描述<html>标记，它定义了子标签<head>和<body>
+让我们看一下在kotlin中实现类型安全构建器的原理。首先我们需要定义要构建的模型，在本例中我们需要构建HTML标签。可以使用一些类来实现，比如HTML类用来描述&lt;html>标签，它定义了子标签&lt;head>和&lt;body>
 
 现在看一下为什么我们能在代码中这样使用
 
@@ -58,7 +58,7 @@ html {
 }
 ```
 
-html实际上是一个接收lambda表达式参数的函数调用，函数定义如下：
+html实际上是一个接收lambda表达式参数的函数，函数定义如下：
 
 ```kotlin
 fun html(init: HTML.() -> Unit): HTML {
@@ -70,7 +70,7 @@ fun html(init: HTML.() -> Unit): HTML {
 
 函数接收一个名为init的参数，它本身也是一个函数，函数类型为HTML.() -> Unit，它是一个带有接收类型HTML的函数类型。也就是说我们可以在函数内部调用HTML实例的成员
 
-可以通过this关键字访问接收类型
+可以通过this关键字访问接收类型对象
 
 ```kotlin
 html {
@@ -89,9 +89,9 @@ html {
 }
 ```
 
-我们看一下上面定义的html函数体。它创建一个新的HTML实例，然后通过调用作为参数传递的函数来初始化实例(在我们的例子中，为在HTML实例上调用head和body)，然后返回这个实例。这正是构建器应该做的
+我们看一下上面定义的html函数。它创建一个新的HTML实例，然后通过调用作为参数传递的函数来初始化实例(在我们的例子中，为在HTML实例上调用head和body)，然后返回这个实例。这正是构建器需要做的
 
-HTML类中head和body函数的定义和html类似。区别是它们将构建的实例添加到HTML实例的集合中
+HTML类中head和body函数的定义与html类似。区别是它们将构建的实例添加到HTML实例的集合中
 
 ```kotlin
 fun head(init: Head.() -> Unit) : Head {
@@ -127,9 +127,9 @@ fun head(init: Head.() -> Unit) = initTag(Head(), init)
 fun body(init: Body.() -> Unit) = initTag(Body(), init)
 ```
 
-我们能使用它们去构建<head>和<body>标记
+我们能使用它们去构建&lt;head>和&lt;body>标签
 
-下面讨论如何向标记体添加文本
+下面讨论如何向标签中添加文本
 
 ```kotlin
 html {
@@ -140,7 +140,7 @@ html {
 }
 ```
 
-我们只是在标记体中加入一个字符串，但在它前面有一个加号，它是调用前缀操作符unaryPlus的函数调用。该操作符是由扩展函数unaryPlus定义的，它是TagWithText抽象类的成员
+我们只是在标签中加入一个字符串，但在它前面有一个加号，它是前缀操作符unaryPlus的函数调用。该操作符是由扩展函数unaryPlus定义的，该扩展函数是TagWithText抽象类的成员
 
 ```kotlin
 operator fun String.unaryPlus() {
@@ -148,6 +148,6 @@ operator fun String.unaryPlus() {
 }
 ```
 
-这里前缀加号是将字符串封装到TextElement中并将其添加到集合中，使它成为标记树的一部分
+前缀加号将字符串封装到TextElement中并将其添加到集合中，使它成为标记树的一部分
 
 ## Scope control: @DslMarker (since 1.1)
