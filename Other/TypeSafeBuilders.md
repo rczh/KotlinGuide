@@ -148,6 +148,168 @@ operator fun String.unaryPlus() {
 }
 ```
 
-前缀加号将字符串封装到TextElement中并将其添加到集合中，使它成为标记树的一部分
+前缀加号将字符串封装到TextElement中并将其添加到集合中，使它成为标签树的一部分
 
 ## Scope control: @DslMarker (since 1.1)
+使用DSL时可能会遇到在上下文中可以调用太多函数的问题。我们可以在lambda表达式中调用每个可用的隐含接收类型的方法，从而得到不一致的结果。比如head标签在另一个head标签内部
+
+```html
+html {
+    head {
+        head {} // should be forbidden
+    }
+    // ...
+}
+```
+
+在本例中，只有最近的隐含接收类型this@head的成员必须可用，head函数是外部接收类型this@html的成员，调用它是非法的
+
+为了解决这个问题，在Kotlin1.1中引入了一种特殊的接收类型范围控制机制
+
+要使编译器来控制作用域，我们需要用相同的注解注释DSL中使用的所有接收类型。例如，对于HTML构建器，我们声明一个注解@HTMLTagMarker
+
+```kotlin
+@DslMarker
+annotation class HtmlTagMarker
+```
+
+如果注解类使用@DslMarker标注，则称它为DSL注解
+
+在我们的DSL中，所有标签类都继承同一个父类。因此可以只使用@HtmlTagMarker注解父类，Kotlin编译器将把所有子类作为注解处理
+
+```kotlin
+@HtmlTagMarker
+abstract class Tag(val name: String) { ... }
+```
+
+我们不需要使用@HtmlTagMarker注解HTML或Head类，因为它们的父类已经被注解了
+
+```kotlin
+class HTML() : Tag("html") { ... }
+class Head() : Tag("head") { ... }
+```
+
+在我们添加这个注解之后，Kotlin编译器知道哪些隐含接收类型是同一DSL的一部分，并且只允许调用最近接收类型的成员
+
+```kotlin
+html {
+    head {
+        head { } // error: a member of outer receiver
+    }
+    // ...
+}
+```
+
+注意，仍然可以调用外部接收类型的成员，但是必须显式的指定this接收类型
+
+```kotlin
+html {
+    head {
+        this@html.head { } // possible
+    }
+    // ...
+}
+```
+
+## Full definition of the com.example.html package
+下面是com.example.html包的完整定义，它构建了一个HTML树，它大量使用了扩展函数和带有接收类型的lambda表达式
+
+注意，@DslMarker注解只在kotlin1.1之后可用
+
+```kotlin
+package com.example.html
+
+interface Element {
+    fun render(builder: StringBuilder, indent: String)
+}
+
+class TextElement(val text: String) : Element {
+    override fun render(builder: StringBuilder, indent: String) {
+        builder.append("$indent$text\n")
+    }
+}
+
+@DslMarker
+annotation class HtmlTagMarker
+
+@HtmlTagMarker
+abstract class Tag(val name: String) : Element {
+    val children = arrayListOf<Element>()
+    val attributes = hashMapOf<String, String>()
+
+    protected fun <T : Element> initTag(tag: T, init: T.() -> Unit): T {
+        tag.init()
+        children.add(tag)
+        return tag
+    }
+
+    override fun render(builder: StringBuilder, indent: String) {
+        builder.append("$indent<$name${renderAttributes()}>\n")
+        for (c in children) {
+            c.render(builder, indent + "  ")
+        }
+        builder.append("$indent</$name>\n")
+    }
+
+    private fun renderAttributes(): String {
+        val builder = StringBuilder()
+        for ((attr, value) in attributes) {
+            builder.append(" $attr=\"$value\"")
+        }
+        return builder.toString()
+    }
+
+    override fun toString(): String {
+        val builder = StringBuilder()
+        render(builder, "")
+        return builder.toString()
+    }
+}
+
+abstract class TagWithText(name: String) : Tag(name) {
+    operator fun String.unaryPlus() {
+        children.add(TextElement(this))
+    }
+}
+
+class HTML : TagWithText("html") {
+    fun head(init: Head.() -> Unit) = initTag(Head(), init)
+
+    fun body(init: Body.() -> Unit) = initTag(Body(), init)
+}
+
+class Head : TagWithText("head") {
+    fun title(init: Title.() -> Unit) = initTag(Title(), init)
+}
+
+class Title : TagWithText("title")
+
+abstract class BodyTag(name: String) : TagWithText(name) {
+    fun b(init: B.() -> Unit) = initTag(B(), init)
+    fun p(init: P.() -> Unit) = initTag(P(), init)
+    fun h1(init: H1.() -> Unit) = initTag(H1(), init)
+    fun a(href: String, init: A.() -> Unit) {
+        val a = initTag(A(), init)
+        a.href = href
+    }
+}
+
+class Body : BodyTag("body")
+class B : BodyTag("b")
+class P : BodyTag("p")
+class H1 : BodyTag("h1")
+
+class A : BodyTag("a") {
+    var href: String
+        get() = attributes["href"]!!
+        set(value) {
+            attributes["href"] = value
+        }
+}
+
+fun html(init: HTML.() -> Unit): HTML {
+    val html = HTML()
+    html.init()
+    return html
+}
+```
