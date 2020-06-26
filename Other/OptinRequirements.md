@@ -120,3 +120,43 @@ sourceSets {
 要在模块级别上加入多个opt-in api，可以为模块中使用的每个opt-in需求标注添加一个描述参数
 
 ## Requiring opt-in for API
+### Opt-in requirement annotations
+如果你需要用户明确同意使用你模块的API，你可以创建一个注解类作为opt-in注解。这个类必须使用@RequiresOptIn标注
+
+```kotlin
+@RequiresOptIn
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+annotation class MyDateTime
+```
+
+opt-in注解必须满足几个需求
+
+* Retention必须为BINARY
+
+* Target中没有EXPRESSION和FILE
+
+* 没有参数
+
+opt-in可以使用以下两个严重级别之一
+
+* RequiresOptIn.Level.ERROR：opt-in的默认级别是强制性的。如果用户没有明确同意使用opt-in api，代码将无法编译
+
+* RequiresOptIn.Level.WARNING：opt-in不是强制性的。如果用户没有明确同意使用opt-in api，编译器将产生一个警告
+
+可以使用@RequiresOptIn注解的level参数设置所需要的级别
+
+另外，你可以提供一个消息通知API用户关于使用API的特定条件。编译器将为使用API而没有提供opt-in的用户显示该消息
+
+```kotlin
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING, message = "This API is experimental. It can be incompatibly changed in the future.")
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+annotation class ExperimentalDateTime
+```
+
+如果你发布了多个需要opt-in的独立功能，为每个功能声明一个注解。这使用户能更加安全的使用API。他们能仅仅使用他们明确接受的功能。你还可以从独立的功能中删除opt-in
+
+### Marking API elements
+
+
