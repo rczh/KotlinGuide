@@ -90,7 +90,7 @@
 
 [MapSpecificOperations](Collections/MapSpecificOperations.md)
 
-## Other
+## More Language Constructs
 
 [DestructuringDeclarations](Other/DestructuringDeclarations.md)
 
