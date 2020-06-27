@@ -158,5 +158,33 @@ annotation class ExperimentalDateTime
 如果你发布了多个需要opt-in的独立功能，为每个功能声明一个注解。这使用户能更加安全的使用API。他们能仅仅使用他们明确接受的功能。你还可以从独立的功能中删除opt-in
 
 ### Marking API elements
+为了使API具有opt-in，可以使用opt-in注解标注它的声明
 
+```kotlin
+@MyDateTime
+class DateProvider
+
+@MyDateTime
+fun getTime(): Time {}
+```
+
+## Opt-in requirements for experimental APIs
+如果你为在实验状态中的功能使用opt-in，请小心处理API升级以避免破坏客户端代码
+
+一旦你的实验功能完成并以稳定的状态发布，请从声明中删除它的opt-in注解。客户端可以不受限制的使用它们。但是你应该在模块中保留opt-in注解类，以便和现有客户端代码保持兼容
+
+为了让客户端相应地更新他们的代码(从代码中删除注解并重新编译)，将注解标记为@Deprecated并且在弃用消息中提供解释
+
+```kotlin
+@Deprecated("This opt-in requirement is not used anymore. Remove its usages from your code.")
+@RequiresOptIn
+annotation class ExperimentalDateTime
+```
+
+## Experimental status of the opt-in requirements
+opt-in机制在kotlin 1.3中尚处于实验性质。在未来的版本中可能会以不兼容的方式进行更改
+
+为了让使用@OptIn和@RequiresOptIn注解的用户意识到他们的实验状态，当编译带有这些注解的代码时编译器会发出警告。比如：This class can only be used with the compiler argument '-Xopt-in=kotlin.RequiresOptIn'
+
+可以添加编译参数-Xopt-in=kotlin.RequiresOptIn来删除警告
 
