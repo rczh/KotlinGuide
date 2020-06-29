@@ -90,6 +90,10 @@
 
 [MapSpecificOperations](Collections/MapSpecificOperations.md)
 
+## Coroutines
+
+[CoroutinesGuide](Coroutines/CoroutinesGuide.md)
+
 ## More Language Constructs
 
 [DestructuringDeclarations](Other/DestructuringDeclarations.md)
