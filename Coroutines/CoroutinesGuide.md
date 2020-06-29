@@ -3,7 +3,7 @@
 
 kotlinx.coroutines是JetBrains为协程开发的一个丰富的库。它包含很多本教程涉及的高级协程原语，比如launch和async等
 
-这是一个关于kotlinx.coroutines核心特性的教程，它包含一系列被划分成不同主题示例
+这是一个关于kotlinx.coroutines核心特性的教程，它包含一系列被划分成不同主题的示例
 
 为了按照教程中的示例来使用协程，你需要添加kotlinx-coroutines-core模块的依赖
 
