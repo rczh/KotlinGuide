@@ -94,6 +94,8 @@
 
 [CoroutinesGuide](Coroutines/CoroutinesGuide.md)
 
+[Basics](Coroutines/Basics.md)
+
 ## More Language Constructs
 
 [DestructuringDeclarations](Other/DestructuringDeclarations.md)
