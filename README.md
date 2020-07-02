@@ -96,6 +96,8 @@
 
 [Basics](Coroutines/Basics.md)
 
+[CancellationAndTimeouts](Coroutines/CancellationAndTimeouts.md)
+
 ## More Language Constructs
 
 [DestructuringDeclarations](Other/DestructuringDeclarations.md)
