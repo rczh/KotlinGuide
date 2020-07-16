@@ -87,5 +87,109 @@ fun main() = runBlocking {
 现在这个循环被取消了。isActive是CoroutineScope对象的扩展属性，可以在协程中使用
 
 ## Closing resources with finally
+可取消的挂起函数会在取消时抛出CancellationException，可以用常规的方式处理它。例如，在协程被取消时使用try表达式或者use函数执行它们的最终操作
 
+```kotlin
+fun main() = runBlocking {
+    val job = launch {
+        try {
+            repeat(1000) { i ->
+                println("job: I'm sleeping $i ...")
+                delay(500L)
+            }
+        } finally {
+            println("job: I'm running finally")
+        }
+    }
+    delay(1300L) // delay a bit
+    println("main: I'm tired of waiting!")
+    job.cancelAndJoin() // cancels the job and waits for its completion
+    println("main: Now I can quit.")    
+}
+```
 
+join和cancelAndJoin函数都会等待所有最终操作完成，上面例子的输出结果为
+
+```kotlin
+job: I'm sleeping 0 ...
+job: I'm sleeping 1 ...
+job: I'm sleeping 2 ...
+main: I'm tired of waiting!
+job: I'm running finally
+main: Now I can quit.
+```
+
+## Run non-cancellable block
+在前面例子的finally块中使用挂起函数会导致CancellationException，因为运行此代码的协程被取消了。通常这不是问题，因为所有行为良好的关闭操作通常都是非阻塞的，不涉及任何挂起函数。然而在极少数情况下，当你需要挂起一个已经取消的协程时，你可以使用withContext函数和NonCancellable上下文来封装相应的代码
+
+```kotlin
+fun main() = runBlocking {
+    val job = launch {
+        try {
+            repeat(1000) { i ->
+                println("job: I'm sleeping $i ...")
+                delay(500L)
+            }
+        } finally {
+            withContext(NonCancellable) {
+                println("job: I'm running finally")
+                delay(1000L)
+                println("job: And I've just delayed for 1 sec because I'm non-cancellable")
+            }
+        }
+    }
+    delay(1300L) // delay a bit
+    println("main: I'm tired of waiting!")
+    job.cancelAndJoin() // cancels the job and waits for its completion
+    println("main: Now I can quit.")    
+}
+```
+
+## Timeout
+取消协程执行的最实际原因是它的执行时间超过了某个时长。你可以手动跟踪相应Job的引用并且在延迟之后启动单独的协程来取消跟踪的Job。可以使用withTimeout函数完成这个操作
+
+```kotlin
+fun main() = runBlocking {
+    withTimeout(1300L) {
+        repeat(1000) { i ->
+            println("I'm sleeping $i ...")
+            delay(500L)
+        }
+    }
+}
+```
+
+输出结果：
+
+```kotlin
+I'm sleeping 0 ...
+I'm sleeping 1 ...
+I'm sleeping 2 ...
+Exception in thread "main" kotlinx.coroutines.TimeoutCancellationException: Timed out waiting for 1300 ms
+```
+
+withTimeout函数抛出的TimeoutCancellationException异常是CancellationException的子类。我们以前没有看到它的堆栈trace打印在控制台上。这是因为在已经取消的协程中，CancellationException被认为是协程完成的正常原因。但是在本例中，我们在主函数中使用了withTimeout
+
+由于取消只是一个异常，所有资源都按照通常的方式关闭。如果你需要对任何类型的超时执行一些额外操作，你可以将超时代码封装在try块中，或者使用与withTimeout类似的withTimeoutOrNull函数，它在超时时返回null而不是抛出异常
+
+```kotlin
+fun main() = runBlocking {
+    val result = withTimeoutOrNull(1300L) {
+        repeat(1000) { i ->
+            println("I'm sleeping $i ...")
+            delay(500L)
+        }
+        "Done" // will get cancelled before it produces this result
+    }
+    println("Result is $result")
+}
+```
+
+运行此代码时没有异常
+
+```kotlin
+I'm sleeping 0 ...
+I'm sleeping 1 ...
+I'm sleeping 2 ...
+Result is null
+```
