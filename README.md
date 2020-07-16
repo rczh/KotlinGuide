@@ -98,6 +98,8 @@
 
 [CancellationAndTimeouts](Coroutines/CancellationAndTimeouts.md)
 
+[ComposingSuspendingFunctions](Coroutines/ComposingSuspendingFunctions.md)
+
 ## More Language Constructs
 
 [DestructuringDeclarations](Other/DestructuringDeclarations.md)
