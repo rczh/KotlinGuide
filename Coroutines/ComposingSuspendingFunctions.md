@@ -122,7 +122,57 @@ Completed in 1017 ms
 注意，如果我们只在println中调用await函数而没有先调用每个协程的start函数，这将导致顺序执行因为await函数会启动协程并等待它完成，这不是懒加载的预期。当值运算涉及到挂起函数时，可以使用async(start = CoroutineStart.LAZY)来替代标准的lazy函数
 
 ## Async-style functions
+我们可以使用全局作用域中的async协程构建器来定义异步形式的函数，它们异步调用doSomethingUsefulOne和doSomethingUsefulTwo。我们将这些函数以Async后缀命名，用来强调它们仅启动异步运算并且需要使用Deferred对象来获得结果
 
+```kotlin
+//somethingUsefulOneAsync的结果类型为Deferred<Int>
+fun somethingUsefulOneAsync() = GlobalScope.async {
+    doSomethingUsefulOne()
+}
 
+//somethingUsefulTwoAsync的结果类型为Deferred<Int>
+fun somethingUsefulTwoAsync() = GlobalScope.async {
+    doSomethingUsefulTwo()
+}
+```
+
+注意，这些Async函数不是挂起函数，它们可以在任何地方使用。然而它们的使用意味着异步执行它们的函数调用操作
+
+```kotlin
+//注意，我们没有在main函数中使用runBlocking
+fun main() {
+    val time = measureTimeMillis {
+        //在协程外初始化异步操作
+        val one = somethingUsefulOneAsync()
+        val two = somethingUsefulTwoAsync()
+        //但是await函数必须在协程中执行
+        //这里使用runBlocking在等待结果时阻塞主线程
+        runBlocking {
+            println("The answer is ${one.await() + two.await()}")
+        }
+    }
+    println("Completed in $time ms")
+}
+
+fun somethingUsefulOneAsync() = GlobalScope.async {
+    doSomethingUsefulOne()
+}
+
+fun somethingUsefulTwoAsync() = GlobalScope.async {
+    doSomethingUsefulTwo()
+}
+
+suspend fun doSomethingUsefulOne(): Int {
+    delay(1000L) // pretend we are doing something useful here
+    return 13
+}
+
+suspend fun doSomethingUsefulTwo(): Int {
+    delay(1000L) // pretend we are doing something useful here, too
+    return 29
+}
+```
+
+这里提供的这种带有异步函数的编程形式只是为了演示，因为在其他编程语言中它是一种流行的形式。在Kotlin协程中使用这种形式是非常不建议的，原因如下：
 
 
