@@ -175,4 +175,85 @@ suspend fun doSomethingUsefulTwo(): Int {
 
 这里提供的这种带有异步函数的编程形式只是为了演示，因为在其他编程语言中它是一种流行的形式。在Kotlin协程中使用这种形式是非常不建议的，原因如下：
 
+考虑一下，如果在val one = somethingUsefulOneAsync()和one.await()之间的代码中出现一些逻辑错误，程序抛出异常并且正在执行的操作被中止会发生什么情况。通常情况下，一个全局错误处理可以捕获这个异常，为开发人员记录并报告错误，程序可以继续执行其他操作。但是这里somethingUsefulOneAsync函数仍然在后台运行，即使初始化它的操作已被中止。这个问题不会在结构化并发中出现
 
+## Structured concurrency with async
+我们以第二个程序为例，我们提取一个同时执行doSomethingUsefulOne和doSomethingUsefulTwo的函数，并返回它们结果的总和。由于async协程构建器被定义为协程作用域上的扩展，我们需要在协程作用域中使用它，这正是coroutineScope函数所做的
+
+```kotlin
+suspend fun concurrentSum(): Int = coroutineScope {
+    val one = async { doSomethingUsefulOne() }
+    val two = async { doSomethingUsefulTwo() }
+    one.await() + two.await()
+}
+```
+
+如果concurrentSum函数内部的代码出现错误并抛出异常，那么在其作用域中启动的所有协程都将被取消
+
+```kotlin
+fun main() = runBlocking<Unit> {
+    val time = measureTimeMillis {
+        println("The answer is ${concurrentSum()}")
+    }
+    println("Completed in $time ms")    
+}
+
+suspend fun concurrentSum(): Int = coroutineScope {
+    val one = async { doSomethingUsefulOne() }
+    val two = async { doSomethingUsefulTwo() }
+    one.await() + two.await()
+}
+
+suspend fun doSomethingUsefulOne(): Int {
+    delay(1000L) // pretend we are doing something useful here
+    return 13
+}
+
+suspend fun doSomethingUsefulTwo(): Int {
+    delay(1000L) // pretend we are doing something useful here, too
+    return 29
+}
+```
+
+两个操作仍然同时执行
+
+```kotlin
+The answer is 42
+Completed in 1017 ms
+```
+
+取消总是通过协程层次结构进行传播
+
+```kotlin
+fun main() = runBlocking<Unit> {
+    try {
+        failedConcurrentSum()
+    } catch(e: ArithmeticException) {
+        println("Computation failed with ArithmeticException")
+    }
+}
+
+suspend fun failedConcurrentSum(): Int = coroutineScope {
+    val one = async<Int> { 
+        try {
+            delay(Long.MAX_VALUE) // Emulates very long computation
+            42
+        } finally {
+            println("First child was cancelled")
+        }
+    }
+    val two = async<Int> { 
+        println("Second child throws an exception")
+        throw ArithmeticException()
+    }
+    one.await() + two.await()
+}
+```
+
+注意第一个async和等待的父协程是如何在第二个async失败时被取消的
+
+```kotlin
+Second child throws an exception
+First child was cancelled
+Computation failed with ArithmeticException
+```
