@@ -145,13 +145,23 @@ fun main() {
 注意，这个例子还使用了kotlin标准库中的use函数来释放newSingleThreadContext创建的不再使用的线程
 
 ## Job in the context
+协程的Job是上下文的一部分，可以使用coroutineContext[Job]表达式从上下文中获取Job
 
+```kotlin
+fun main() = runBlocking<Unit> {
+    println("My job is ${coroutineContext[Job]}")    
+}
+```
 
+在调试模式下，输出结果为：
 
+```kotlin
+My job is "coroutine#1":BlockingCoroutine{Active}@6d311334
+```
 
+注意，协程作用域中的isActive只是coroutineContext[Job]?.isActive == true表达式的快捷方式
 
-
-
+## Children of a coroutine
 
 
 
