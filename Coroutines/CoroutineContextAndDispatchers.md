@@ -162,22 +162,106 @@ My job is "coroutine#1":BlockingCoroutine{Active}@6d311334
 注意，协程作用域中的isActive只是coroutineContext[Job]?.isActive == true表达式的快捷方式
 
 ## Children of a coroutine
+当一个协程在另一个协程的作用域中被启动时，它通过CoroutineScope.coroutineContext来继承另一个协程的上下文，并且新协程的Job变成父协程Job的孩子。当父协程被取消时，它的所有子协程也被递归地取消
 
+然而当使用GlobalScope启动协程时，新协程的Job没有父亲。因此新协程不与启动它的作用域绑定并且独立运行
 
+```kotlin
+fun main() = runBlocking<Unit> {
+    // launch a coroutine to process some kind of incoming request
+    val request = launch {
+        // it spawns two other jobs, one with GlobalScope
+        GlobalScope.launch {
+            println("job1: I run in GlobalScope and execute independently!")
+            delay(1000)
+            println("job1: I am not affected by cancellation of the request")
+        }
+        // and the other inherits the parent context
+        launch {
+            delay(100)
+            println("job2: I am a child of the request coroutine")
+            delay(1000)
+            println("job2: I will not execute this line if my parent request is cancelled")
+        }
+    }
+    delay(500)
+    request.cancel() // cancel processing of the request
+    delay(1000) // delay a second to see what happens
+    println("main: Who has survived request cancellation?")
+}
+```
 
+输出结果：
 
+```kotlin
+job1: I run in GlobalScope and execute independently!
+job2: I am a child of the request coroutine
+job1: I am not affected by cancellation of the request
+main: Who has survived request cancellation?
+```
 
+## Parental responsibilities
+父协程总是等待所有子协程执行完成。父协程不需要明确地跟踪它启动的所有子协程，也不需要使用Job.join在最后等待他们
 
+```kotlin
+fun main() = runBlocking<Unit> {
+    // launch a coroutine to process some kind of incoming request
+    val request = launch {
+        repeat(3) { i -> // launch a few children jobs
+            launch  {
+                delay((i + 1) * 200L) // variable delay 200ms, 400ms, 600ms
+                println("Coroutine $i is done")
+            }
+        }
+        println("request: I'm done and I don't explicitly join my children that are still active")
+    }
+    request.join() //这里可以不使用join
+    println("Now processing of the request is complete")
+}
+```
 
+输出结果：
 
+```kotlin
+request: I'm done and I don't explicitly join my children that are still active
+Coroutine 0 is done
+Coroutine 1 is done
+Coroutine 2 is done
+Now processing of the request is complete
+```
 
+## Naming coroutines for debugging
+当协程经常记录日志并且你只需要关联来自同一协程的日志记录时，自动分配id是很好的。然而当协程被绑定到一个特定请求的执行或者执行某些特定后台任务时，为了便于调试最好明确地命名它。CoroutineName上下文元素的作用与线程名相同。当打开调试模式时，它被包含在执行此协程的线程名中
 
+```kotlin
+fun log(msg: String) = println("[${Thread.currentThread().name}] $msg")
 
+fun main() = runBlocking(CoroutineName("main")) {
+    log("Started main coroutine")
+    // run two background value computations
+    val v1 = async(CoroutineName("v1coroutine")) {
+        delay(500)
+        log("Computing v1")
+        252
+    }
+    val v2 = async(CoroutineName("v2coroutine")) {
+        delay(1000)
+        log("Computing v2")
+        6
+    }
+    log("The answer for v1 / v2 = ${v1.await() / v2.await()}")    
+}
+```
 
+使用-Dkotlinx.coroutines.debug虚拟机选项的输出结果：
 
+```kotlin
+[main @main#1] Started main coroutine
+[main @v1coroutine#2] Computing v1
+[main @v2coroutine#3] Computing v2
+[main @main#1] The answer for v1 / v2 = 42
+```
 
-
-
-
+## Combining context elements
 
 
