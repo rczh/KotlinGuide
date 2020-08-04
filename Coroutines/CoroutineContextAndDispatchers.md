@@ -335,7 +335,7 @@ Destroying activity!
 
 可以看到，只有前两个协程打印消息，其他协程通过调用Activity.destroy中的job.cancel被取消
 
-注意，Android在带有生命周期的所有实体中有对协程作用域的官方支持
+注意，Android在带有生命周期的所有实体中有对协程作用域的官方支持，请看相应的文档
 
 ## Thread-local data
 
