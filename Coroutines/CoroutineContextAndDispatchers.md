@@ -263,5 +263,80 @@ fun main() = runBlocking(CoroutineName("main")) {
 ```
 
 ## Combining context elements
+有时我们需要为协程上下文定义多个元素，我们可以使用+运算符。例如，我们可以同时使用一个明确指定的调度器和一个明确指定的名称来启动协程
+
+```kotlin
+fun main() = runBlocking<Unit> {
+    launch(Dispatchers.Default + CoroutineName("test")) {
+        println("I'm working in thread ${Thread.currentThread().name}")
+    }    
+}
+```
+
+使用-Dkotlinx.coroutines.debug虚拟机选项的输出结果：
+
+```kotlin
+I'm working in thread DefaultDispatcher-worker-1 @test#2
+```
+
+## Coroutine scope
+让我们把上下文、孩子和Job的知识放在一起。假设我们的应用程序有一个具有生命周期的对象，但该对象不是协程。例如，我们正在写一个Android应用程序，并且在一个Activity的上下文中启动各种协程来执行异步操作去获取和更新数据，执行动画。当Activity被销毁时必须取消所有协程以避免内存泄漏。当然，我们可以手动操作上下文和Job以绑定Activity和协程的生命周期，但是kotlinx.coroutines包提供了对其进行封装的抽象：CoroutineScope。你应该已经熟悉协程作用域，因为所有协程构建器都被声明为它的扩展
+
+我们通过创建一个与Activity生命周期相关联的CoroutineScope实例来管理协程的生命周期。CoroutineScope实例可以通过CoroutineScope()或MainScope()工厂函数创建。前者创建一个通用作用域，后者为UI应用程序创建一个作用域并且使用Dispatchers.Main作为默认的调度器
+
+```kotlin
+class Activity {
+    private val mainScope = MainScope()
+    
+    fun destroy() {
+        mainScope.cancel()
+    }
+    // to be continued ...
+```
+
+现在，我们可以使用定义的mainScope在Activity的作用域内启动协程
+
+```kotlin
+// class Activity continues
+    fun doSomething() {
+        // launch ten coroutines for a demo, each working for a different time
+        repeat(10) { i ->
+            mainScope.launch {
+                delay((i + 1) * 200L) // variable delay 200ms, 400ms, ... etc
+                println("Coroutine $i is done")
+            }
+        }
+    }
+} // class Activity ends
+```
+
+我们在主函数中创建Activity，调用测试doSomething函数，并在500ms后销毁Activity。这取消了所有从doSomething中启动的协程。我们可以看到在Activity被销毁之后，即使我们再等一会儿也没有更多的消息被打印
+
+```kotlin
+fun main() = runBlocking<Unit> {
+    val activity = Activity()
+    activity.doSomething() // run test function
+    println("Launched coroutines")
+    delay(500L) // delay for half a second
+    println("Destroying activity!")
+    activity.destroy() // cancels all coroutines
+    delay(1000) // visually confirm that they don't work    
+}
+```
+
+输出结果：
+
+```kotlin
+Launched coroutines
+Coroutine 0 is done
+Coroutine 1 is done
+Destroying activity!
+```
+
+可以看到，只有前两个协程打印消息，其他协程通过调用Activity.destroy中的job.cancel被取消
+
+注意，Android在带有生命周期的所有实体中有对协程作用域的官方支持
+
+## Thread-local data
 
 
