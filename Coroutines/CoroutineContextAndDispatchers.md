@@ -338,5 +338,51 @@ Destroying activity!
 注意，Android在带有生命周期的所有实体中有对协程作用域的官方支持，请看相应的文档
 
 ## Thread-local data
+有时能够在协程之间传递线程本地数据是很方便的。由于它们没有绑定到任何特定的线程，如果手动执行可能会导致问题
 
+对于ThreadLocal，可以使用asContextElement扩展函数进行补救。它创建了一个额外的上下文元素，该元素保存给定的ThreadLocal值，并且在协程每次切换上下文时恢复它
+
+```kotlin
+val threadLocal = ThreadLocal<String>() // declare thread-local variable
+
+**
+ * 基于协程的线程本地变量
+ */
+fun main() = runBlocking<Unit> {
+    threadLocal.set("main")
+    println("Pre-main, current thread: ${Thread.currentThread()}, thread local value: '${threadLocal.get()}'")
+    //由于不能确定协程在哪个线程中运行，这里将threadLocal和value作为一个元素传给上下文，由上下文决定何时设置value
+    //updateThreadContext
+    val job = launch(Dispatchers.Default + threadLocal.asContextElement(value = "launch")) {
+        println("Launch start, current thread: ${Thread.currentThread()}, thread local value: '${threadLocal.get()}'")
+        //restoreThreadContext
+        yield()
+        //如果不使用asContextElement，当线程发生变化时，threadLocal.get返回值可能不确定
+        //updateThreadContext
+        println("After yield, current thread: ${Thread.currentThread()}, thread local value: '${threadLocal.get()}'")
+        //restoreThreadContext
+    }
+    job.join()
+    println("Post-main, current thread: ${Thread.currentThread()}, thread local value: '${threadLocal.get()}'")    
+}
+```
+
+在本例中，我们使用Dispatchers.Default在后台线程池中启动一个新的协程，它在线程池的另一个线程上运行，无论协程在哪个线程上运行，它仍然有我们使用threadLocal.asContextElement(value = "launch")指定的线程本地变量值
+
+输出结果：
+
+```kotlin
+Pre-main, current thread: Thread[main @coroutine#1,5,main], thread local value: 'main'
+Launch start, current thread: Thread[DefaultDispatcher-worker-1 @coroutine#2,5,main], thread local value: 'launch'
+After yield, current thread: Thread[DefaultDispatcher-worker-2 @coroutine#2,5,main], thread local value: 'launch'
+Post-main, current thread: Thread[main @coroutine#1,5,main], thread local value: 'main'
+```
+
+由于很容易忘记设置相应的上下文元素。如果运行协程的线程不同，从协程访问线程本地变量可能会有一个不确定值。为了避免这种情况，建议使用ensurepresentation方法在不正确的用法时快速失败
+
+ThreadLocal具有良好的支持，可以与任何kotlinx.coroutines包提供的原生协程一起使用。不过，它有一个关键的限制。当线程本地变量值发生变化时，新值不会传播到协程调用者(因为一个上下文元素不能跟踪所有ThreadLocal值的设置)，它在下一次挂起时会丢失。使用withContext在协程中更新线程本地变量的值，请看asContextElement了解更多细节
+
+或者可以将变量保存在一个类中，比如class Counter(var i: Int)，然后将它存储在线程本地变量中。但是在这种情况下，你要完全负责去同步类中变量可能的并发修改
+
+对于线程本地变量的高级用法，请看ThreadContextElement接口的文档
 
