@@ -2,7 +2,7 @@
 挂起函数异步返回一个值，如果需要返回多个异步计算的值，可以使用Flow
 
 ## Representing multiple values
-在Kotlin中可以使用集合表示多个值。例如，我们有一个simple函数返回三个数字的列表，然后使用forEach打印它们
+在Kotlin中可以使用集合来表示多个值。例如，我们有一个simple函数返回三个数字的列表，然后使用forEach打印它们
 
 ```kotlin
 fun simple(): List<Int> = listOf(1, 2, 3)
@@ -78,7 +78,7 @@ fun main() = runBlocking<Unit> {
 }
 ```
 
-这段代码在打印每个数字前等待100ms，并且不会阻塞主线程。可以通过运行在主线程中的独立协程每隔100ms打印"I'm not blocked"来验证这一点
+这段代码在打印每个数字前等待100ms，并且不会阻塞主线程。可以通过运行在主线程中的独立协程每隔100ms打印一次"I'm not blocked"来验证这一点
 
 ```kotlin
 I'm not blocked 1
