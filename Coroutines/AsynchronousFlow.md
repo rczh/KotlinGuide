@@ -14,7 +14,7 @@ fun main() {
 
 输出结果：
 
-```kotlin
+```
 1
 2
 3
@@ -80,7 +80,7 @@ fun main() = runBlocking<Unit> {
 
 这段代码在打印每个数字前等待100ms，并且不会阻塞主线程。可以通过运行在主线程中的独立协程每隔100ms打印一次"I'm not blocked"来验证这一点
 
-```kotlin
+```
 I'm not blocked 1
 1
 I'm not blocked 2
@@ -88,4 +88,24 @@ I'm not blocked 2
 I'm not blocked 3
 3
 ```
+
+注意使用Flow的代码和前面示例之间的以下区别
+
+* 用于Flow类型的构造器函数flow被调用
+
+* 在flow构造器中的代码可以挂起
+
+* simple函数不再使用suspend关键字标记
+
+* 使用emit函数从流中发送值
+
+* 使用collect函数从流中收集值
+
+我们可以使用Thread.sleep替换flow函数体中的delay，可以看到在这种情况下主线程被阻塞了
+
+## Flows are cold
+
+
+
+
 
