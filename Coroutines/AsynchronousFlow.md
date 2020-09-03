@@ -437,27 +437,74 @@ fun main() = runBlocking<Unit> {
 
 注意Flow是如何在后台线程中运行的，而收集器是在主线程中运行的
 
-这里要注意的另一件事是flowOn操作符改变了Flow的默认连续特性。现在收集器运行在一个协程中("coroutine#1")，而发送器运行在另一个协程中("coroutine#2")，它与收集器协程并行地运行在另一个线程中。当flowOn操作符必须在其上下文中更改调度器时，它会为上游流创建另一个协程
+这里要注意的另一件事是flowOn操作符改变了Flow的默认连续特性。现在收集器运行在一个协程中("coroutine#1")，而发送器运行在另一个协程中("coroutine#2")，它与收集器协程并行地运行在另一个线程中。当flowOn操作符必须在其上下文中更改协程调度器时，它会为上游流创建另一个协程
 
 ## Buffering
+从流收集所花费的总时间角度来看，在不同协程中运行流的不同部分可能很有帮助，尤其是在涉及长时间运行的异步操作时。例如，考虑这种情况，当simple流的发送器很慢需要100ms来产生一个元素，收集器也很慢需要300ms处理一个元素。让我们看看收集这样一个包含三个数字的流需要多长时间
 
+```kotlin
+fun simple(): Flow<Int> = flow {
+    for (i in 1..3) {
+        delay(100) // pretend we are asynchronously waiting 100 ms
+        emit(i) // emit next value
+    }
+}
 
+fun main() = runBlocking<Unit> { 
+    val time = measureTimeMillis {
+        simple().collect { value -> 
+            delay(300) // pretend we are processing it for 300 ms
+            println(value) 
+        } 
+    }   
+    println("Collected in $time ms")
+}
+```
 
+输出结果如下，整个收集大约花费1200ms(三个数字，每个400ms)
 
+```
+1
+2
+3
+Collected in 1220 ms
+```
 
+我们可以在流上使用buffer操作符在收集器运行的同时并行地运行发送器，而不是按顺序运行它们
 
+```kotlin
+fun simple(): Flow<Int> = flow {
+    for (i in 1..3) {
+        delay(100) // pretend we are asynchronously waiting 100 ms
+        emit(i) // emit next value
+    }
+}
 
+fun main() = runBlocking<Unit> { 
+    val time = measureTimeMillis {
+        simple()
+            .buffer() // buffer emissions, don't wait
+            .collect { value -> 
+                delay(300) // pretend we are processing it for 300 ms
+                println(value) 
+            } 
+    }   
+    println("Collected in $time ms")
+}
+```
 
+它更快的产生相同的数字，因为我们有效地创建了一个处理管道，只需等待100ms来处理第一个数字，然后只需花费300ms来处理每个数字。这种方法运行大约需要1000ms
 
+```
+1
+2
+3
+Collected in 1071 ms
+```
 
+注意，当必须更改协程调度器时，flowOn操作符使用了类似的Buffering机制。但是这里，我们明确的请求Buffering而不更改执行上下文
 
-
-
-
-
-
-
-
+**Conflation**
 
 
 
