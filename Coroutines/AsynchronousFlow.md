@@ -506,23 +506,74 @@ Collected in 1071 ms
 
 **Conflation**
 
+当流表示操作的部分结果或操作状态更新时，可能不需要处理每个值，而只需处理最近的值。在这种情况下，当收集器太慢无法处理中间值时，可以使用conflate操作符跳过他们
 
+```kotlin
+fun simple(): Flow<Int> = flow {
+    for (i in 1..3) {
+        delay(100) // pretend we are asynchronously waiting 100 ms
+        emit(i) // emit next value
+    }
+}
 
+fun main() = runBlocking<Unit> { 
+    val time = measureTimeMillis {
+        simple()
+            .conflate() // conflate emissions, don't process each one
+            .collect { value -> 
+                delay(300) // pretend we are processing it for 300 ms
+                println(value) 
+            } 
+    }   
+    println("Collected in $time ms")
+}
+```
 
+可以看到，当第一个数字还在处理的时候，第二个和第三个数字已经产生了，所以第二个数字被跳过了，只有最近的(第三个数字)被发送给收集器
 
+```
+1
+3
+Collected in 758 ms
+```
 
+**Processing the latest value**
 
+当发送器和收集器都很慢时，Conflation是一种提升处理速度的方法。它通过丢弃发送的值来实现。另一种方法是取消缓慢的收集器，并且在每次发送新值时重新启动它。有一类xxxLatest操作符，它们执行与xxx操作符相同的逻辑，但是在收到新值时会取消前面接收器中的代码
 
+```kotlin
+fun simple(): Flow<Int> = flow {
+    for (i in 1..3) {
+        delay(100) // pretend we are asynchronously waiting 100 ms
+        emit(i) // emit next value
+    }
+}
 
+fun main() = runBlocking<Unit> { 
+    val time = measureTimeMillis {
+        simple()
+            .collectLatest { value -> // cancel & restart on the latest value
+                //每次发送数据时会把之前慢的收集器取消
+                println("Collecting $value") 
+                delay(300) // pretend we are processing it for 300 ms
+                println("Done $value") 
+            } 
+    }   
+    println("Collected in $time ms")
+}
+```
 
+由于collectLatest的执行需要300ms，但是每100ms就会发送一个新值，我们看到收集器在每个值上都会执行，但是只在最后一个值上完全执行
 
+```
+Collecting 1
+Collecting 2
+Collecting 3
+Done 3
+Collected in 741 ms
+```
 
-
-
-
-
-
-
+## Composing multiple flows
 
 
 
