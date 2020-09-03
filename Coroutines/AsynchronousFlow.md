@@ -343,6 +343,133 @@ Filter 5
 ```
 
 ## Flow context
+Flow的集合总是在调用协程的上下文中运行。例如，下面的代码中simple流将在该代码作者指定的上下文中运行，而与simple流的实现细节无关
+
+```kotlin
+withContext(context) {
+    simple().collect { value ->
+        println(value) // run in the specified context 
+    }
+}
+```
+
+Flow的这个特性称为上下文保留
+
+默认情况下，flow构造器中的代码在相应Flow收集器提供的上下文中运行。例如，参考simple函数的实现，该函数打印调用它的线程并发送三个数字
+
+```kotlin
+fun log(msg: String) = println("[${Thread.currentThread().name}] $msg")
+           
+fun simple(): Flow<Int> = flow {
+    log("Started simple flow")
+    for (i in 1..3) {
+        emit(i)
+    }
+}  
+
+fun main() = runBlocking<Unit> {
+    simple().collect { value -> log("Collected $value") } 
+}
+```
+
+输出结果：
+
+```
+[main @coroutine#1] Started simple flow
+[main @coroutine#1] Collected 1
+[main @coroutine#1] Collected 2
+[main @coroutine#1] Collected 3
+```
+
+由于collect从主线程中调用，flow的实现也从主线程中调用。对于快速运行或者不关心执行上下文并且不会阻塞调用者的异步代码，这是完美的默认行为
+
+**Wrong emission withContext**
+
+长时间运行的消耗cpu代码可能需要在Dispatchers.Default上下文中运行，更新UI的代码可能需要在Dispatchers.Main上下文中运行。通常情况下，使用withContext在Kotlin协程代码中更改上下文，但是Flow构造器中的代码必须遵守上下文保留特性并且不允许从不同的上下文中发送数据
+
+```kotlin
+fun simple(): Flow<Int> = flow {
+    // The WRONG way to change context for CPU-consuming code in flow builder
+    kotlinx.coroutines.withContext(Dispatchers.Default) {
+        for (i in 1..3) {
+            Thread.sleep(100) // pretend we are computing it in CPU-consuming way
+            emit(i) // emit next value
+        }
+    }
+}
+
+fun main() = runBlocking<Unit> {
+    simple().collect { value -> println(value) } 
+}
+```
+
+输出结果：
+
+```
+Exception in thread "main" java.lang.IllegalStateException: Flow invariant is violated:
+        Flow was collected in [CoroutineId(1), "coroutine#1":BlockingCoroutine{Active}@5511c7f8, BlockingEventLoop@2eac3323],
+        but emission happened in [CoroutineId(1), "coroutine#1":DispatchedCoroutine{Active}@2dae0000, Dispatchers.Default].
+        Please refer to 'flow' documentation or use 'flowOn' instead
+    at ...
+```
+
+**flowOn operator**
+
+这个异常指出应该使用flowOn函数更改Flow发送的上下文。下面的例子展示了更改Flow上下文的正确方法，它还打印相应线程的名称以显示其工作原理
+
+```kotlin
+fun log(msg: String) = println("[${Thread.currentThread().name}] $msg")
+           
+fun simple(): Flow<Int> = flow {
+    for (i in 1..3) {
+        Thread.sleep(100) // pretend we are computing it in CPU-consuming way
+        log("Emitting $i")
+        emit(i) // emit next value
+    }
+}.flowOn(Dispatchers.Default) // RIGHT way to change context for CPU-consuming code in flow builder
+
+fun main() = runBlocking<Unit> {
+    simple().collect { value ->
+        log("Collected $value") 
+    } 
+} 
+```
+
+注意Flow是如何在后台线程中运行的，而收集器是在主线程中运行的
+
+这里要注意的另一件事是flowOn操作符改变了Flow的默认连续特性。现在收集器运行在一个协程中("coroutine#1")，而发送器运行在另一个协程中("coroutine#2")，它与收集器协程并行地运行在另一个线程中。当flowOn操作符必须在其上下文中更改调度器时，它会为上游流创建另一个协程
+
+## Buffering
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
