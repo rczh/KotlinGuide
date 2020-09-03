@@ -217,5 +217,159 @@ response 2
 response 3
 ```
 
+**Transform operator**
+
+在Flow变换操作中最常用的是transform。它可以用来模拟简单的变换，比如map和filter，以及实现更复杂的变换。使用transform操作符，我们可以发送任意次数的任意值
+
+例如，我们可以使用transform在执行一个长时间运行的异步请求之前发送一个字符串，然后在后面增加一个响应
+
+```kotlin
+suspend fun performRequest(request: Int): String {
+    delay(1000) // imitate long-running asynchronous work
+    return "response $request"
+}
+
+fun main() = runBlocking<Unit> {
+    (1..3).asFlow() // a flow of requests
+        .transform { request ->
+            emit("Making request $request") 
+            emit(performRequest(request)) 
+        }
+        .collect { response -> println(response) }
+}
+```
+
+输出结果：
+
+```
+Making request 1
+response 1
+Making request 2
+response 2
+Making request 3
+response 3
+```
+
+**Size-limiting operators**
+
+当达到相应的限制时，限制大小操作符(比如take)将取消Flow的执行。协程中的取消总是通过抛出异常来实现，因此所有资源管理函数(比如try{}finally{})在取消时都能正常工作
+
+```kotlin
+fun numbers(): Flow<Int> = flow {
+    try {                          
+        emit(1)
+        emit(2) 
+        println("This line will not execute")
+        emit(3)    
+    } finally {
+        println("Finally in numbers")
+    }
+}
+
+fun main() = runBlocking<Unit> {
+    numbers() 
+        .take(2) // take only the first two
+        .collect { value -> println(value) }
+}  
+```
+
+从输出结果中可以看到，在发送第二个数字之后Flow的执行被停止
+
+```
+1
+2
+Finally in numbers
+```
+
+## Terminal flow operators
+Flow上的终端操作符是启动Flow收集的挂起函数。collect是最常用的一个，还有其他一些终端操作符
+
+* 转换到各种集合，比如toList和toSet
+
+* first操作符获取第一个值，并且确保Flow发出单个值
+
+* 使用reduce和fold将Flow减少到一个值
+
+```kotlin
+fun main() = runBlocking<Unit> {
+
+    val sum = (1..5).asFlow()
+        .map { it * it } // squares of numbers from 1 to 5                           
+        .reduce { a, b -> a + b } // sum them (terminal operator)
+    println(sum)     
+}
+```
+
+输出结果：
+
+```
+55
+```
+
+## Flows are sequential
+Flow的每个单独集合都是按顺序执行的，除非使用了对多个Flow进行操作的特殊操作符。集合直接在调用终端操作符的协程中运行，默认情况下不会启动新的协程。每个发送的值由从上游到下游的所有中间操作符进行处理，然后交给终端操作符
+
+下面的例子过滤偶数并将其映射为字符串
+
+```kotlin
+fun main() = runBlocking<Unit> {
+
+    (1..5).asFlow()
+        .filter {
+            println("Filter $it")
+            it % 2 == 0              
+        }              
+        .map { 
+            println("Map $it")
+            "string $it"
+        }.collect { 
+            println("Collect $it")
+        }                      
+}
+```
+
+输出结果：
+
+```
+Filter 1
+Filter 2
+Map 2
+Collect string 2
+Filter 3
+Filter 4
+Map 4
+Collect string 4
+Filter 5
+```
+
+## Flow context
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
