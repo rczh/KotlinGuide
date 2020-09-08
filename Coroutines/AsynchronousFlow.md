@@ -663,7 +663,7 @@ fun requestFlow(i: Int): Flow<String> = flow {
 
 **flatMapConcat**
 
-
+连接模式由flatMapConcat和flattenConcat操作符实现。它们对应于相应的序列操作符。
 
 
 
