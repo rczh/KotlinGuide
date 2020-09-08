@@ -574,15 +574,94 @@ Collected in 741 ms
 ```
 
 ## Composing multiple flows
+有很多方法可以组合多个流
 
+**Zip**
 
+与Kotlin标准库中的Sequence.zip扩展函数一样，流也有一个zip操作符用来组合两个流的对应值
 
+```kotlin
+fun main() = runBlocking<Unit> { 
 
+    val nums = (1..3).asFlow() // numbers 1..3
+    val strs = flowOf("one", "two", "three") // strings 
+    nums.zip(strs) { a, b -> "$a -> $b" } // compose a single string
+        .collect { println(it) } // collect and print
+}
+```
 
+输出结果：
 
+```
+1 -> one
+2 -> two
+3 -> three
+```
 
+**Combine**
 
+当流表示变量或操作的最新值时，可能需要执行依赖于相应流的最新值的计算，并且在任何上游流发送数据时重新进行计算。相对应的运算符称为combine
 
+例如，如果前面例子中的数字每300ms更新一次，但是字符串每400ms更新一次，使用zip操作符组合它们仍然会产生相同的结果，尽管每400ms打印一次结果
+
+在本例中，我们使用onEach中间操作符来延迟每个元素，使发送示例流的代码更具声明性并且更短
+
+```kotlin
+fun main() = runBlocking<Unit> { 
+    val nums = (1..3).asFlow().onEach { delay(300) } // numbers 1..3 every 300 ms
+    val strs = flowOf("one", "two", "three").onEach { delay(400) } // strings every 400 ms
+    val startTime = System.currentTimeMillis() // remember the start time 
+    nums.zip(strs) { a, b -> "$a -> $b" } // compose a single string with "zip"
+        .collect { value -> // collect and print 
+            println("$value at ${System.currentTimeMillis() - startTime} ms from start") 
+        } 
+}
+```
+
+当在这里使用combine操作符代替zip时
+
+```kotlin
+fun main() = runBlocking<Unit> { 
+    val nums = (1..3).asFlow().onEach { delay(300) } // numbers 1..3 every 300 ms
+    val strs = flowOf("one", "two", "three").onEach { delay(400) } // strings every 400 ms          
+    val startTime = System.currentTimeMillis() // remember the start time 
+    nums.combine(strs) { a, b -> "$a -> $b" } // compose a single string with "combine"
+        .collect { value -> // collect and print 
+            println("$value at ${System.currentTimeMillis() - startTime} ms from start") 
+        } 
+}
+```
+
+输出结果完全不同，每次nums或strs流发送数据时都会打印一行
+
+```
+1 -> one at 452 ms from start
+2 -> one at 651 ms from start
+2 -> two at 854 ms from start
+3 -> two at 952 ms from start
+3 -> three at 1256 ms from start
+```
+
+## Flattening flows
+流表示异步接收的值序列，因此很容易出现这种情况，每个值触发对另一个值序列的请求。例如，我们可以使用以下函数返回两个间隔500ms的字符串流
+
+```kotlin
+fun requestFlow(i: Int): Flow<String> = flow {
+    emit("$i: First") 
+    delay(500) // wait 500 ms
+    emit("$i: Second")    
+}
+```
+
+现在，如果我们有三个整数的流，并且像这样为每个整数调用requestFlow
+
+```kotlin
+(1..3).asFlow().map { requestFlow(it) }
+```
+
+然后我们得到了一个元素为流的流(Flow&lt;Flow&lt;String>>)，为了进一步处理需要将其简化为单个流。集合和序列可以使用flatten和flatMap操作符。然而由于流的异步特性，它们需要不同的简化模式，因此流上有一系列简化操作符
+
+**flatMapConcat**
 
 
 
