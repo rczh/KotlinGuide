@@ -757,7 +757,7 @@ fun main() = runBlocking<Unit> {
 3: Second at 931 ms from start
 ```
 
-注意，在发送新值时flatMapLatest会取消代码块中的所有代码(本例中为{requestFlow(it)})。在这个例子中看不出任何区别，因为对requestFlow的调用是快速的，不会挂起并且不能取消。然而，如果我们在那里使用像delay这样的挂起功能就会看到区别
+注意，在发送新值时flatMapLatest会取消代码块中的所有代码(本例中为{requestFlow(it)})。在这个例子中看不出任何区别，因为对requestFlow的调用是快速的，不会挂起并且不能取消。然而，如果我们在那里使用像delay这样的挂起函数就会看到区别
 
 ## Flow exceptions
 
