@@ -663,17 +663,103 @@ fun requestFlow(i: Int): Flow<String> = flow {
 
 **flatMapConcat**
 
-连接模式由flatMapConcat和flattenConcat操作符实现。它们对应于相应的序列操作符。
+连接模式由flatMapConcat和flattenConcat操作符实现。它们对应于相应的序列操作符。如下面的例子所示，它们等待内部流完成然后开始收集下一个流
 
+```kotlin
+fun requestFlow(i: Int): Flow<String> = flow {
+    emit("$i: First") 
+    delay(500) // wait 500 ms
+    emit("$i: Second")    
+}
 
+fun main() = runBlocking<Unit> { 
+    val startTime = System.currentTimeMillis() // remember the start time 
+    (1..3).asFlow().onEach { delay(100) } // a number every 100 ms 
+        .flatMapConcat { requestFlow(it) }                                                                           
+        .collect { value -> // collect and print 
+            println("$value at ${System.currentTimeMillis() - startTime} ms from start") 
+        } 
+}
+```
 
+输出结果中可以看到flatMapConcat的顺序特性
 
+```
+1: First at 121 ms from start
+1: Second at 622 ms from start
+2: First at 727 ms from start
+2: Second at 1227 ms from start
+3: First at 1328 ms from start
+3: Second at 1829 ms from start
+```
 
+**flatMapMerge**
 
+另一种简化模式是并行地收集所有输入流，并且将它们的值合并到单个流中以便尽快的发送值。它由flatMapMerge和flattenMerge操作符实现。它们都接受一个可选的concurrency参数，用来限制同一时刻收集的并发流的数量(默认值为DEFAULT_CONCURRENCY)
 
+```kotlin
+fun requestFlow(i: Int): Flow<String> = flow {
+    emit("$i: First") 
+    delay(500) // wait 500 ms
+    emit("$i: Second")    
+}
 
+fun main() = runBlocking<Unit> { 
+    val startTime = System.currentTimeMillis() // remember the start time 
+    (1..3).asFlow().onEach { delay(100) } // a number every 100 ms 
+        .flatMapMerge { requestFlow(it) }                                                                           
+        .collect { value -> // collect and print 
+            println("$value at ${System.currentTimeMillis() - startTime} ms from start") 
+        } 
+}
+```
 
+输出结果中可以看到flatMapMerge的并发性
 
+```
+1: First at 136 ms from start
+2: First at 231 ms from start
+3: First at 333 ms from start
+1: Second at 639 ms from start
+2: Second at 732 ms from start
+3: Second at 833 ms from start
+```
+
+注意，flatMapMerge顺序调用它的代码块(本例中为{requestFlow(it)})，但是并行地收集产生的流，它相当于先执行map，然后对结果调用flattenMerge
+
+**flatMapLatest**
+
+类似于collectLatest操作符，有一种相对应的"Latest"简化模式，在该模式中一旦发送新的流就会取消前一个流的收集。它由flatMapLatest操作符实现
+
+```kotlin
+fun requestFlow(i: Int): Flow<String> = flow {
+    emit("$i: First") 
+    delay(500) // wait 500 ms
+    emit("$i: Second")    
+}
+
+fun main() = runBlocking<Unit> { 
+    val startTime = System.currentTimeMillis() // remember the start time 
+    (1..3).asFlow().onEach { delay(100) } // a number every 100 ms 
+        .flatMapLatest { requestFlow(it) }                                                                           
+        .collect { value -> // collect and print 
+            println("$value at ${System.currentTimeMillis() - startTime} ms from start") 
+        } 
+}
+```
+
+输出结果展示了flatMapLatest是如何工作的
+
+```
+1: First at 142 ms from start
+2: First at 322 ms from start
+3: First at 425 ms from start
+3: Second at 931 ms from start
+```
+
+注意，在发送新值时flatMapLatest会取消代码块中的所有代码(本例中为{requestFlow(it)})。在这个例子中看不出任何区别，因为对requestFlow的调用是快速的，不会挂起并且不能取消。然而，如果我们在那里使用像delay这样的挂起功能就会看到区别
+
+## Flow exceptions
 
 
 
