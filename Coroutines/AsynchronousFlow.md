@@ -1028,7 +1028,10 @@ Exception in thread "main" java.lang.IllegalStateException: Collected 2
 ```
 
 ## Imperative versus declarative
+现在我们知道了如何收集流，并且以命令和声明方式处理它的完成和异常。很自然的问题是哪种方式更好以及为什么。作为一个库，我们不提倡任何特定的方式并且相信这两种方式都是有效的，应该根据你自己的偏好和代码风格进行选择
 
+## Launching flow
+使用流表示来自某个源的异步事件是很容易的。在这种情况下，我们需要一个类似于addEventListener函数的程序，它注册一段对输入事件进行响应的代码然后继续下一步的工作。onEach操作符可以完成此任务，然而它是一个中间操作符。我们还需要一个终端操作符来收集流，否则仅调用onEach不起作用
 
 
 
