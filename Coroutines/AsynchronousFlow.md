@@ -1033,23 +1033,58 @@ Exception in thread "main" java.lang.IllegalStateException: Collected 2
 ## Launching flow
 使用流表示来自某个源的异步事件是很容易的。在这种情况下，我们需要一个类似于addEventListener函数的程序，它注册一段对输入事件进行响应的代码然后继续下一步的工作。onEach操作符可以完成此任务，然而它是一个中间操作符。我们还需要一个终端操作符来收集流，否则仅调用onEach不起作用
 
+如果我们在onEach之后使用collect终端操作符，它之后的代码会一直等待直到流收集完成
 
+```kotlin
+fun events(): Flow<Int> = (1..3).asFlow().onEach { delay(100) }
 
+fun main() = runBlocking<Unit> {
+    events()
+        .onEach { event -> println("Event: $event") }
+        .collect() // <--- Collecting the flow waits
+    //这段代码会等待流收集器完成后执行    
+    println("Done")
+} 
+```
 
+输出结果：
 
+```
+Event: 1
+Event: 2
+Event: 3
+Done
+```
 
+launchIn终端操作符用来解决这个问题。通过使用launchIn我们可以在单独的协程中启动流的收集，这样可以立即执行后续代码
 
+```kotlin
+fun events(): Flow<Int> = (1..3).asFlow().onEach { delay(100) }
 
+fun main() = runBlocking<Unit> {
+    events()
+        .onEach { event -> println("Event: $event") }
+        .launchIn(this) // <--- Launching the flow in a separate coroutine
+    println("Done")
+}
+```
 
+输出结果：
 
+```
+Done
+Event: 1
+Event: 2
+Event: 3
+```
 
+必须为launchIn的参数指定一个协程作用域，在其中启动收集流的协程。在上面的例子中，这个作用域来自于runBlocking协程构建器，因此在流运行时runBlocking等待它的子协程完成，并防止主函数返回和终止程序
 
+在实际的应用程序中，作用域将来自生命周期受限的实体。一旦这个实体的生命周期被终止，相应的作用域会被取消，从而取消相应流的收集。这里onEach{}.launchIn()对的工作方式类似于addEventListener。但是不需要相应的removeEventListener函数，因为取消和结构化并发可以达到这个目的
 
+注意，launchIn会返回一个Job，它可以用来取消相应的流收集协程(不是取消整个作用域)或者join它
 
-
-
-
-
+## Flow cancellation checks
 
 
 
