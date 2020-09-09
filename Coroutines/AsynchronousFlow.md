@@ -760,6 +760,211 @@ fun main() = runBlocking<Unit> {
 注意，在发送新值时flatMapLatest会取消代码块中的所有代码(本例中为{requestFlow(it)})。在这个例子中看不出任何区别，因为对requestFlow的调用是快速的，不会挂起并且不能取消。然而，如果我们在那里使用像delay这样的挂起函数就会看到区别
 
 ## Flow exceptions
+当发送器或操作符内的代码抛出异常时，流收集器可以在异常情况下执行完成。有几种方法去处理这些异常
+
+**Collector try and catch**
+
+收集器可以使用try/catch块来处理异常
+
+```kotlin
+fun simple(): Flow<Int> = flow {
+    for (i in 1..3) {
+        println("Emitting $i")
+        emit(i) // emit next value
+    }
+}
+
+fun main() = runBlocking<Unit> {
+    try {
+        simple().collect { value ->         
+            println(value)
+            check(value <= 1) { "Collected $value" }
+        }
+    } catch (e: Throwable) {
+        println("Caught $e")
+    } 
+}
+```
+
+正如我们所看到的，这段代码成功地捕获了collect终端操作符中的异常，在那之后没有发送任何值
+
+```
+Emitting 1
+1
+Emitting 2
+2
+Caught java.lang.IllegalStateException: Collected 2
+```
+
+**Everything is caught**
+
+前面的例子实际上捕获了发送器或任何中间操作符或者终端操作符中发生的任何异常。例如，让我们修改代码使发送的值映射为字符串，但是相应的代码会产生一个异常
+
+```kotlin
+fun simple(): Flow<String> = 
+    flow {
+        for (i in 1..3) {
+            println("Emitting $i")
+            emit(i) // emit next value
+        }
+    }
+    .map { value ->
+        check(value <= 1) { "Crashed on $value" }                 
+        "string $value"
+    }
+
+fun main() = runBlocking<Unit> {
+    try {
+        simple().collect { value -> println(value) }
+    } catch (e: Throwable) {
+        println("Caught $e")
+    } 
+}
+```
+
+这个异常仍然被捕获并且收集器被停止
+
+```
+Emitting 1
+string 1
+Emitting 2
+Caught java.lang.IllegalStateException: Crashed on 2
+```
+
+## Exception transparency
+但是发送器的代码如何封装它的异常处理行为
+
+流必须对异常透明，在流构造器中从try/catch块内部发送值违反了异常透明性。异常透明性保证了抛出异常的收集器可以像前面例子中那样始终使用try/catch块来捕获异常
+
+发送器可以使用catch操作符来保持异常透明性，并且允许对其异常处理进行封装。catch操作符可以分析异常，并且根据捕获的异常以不同的方式对其作出响应：
+
+* 可以使用throw重新抛出异常
+
+* 可以使用emit将异常转换为发送值
+
+* 异常可以被忽略、记录或由其他代码进行处理
+
+例如，让我们在捕获异常时发送文本
+
+```kotlin
+fun simple(): Flow<String> = 
+    flow {
+        for (i in 1..3) {
+            println("Emitting $i")
+            emit(i) // emit next value
+        }
+    }
+    .map { value ->
+        check(value <= 1) { "Crashed on $value" }                 
+        "string $value"
+    }
+
+fun main() = runBlocking<Unit> {
+    simple()
+        .catch { e -> emit("Caught $e") } // emit on exception
+        .collect { value -> println(value) }
+}
+```
+
+例子的输出相同，即使我们没有使用try/catch
+
+**Transparent catch**
+
+catch操作符遵循异常透明性，它只捕获上游异常(来自于catch上面的所有异常，不包含catch下面的异常)。如果collect块中抛出一个异常，它会被漏过
+
+```kotlin
+fun simple(): Flow<Int> = flow {
+    for (i in 1..3) {
+        println("Emitting $i")
+        emit(i)
+    }
+}
+
+fun main() = runBlocking<Unit> {
+    simple()
+        .catch { e -> println("Caught $e") } // does not catch downstream exceptions
+        .collect { value ->
+            check(value <= 1) { "Collected $value" }                 
+            println(value) 
+        }
+}
+```
+
+尽管使用了catch操作符，但是不会打印"Caught..."消息
+
+```
+Emitting 1
+1
+Emitting 2
+Exception in thread "main" java.lang.IllegalStateException: Collected 2
+    at ...
+```
+
+**Catching declaratively**
+
+我们可以将catch操作符的声明性质与处理所有异常的愿望结合起来，将收集器的实现移动到onEach中并将其放在catch操作符之前。流的收集必须由不带参数的collect调用触发
+
+```kotlin
+fun simple(): Flow<Int> = flow {
+    for (i in 1..3) {
+        println("Emitting $i")
+        emit(i)
+    }
+}
+
+fun main() = runBlocking<Unit> {
+    simple()
+        .onEach { value ->
+            check(value <= 1) { "Collected $value" }                 
+            println(value) 
+        }
+        .catch { e -> println("Caught $e") }
+        .collect()
+}
+```
+
+可以看到打印了"Caught..."消息，这样我们可以在不明确地使用try/catch块的情况下捕获所有异常
+
+```
+Emitting 1
+1
+Emitting 2
+Caught java.lang.IllegalStateException: Collected 2
+```
+
+## Flow completion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
