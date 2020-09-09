@@ -962,6 +962,115 @@ Done
 
 **Declarative handling**
 
+对于声明式方法，可以使用onCompletion操作符，它在流完全收集完毕时调用
+
+可以使用onCompletion操作符重写前面的例子并生成相同的输出
+
+```kotlin
+fun simple(): Flow<Int> = (1..3).asFlow()
+
+fun main() = runBlocking<Unit> {
+    simple()
+        .onCompletion { println("Done") }
+        .collect { value -> println(value) }
+}
+```
+
+onCompletion的主要优点是有一个可空的Throwable参数，可以用来确定流收集是正常完成还是异常完成。下面的例子中，simple流在发送数字1之后抛出异常
+
+```kotlin
+fun simple(): Flow<Int> = flow {
+    emit(1)
+    throw RuntimeException()
+}
+
+fun main() = runBlocking<Unit> {
+    simple()
+        .onCompletion { cause -> if (cause != null) println("Flow completed exceptionally") }
+        .catch { cause -> println("Caught exception") }
+        .collect { value -> println(value) }
+} 
+```
+
+输出结果：
+
+```
+1
+Flow completed exceptionally
+Caught exception
+```
+
+与catch不同，onCompletion操作符不处理异常。正如我们从上面的例子中看到的，异常仍然向下传递。它将被传递到onCompletion操作符之后，并且被catch操作符处理
+
+**Successful completion**
+
+与catch操作符的另一个区别是onCompletion能看到所有异常，并且只有在上游流成功完成时(没有取消或失败)收到一个null异常
+
+```kotlin
+fun simple(): Flow<Int> = (1..3).asFlow()
+
+fun main() = runBlocking<Unit> {
+    simple()
+        .onCompletion { cause -> println("Flow completed with $cause") }
+        .collect { value ->
+            check(value <= 1) { "Collected $value" }                 
+            println(value) 
+        }
+}
+```
+
+我们可以看到cause不是空，因为流由于下游异常而中止
+
+```
+1
+Flow completed with java.lang.IllegalStateException: Collected 2
+Exception in thread "main" java.lang.IllegalStateException: Collected 2
+```
+
+## Imperative versus declarative
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
