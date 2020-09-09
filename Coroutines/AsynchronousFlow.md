@@ -933,6 +933,91 @@ Caught java.lang.IllegalStateException: Collected 2
 ```
 
 ## Flow completion
+当流收集完成时(通常或异常殊情况下)，可能需要执行一个操作。可以通过两种方式来实现：命令式或者声明式
+
+**Imperative finally block**
+
+除了try/catch，收集器还可以使用finally块在collect完成时执行操作
+
+```kotlin
+fun simple(): Flow<Int> = (1..3).asFlow()
+
+fun main() = runBlocking<Unit> {
+    try {
+        simple().collect { value -> println(value) }
+    } finally {
+        println("Done")
+    }
+} 
+```
+
+这段代码输出由simple流生成的三个数字，后面跟一个"Done"字符串
+
+```
+1
+2
+3
+Done
+```
+
+**Declarative handling**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
