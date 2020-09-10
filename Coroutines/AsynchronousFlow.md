@@ -1086,31 +1086,82 @@ Event: 3
 
 ## Flow cancellation checks
 
+为了方便，流构造器会为取消操作对每个发送的值执行附加的活动检查。这意味着从流构造器循环发送数据是可以取消的
 
+```kotlin
+fun foo(): Flow<Int> = flow { 
+    for (i in 1..5) {
+        println("Emitting $i") 
+        emit(i) 
+    }
+}
 
+fun main() = runBlocking<Unit> {
+    foo().collect { value -> 
+        if (value == 3) cancel()  
+        println(value)
+    } 
+}
+```
 
+我们只收集到3以内的数字，在发送数字4后抛出CancellationException异常
 
+```
+Emitting 1
+1
+Emitting 2
+2
+Emitting 3
+3
+Emitting 4
+Exception in thread "main" kotlinx.coroutines.JobCancellationException: BlockingCoroutine was cancelled; job="coroutine#1":BlockingCoroutine{Cancelled}@6d7b4f4c
+```
 
+然而由于性能原因，大多数其他流操作符自己不进行额外的取消检查。例如，如果你使用IntRange.asFlow扩展函数实现类似的循环并且没有任何挂起函数，它不会检查取消
 
+```kotlin
+fun main() = runBlocking<Unit> {
+    (1..5).asFlow().collect { value -> 
+        if (value == 3) cancel()  
+        println(value)
+    } 
+}
+```
 
+所有数字都会被收集，并且只在从runBlocking返回之前检测取消
 
+```
+1
+2
+3
+4
+5
+Exception in thread "main" kotlinx.coroutines.JobCancellationException: BlockingCoroutine was cancelled; job="coroutine#1":BlockingCoroutine{Cancelled}@3327bd23
+```
 
+**Making busy flow cancellable**
 
+在协程处于不断循环的情况下，你必须明确的检查取消。你可以使用onEach{currentCoroutineContext().ensureActive()}，另外也提供了一个现成的cancellable操作符来执行此操作
 
+```kotlin
+fun main() = runBlocking<Unit> {
+    (1..5).asFlow().cancellable().collect { value -> 
+        if (value == 3) cancel()  
+        println(value)
+    } 
+}
+```
 
+使用cancellable操作符，只收集1到3的数字
 
+```
+1
+2
+3
+Exception in thread "main" kotlinx.coroutines.JobCancellationException: BlockingCoroutine was cancelled; job="coroutine#1":BlockingCoroutine{Cancelled}@5ec0a365
+```
 
-
-
-
-
-
-
-
-
-
-
-
+## Flow and Reactive Streams
 
 
 
