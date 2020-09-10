@@ -1163,91 +1163,9 @@ Exception in thread "main" kotlinx.coroutines.JobCancellationException: Blocking
 
 ## Flow and Reactive Streams
 
+对于那些熟悉Reactive Streams或reactive框架(比如RxJava和project Reactor)的人来说，流的设计可能看起来非常熟悉
 
+实际上，流的设计灵感来自于Reactive Streams和它的各种实现。但是流的主要目的是尽可能简单的设计，对Kotlin和挂起友好并且遵循结构化并发。没有reactive先驱者和他们的巨大工作不可能实现这一目标。你可以在"Reactive Streams and Kotlin Flows"章节中阅读完整的故事
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+虽然在概念上有所不同，流是reactive流，可以在流和reactive Publisher之间进行相互转换。kotlinx.coroutines包提供了开箱即用的转换器，可以在相应的reactive模块中找到(kotlinx-coroutines-reactive包为Reactive Streams，kotlinx-coroutines-reactor包为Project Reactor， kotlinx-coroutines-rx2/kotlinx-coroutines-rx3包为RxJava2/RxJava3)。集成模块包括从流和到流的转换，与Reactor上下文的集成，以及与各种reactive实体以挂起友好的方式工作
 
