@@ -1,5 +1,5 @@
 # Asynchronous Flow
-挂起函数异步返回一个值，如果需要返回多个异步计算的值，可以使用Flow
+挂起函数异步返回一个值，如果需要返回多个异步计算的值，可以使用流
 
 ## Representing multiple values
 在Kotlin中可以使用集合来表示多个值。例如，我们有一个simple函数返回三个数字的列表，然后使用forEach打印它们
@@ -89,9 +89,9 @@ I'm not blocked 3
 3
 ```
 
-注意使用Flow的代码和前面示例之间的以下区别
+注意使用流的代码和前面示例之间的以下区别
 
-* 用于Flow类型的构造器函数flow被调用
+* 用于流类型的构造器函数flow被调用
 
 * 在flow构造器中的代码可以挂起
 
@@ -104,7 +104,7 @@ I'm not blocked 3
 我们可以使用Thread.sleep替换flow函数体中的delay，可以看到在这种情况下主线程被阻塞了
 
 ## Flows are cold
-Flows是类似于序列的冷流。flow构造器中的代码在collect函数调用之前不会运行
+流是类似于序列的冷流。flow构造器中的代码在collect函数调用之前不会运行
 
 ```kotlin
 fun simple(): Flow<Int> = flow { 
@@ -141,10 +141,10 @@ Flow started
 3
 ```
 
-这就是simple函数(返回flow)没有标记为suspend的一个关键原因。就其本身而言，simple函数调用快速返回并且不会等待任何东西。flow在每次调用collect时启动，这就是为什么我们在调用collect时看到"Flow started"
+这就是simple函数(返回流)没有标记为suspend的一个关键原因。就其本身而言，simple函数调用快速返回并且不会等待任何东西。流在每次调用collect时启动，这就是为什么我们在调用collect时看到"Flow started"
 
 ## Flow cancellation basics
-Flow遵循协程的协作性取消。通常情况下，当Flow在可取消的挂起函数(比如delay)中挂起时，可以取消Flow收集。下面的例子演示了Flow在withTimeoutOrNull中运行时，它是如何在超时时被取消并且停止执行其代码的
+流遵循协程的协作性取消。通常情况下，当流在可取消的挂起函数(比如delay)中挂起时，可以取消流收集。下面的例子演示了流在withTimeoutOrNull中运行时，它是如何在超时时被取消并且停止执行其代码的
 
 ```kotlin
 fun simple(): Flow<Int> = flow { 
@@ -163,7 +163,7 @@ fun main() = runBlocking<Unit> {
 }
 ```
 
-注意在simple函数中Flow只发送两个数字：
+注意在simple函数中流只发送两个数字：
 
 ```
 Emitting 1
@@ -174,13 +174,13 @@ Done
 ```
 
 ## Flow builders
-前面例子中的flow构造器是最基本的一个，还有其他更容易声明Flow的构造器：
+前面例子中的流构造器是最基本的一个，还有其他更容易声明流的构造器：
 
-* flowOf构造器用来定义发送一组固定值的Flow
+* flowOf构造器用来定义发送一组固定值的流
 
-* 可以使用asFlow扩展函数将各种集合和序列转换为Flow
+* 可以使用asFlow扩展函数将各种集合和序列转换为流
 
-因此，从Flow中打印从1到3数字的例子可以写成：
+因此，从流中打印从1到3数字的例子可以写成：
 
 ```kotlin
 fun main() = runBlocking<Unit> {
@@ -190,11 +190,11 @@ fun main() = runBlocking<Unit> {
 ```
 
 ## Intermediate flow operators
-Flow可以使用操作符进行转换，就像使用集合和序列一样。中间操作符应用于一个上游流并且返回一个下游流。像Flow一样，这些操作符是冷的。对此类操作符的调用本身不是挂起函数。它快速执行并且返回一个新的转换流的定义
+流可以使用操作符进行转换，就像使用集合和序列一样。中间操作符应用于一个上游流并且返回一个下游流。像流一样，这些操作符是冷的。对此类操作符的调用本身不是挂起函数。它快速执行并且返回一个新的转换流的定义
 
 基本操作符有熟悉的名字，比如map和filter。与序列的重要区别在于，这些操作符中的代码块可以调用挂起函数
 
-例如，输入请求Flow可以使用map操作符映射成为结果，即使执行的请求是由挂起函数实现的长时间运行的操作
+例如，输入请求流可以使用map操作符映射成为结果，即使执行的请求是由挂起函数实现的长时间运行的操作
 
 ```kotlin
 suspend fun performRequest(request: Int): String {
@@ -219,7 +219,7 @@ response 3
 
 **Transform operator**
 
-在Flow变换操作中最常用的是transform。它可以用来模拟简单的变换，比如map和filter，以及实现更复杂的变换。使用transform操作符，我们可以发送任意次数的任意值
+在流变换操作中最常用的是transform。它可以用来模拟简单的变换，比如map和filter，以及实现更复杂的变换。使用transform操作符，我们可以发送任意次数的任意值
 
 例如，我们可以使用transform在执行一个长时间运行的异步请求之前发送一个字符串，然后在后面增加一个响应
 
@@ -252,7 +252,7 @@ response 3
 
 **Size-limiting operators**
 
-当达到相应的限制时，限制大小操作符(比如take)将取消Flow的执行。协程中的取消总是通过抛出异常来实现，因此所有资源管理函数(比如try{}finally{})在取消时都能正常工作
+当达到相应的限制时，限制大小操作符(比如take)将取消流的执行。协程中的取消总是通过抛出异常来实现，因此所有资源管理函数(比如try{}finally{})在取消时都能正常工作
 
 ```kotlin
 fun numbers(): Flow<Int> = flow {
@@ -273,7 +273,7 @@ fun main() = runBlocking<Unit> {
 }  
 ```
 
-从输出结果中可以看到，在发送第二个数字之后Flow的执行被停止
+从输出结果中可以看到，在发送第二个数字之后流的执行被停止
 
 ```
 1
@@ -282,13 +282,13 @@ Finally in numbers
 ```
 
 ## Terminal flow operators
-Flow上的终端操作符是启动Flow收集的挂起函数。collect是最常用的一个，还有其他一些终端操作符
+流上的终端操作符是启动流收集的挂起函数。collect是最常用的一个，还有其他一些终端操作符
 
 * 转换到各种集合，比如toList和toSet
 
-* first操作符获取第一个值，并且确保Flow发出单个值
+* first操作符获取第一个值，并且确保流发出单个值
 
-* 使用reduce和fold将Flow减少到一个值
+* 使用reduce和fold将流减少到一个值
 
 ```kotlin
 fun main() = runBlocking<Unit> {
@@ -307,7 +307,7 @@ fun main() = runBlocking<Unit> {
 ```
 
 ## Flows are sequential
-Flow的每个单独集合都是按顺序执行的，除非使用了对多个Flow进行操作的特殊操作符。集合直接在调用终端操作符的协程中运行，默认情况下不会启动新的协程。每个发送的值由从上游到下游的所有中间操作符进行处理，然后交给终端操作符
+流的每个单独集合都是按顺序执行的，除非使用了对多个流进行操作的特殊操作符。集合直接在调用终端操作符的协程中运行，默认情况下不会启动新的协程。每个发送的值由从上游到下游的所有中间操作符进行处理，然后交给终端操作符
 
 下面的例子过滤偶数并将其映射为字符串
 
@@ -343,7 +343,7 @@ Filter 5
 ```
 
 ## Flow context
-Flow的集合总是在调用协程的上下文中运行。例如，下面的代码中simple流将在该代码作者指定的上下文中运行，而与simple流的实现细节无关
+流的集合总是在调用协程的上下文中运行。例如，下面的代码中simple流将在该代码作者指定的上下文中运行，而与simple流的实现细节无关
 
 ```kotlin
 withContext(context) {
@@ -353,9 +353,9 @@ withContext(context) {
 }
 ```
 
-Flow的这个特性称为上下文保留
+流的这个特性称为上下文保留
 
-默认情况下，flow构造器中的代码在相应Flow收集器提供的上下文中运行。例如，参考simple函数的实现，该函数打印调用它的线程并发送三个数字
+默认情况下，流构造器中的代码在相应流收集器提供的上下文中运行。例如，参考simple函数的实现，该函数打印调用它的线程并发送三个数字
 
 ```kotlin
 fun log(msg: String) = println("[${Thread.currentThread().name}] $msg")
@@ -381,11 +381,11 @@ fun main() = runBlocking<Unit> {
 [main @coroutine#1] Collected 3
 ```
 
-由于collect从主线程中调用，flow的实现也从主线程中调用。对于快速运行或者不关心执行上下文并且不会阻塞调用者的异步代码，这是完美的默认行为
+由于collect从主线程中调用，流的实现也从主线程中调用。对于快速运行或者不关心执行上下文并且不会阻塞调用者的异步代码，这是完美的默认行为
 
 **Wrong emission withContext**
 
-长时间运行的消耗cpu代码可能需要在Dispatchers.Default上下文中运行，更新UI的代码可能需要在Dispatchers.Main上下文中运行。通常情况下，使用withContext在Kotlin协程代码中更改上下文，但是Flow构造器中的代码必须遵守上下文保留特性并且不允许从不同的上下文中发送数据
+长时间运行的消耗cpu代码可能需要在Dispatchers.Default上下文中运行，更新UI的代码可能需要在Dispatchers.Main上下文中运行。通常情况下，使用withContext在Kotlin协程代码中更改上下文，但是流构造器中的代码必须遵守上下文保留特性并且不允许从不同的上下文中发送数据
 
 ```kotlin
 fun simple(): Flow<Int> = flow {
@@ -415,7 +415,7 @@ Exception in thread "main" java.lang.IllegalStateException: Flow invariant is vi
 
 **flowOn operator**
 
-这个异常指出应该使用flowOn函数更改Flow发送的上下文。下面的例子展示了更改Flow上下文的正确方法，它还打印相应线程的名称以显示其工作原理
+这个异常指出应该使用flowOn函数更改流发送的上下文。下面的例子展示了更改流上下文的正确方法，它还打印相应线程的名称以显示其工作原理
 
 ```kotlin
 fun log(msg: String) = println("[${Thread.currentThread().name}] $msg")
@@ -435,9 +435,9 @@ fun main() = runBlocking<Unit> {
 } 
 ```
 
-注意Flow是如何在后台线程中运行的，而收集器是在主线程中运行的
+注意流是如何在后台线程中运行的，而收集器是在主线程中运行的
 
-这里要注意的另一件事是flowOn操作符改变了Flow的默认连续特性。现在收集器运行在一个协程中("coroutine#1")，而发送器运行在另一个协程中("coroutine#2")，它与收集器协程并行地运行在另一个线程中。当flowOn操作符必须在其上下文中更改协程调度器时，它会为上游流创建另一个协程
+这里要注意的另一件事是flowOn操作符改变了流的默认连续特性。现在收集器运行在一个协程中("coroutine#1")，而发送器运行在另一个协程中("coroutine#2")，它与收集器协程并行地运行在另一个线程中。当flowOn操作符必须在其上下文中更改协程调度器时，它会为上游流创建另一个协程
 
 ## Buffering
 从流收集所花费的总时间角度来看，在不同协程中运行流的不同部分可能很有帮助，尤其是在涉及长时间运行的异步操作时。例如，考虑这种情况，当simple流的发送器很慢需要100ms来产生一个元素，收集器也很慢需要300ms处理一个元素。让我们看看收集这样一个包含三个数字的流需要多长时间
