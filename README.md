@@ -104,6 +104,8 @@
 
 [AsynchronousFlow](Coroutines/AsynchronousFlow.md)
 
+[Channels](Coroutines/Channels.md)
+
 ## More Language Constructs
 
 [DestructuringDeclarations](Other/DestructuringDeclarations.md)
