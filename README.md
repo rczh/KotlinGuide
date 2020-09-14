@@ -106,6 +106,8 @@
 
 [Channels](Coroutines/Channels.md)
 
+[ExceptionHandlingAndSupervision](Coroutines/ExceptionHandlingAndSupervision.md)
+
 ## More Language Constructs
 
 [DestructuringDeclarations](Other/DestructuringDeclarations.md)
