@@ -173,6 +173,194 @@ fun CoroutineScope.filter(numbers: ReceiveChannel<Int>, prime: Int) = produce<In
 无论如何，这是一种非常不切实际的求素数方法。实际上，管道涉及一些其他的挂起调用(比如对远程服务的异步调用)，而且这些管道不能使用sequence/iterator构造因为它们不允许任意挂起，不像produce是完全异步的
 
 ## Fan-out
+多个协程可以从同一通道接收数据，协程之间独立工作。让我们从一个定期生成整数的生产者协程开始(每秒10个数字)
+
+```kotlin
+fun CoroutineScope.produceNumbers() = produce<Int> {
+    var x = 1 // start from 1
+    while (true) {
+        send(x++) // produce next
+        delay(100) // wait 0.1s
+    }
+}
+```
+
+然后我们可以有几个处理协程。在本例中，他们只打印id和收到的数值
+
+```kotlin
+fun CoroutineScope.launchProcessor(id: Int, channel: ReceiveChannel<Int>) = launch {
+    for (msg in channel) {
+        println("Processor #$id received $msg")
+    }    
+}
+```
+
+现在让我们启动5个处理器，让它们工作近一秒。看看会发生什么
+
+```kotlin
+fun main() = runBlocking<Unit> {
+    val producer = produceNumbers()
+    repeat(5) { launchProcessor(it, producer) }
+    delay(950)
+    producer.cancel() // cancel producer coroutine and thus kill them all
+}
+
+fun CoroutineScope.produceNumbers() = produce<Int> {
+    var x = 1 // start from 1
+    while (true) {
+        send(x++) // produce next
+        delay(100) // wait 0.1s
+    }
+}
+
+fun CoroutineScope.launchProcessor(id: Int, channel: ReceiveChannel<Int>) = launch {
+    for (msg in channel) {
+        println("Processor #$id received $msg")
+    }    
+}
+```
+
+输出类似于下面，尽管接收每个整数的处理器id可能不同
+
+```
+Processor #2 received 1
+Processor #4 received 2
+Processor #0 received 3
+Processor #1 received 4
+Processor #3 received 5
+Processor #2 received 6
+Processor #4 received 7
+Processor #0 received 8
+Processor #1 received 9
+Processor #3 received 10
+```
+
+注意，取消一个生产者协程将关闭它的通道，从而最终终止处理协程执行的通道上的迭代
+
+另外，请注意我们是如何明确的使用for循环遍历通道在launchProcessor代码中执行扇出的。与consumeEach不同，这个for循环模式在多协程中使用是非常安全的。如果其中一个处理协程失败，那么其他处理协程仍然可以处理该通道，而使用consumeEach实现的处理器会在其正常或异常完成时消费或取消通道
+
+## Fan-in
+多个协程可以发送到同一个通道。例如，我们有一个字符串通道和一个挂起函数，它以特定的延迟重复向该通道发送特定的字符串
+
+```kotlin
+suspend fun sendString(channel: SendChannel<String>, s: String, time: Long) {
+    while (true) {
+        delay(time)
+        channel.send(s)
+    }
+}
+```
+
+现在让我们看看如果启动两个协程发送字符串会发生什么(在本例中，我们在主线程的上下文中作为主协程的孩子来启动他们)
+
+```kotlin
+fun main() = runBlocking {
+    val channel = Channel<String>()
+    launch { sendString(channel, "foo", 200L) }
+    launch { sendString(channel, "BAR!", 500L) }
+    repeat(6) { // receive first six
+        println(channel.receive())
+    }
+    coroutineContext.cancelChildren() // cancel all children to let main finish
+}
+
+suspend fun sendString(channel: SendChannel<String>, s: String, time: Long) {
+    while (true) {
+        delay(time)
+        channel.send(s)
+    }
+}
+```
+
+输出结果：
+
+```
+foo
+foo
+BAR!
+foo
+foo
+BAR!
+```
+
+## Buffered channels
+目前为止展示的通道都没有缓存。当发送方和接收方相遇时(会和)，无缓存通道开始传输元素。如果先调用send，发送方会被挂起直到调用receive，如果先调用receive，接收方会被挂起直到调用send
+
+Channel工厂函数和produce构造器都使用了可选的capacity参数来指定缓存大小。缓存允许发送方在挂起之前发送多个元素，类似于具有指定容量的BlockingQueue，它会在缓存满时阻塞
+
+```kotlin
+fun main() = runBlocking<Unit> {
+    val channel = Channel<Int>(4) // create buffered channel
+    val sender = launch { // launch sender coroutine
+        repeat(10) {
+            println("Sending $it") // print before sending each element
+            channel.send(it) // will suspend when buffer is full
+        }
+    }
+    // don't receive anything... just wait....
+    delay(1000)
+    sender.cancel() // cancel sender coroutine    
+}
+```
+
+使用容量为4的缓存通道会打印5次"sending"
+
+```
+Sending 0
+Sending 1
+Sending 2
+Sending 3
+Sending 4
+```
+
+前四个元素被添加到缓存中，发送方在尝试发送第五个元素时挂起
+
+## Channels are fair
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
