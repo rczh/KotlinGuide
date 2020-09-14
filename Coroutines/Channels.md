@@ -316,6 +316,92 @@ Sending 4
 前四个元素被添加到缓存中，发送方在尝试发送第五个元素时挂起
 
 ## Channels are fair
+通道的发送和接收操作是公平的，并且遵循它们从多个协程的调用顺序。他们满足先进先出原则，例如，第一个调用receive的协程会获取到元素。在下面的例子中，两个协程"ping"和"pong"从共享的"table"通道接收"ball"对象
+
+```kotlin
+data class Ball(var hits: Int)
+
+fun main() = runBlocking {
+    val table = Channel<Ball>() // a shared table
+    launch { player("ping", table) }
+    launch { player("pong", table) }
+    table.send(Ball(0)) // serve the ball
+    delay(1000) // delay 1 second
+    coroutineContext.cancelChildren() // game over, cancel them
+}
+
+suspend fun player(name: String, table: Channel<Ball>) {
+    for (ball in table) { // receive the ball in a loop
+        ball.hits++
+        println("$name $ball")
+        delay(300) // wait a bit
+        table.send(ball) // send the ball back
+    }
+}
+```
+
+"ping"协程首先开始，所以它第一个收到ball。即使"ping"协程在把ball发送回通道后立即再次接收，ball仍然会被"pong"协程接收，因为它已经在等待了
+
+```
+ping Ball(hits=1)
+pong Ball(hits=2)
+ping Ball(hits=3)
+pong Ball(hits=4)
+```
+
+请注意，由于所使用执行器的特性，有时通道可能会产生看起来不公平的执行
+
+## Ticker channels
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
