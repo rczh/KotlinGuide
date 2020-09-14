@@ -352,153 +352,50 @@ pong Ball(hits=4)
 请注意，由于所使用执行器的特性，有时通道可能会产生看起来不公平的执行
 
 ## Ticker channels
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Ticker通道是一种特殊的集合通道，从通道的最后一个元素被消费开始，在每次给定的延迟之后产生一个Unit。单独来说，它看起来是无用的。对于创建复杂的基于时间的管道或者执行窗口操作或者其他依赖时间的处理来说，它是一个有用的构造器。可以在select中使用Ticker通道执行"on tick"操作
+
+使用工厂方法ticker创建Ticker通道。使用通道的ReceiveChannel.cancel方法表示不需要更多的元素
+
+让我们看看它是如何工作的
+
+```kotlin
+fun main() = runBlocking<Unit> {
+    val tickerChannel = ticker(delayMillis = 100, initialDelayMillis = 0) // create ticker channel
+    var nextElement = withTimeoutOrNull(1) { tickerChannel.receive() }
+    println("Initial element is available immediately: $nextElement") // no initial delay
+
+    nextElement = withTimeoutOrNull(50) { tickerChannel.receive() } // all subsequent elements have 100ms delay
+    println("Next element is not ready in 50 ms: $nextElement")
+
+    nextElement = withTimeoutOrNull(60) { tickerChannel.receive() }
+    println("Next element is ready in 100 ms: $nextElement")
+
+    // Emulate large consumption delays
+    println("Consumer pauses for 150ms")
+    delay(150)
+    // Next element is available immediately
+    nextElement = withTimeoutOrNull(1) { tickerChannel.receive() }
+    println("Next element is available immediately after large consumer delay: $nextElement")
+    // Note that the pause between `receive` calls is taken into account and next element arrives faster
+    nextElement = withTimeoutOrNull(60) { tickerChannel.receive() } 
+    println("Next element is ready in 50ms after consumer pause in 150ms: $nextElement")
+
+    tickerChannel.cancel() // indicate that no more elements are needed
+}
+```
+
+输出结果：
+
+```
+Initial element is available immediately: kotlin.Unit
+Next element is not ready in 50 ms: null
+Next element is ready in 100 ms: kotlin.Unit
+Consumer pauses for 150ms
+Next element is available immediately after large consumer delay: kotlin.Unit
+Next element is ready in 50ms after consumer pause in 150ms: kotlin.Unit
+```
+
+注意，ticker会意识到可能的消费者暂停，默认情况下，如果发生暂停它会调整下一个生成元素的延迟，以保持一个固定的产生元素的比率
+
+可选的，可以指定mode参数为TickerMode.FIXED_DELAY来保持元素之间的固定延迟
 
