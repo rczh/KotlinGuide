@@ -44,22 +44,104 @@ Caught ArithmeticException
 
 CoroutineExceptionHandler只在uncaught异常上调用(没有以任何其他方式处理的异常)。特别是所有子协程将异常处理委托给父协程，父协程也将异常处理委托给父协程，依此类推直到根协程，因此注册在它们上下文中的CoroutineExceptionHandler永远不会被使用。除此之外，async构造器总是捕获所有异常并将它们表示在结果的Deferred对象中，所以它的CoroutineExceptionHandler也没有效果
 
+运行在supervision作用域中的协程不会将异常传播给父协程，因此被排除在此规则之外。文档的Supervision部分提供了更多的细节
 
+```kotlin
+fun main() = runBlocking {
+    val handler = CoroutineExceptionHandler { _, exception -> 
+        println("CoroutineExceptionHandler got $exception") 
+    }
+    val job = GlobalScope.launch(handler) { // root coroutine, running in GlobalScope
+        throw AssertionError()
+    }
+    val deferred = GlobalScope.async(handler) { // also root, but async instead of launch
+        throw ArithmeticException() // Nothing will be printed, relying on user to call deferred.await()
+    }
+    joinAll(job, deferred)    
+}
+```
 
+输出结果：
 
+```
+CoroutineExceptionHandler got java.lang.AssertionError
+```
 
+## Cancellation and exceptions
+取消与异常紧密相关。协程内部使用CancellationException执行取消操作，所有处理程序都会忽略这些异常，因此它们应该仅作为额外调试信息的源使用，这些信息可以通过catch块获取。当使用Job.cancel取消协程时，协程会终止但是不会取消它的父协程
 
+```kotlin
+fun main() = runBlocking {
+    val job = launch {
+        val child = launch {
+            try {
+                delay(Long.MAX_VALUE)
+            } finally {
+                println("Child is cancelled")
+            }
+        }
+        yield()
+        println("Cancelling child")
+        child.cancel()
+        child.join()
+        yield()
+        println("Parent is not cancelled")
+    }
+    job.join()    
+}
+```
 
+输出结果：
 
+```
+Cancelling child
+Child is cancelled
+Parent is not cancelled
+```
 
+如果协程遇到除CancellationException之外的异常，它会用该异常取消它的父协程。这个行为不能被覆盖，它用于为结构化并发提供稳定的协程层级关系。CoroutineExceptionHandler的实现不被用于子协程
 
+在这些例子中，CoroutineExceptionHandler总是被注册到GlobalScope创建的协程中。对主runBlocking作用域中启动的协程注册异常处理程序是没有意义的，因为当子协程异常完成时主协程总会被取消，尽管注册了异常处理程序
 
+只有当所有子协程终止时，原始异常才会被父协程处理
 
+```kotlin
+fun main() = runBlocking {
+    val handler = CoroutineExceptionHandler { _, exception -> 
+        println("CoroutineExceptionHandler got $exception") 
+    }
+    val job = GlobalScope.launch(handler) {
+        launch { // the first child
+            try {
+                delay(Long.MAX_VALUE)
+            } finally {
+                withContext(NonCancellable) {
+                    println("Children are cancelled, but exception is not handled until all children terminate")
+                    delay(100)
+                    println("The first child finished its non cancellable block")
+                }
+            }
+        }
+        launch { // the second child
+            delay(10)
+            println("Second child throws an exception")
+            throw ArithmeticException()
+        }
+    }
+    job.join()    
+}
+```
 
+输出结果：
 
+```
+Second child throws an exception
+Children are cancelled, but exception is not handled until all children terminate
+The first child finished its non cancellable block
+CoroutineExceptionHandler got java.lang.ArithmeticException
+```
 
-
-
+## Exceptions aggregation
 
 
 
