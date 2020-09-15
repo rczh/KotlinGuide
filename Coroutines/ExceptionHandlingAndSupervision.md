@@ -142,19 +142,75 @@ CoroutineExceptionHandler got java.lang.ArithmeticException
 ```
 
 ## Exceptions aggregation
+当协程的多个子协程失败抛出异常时，通常的规则是"第一个异常获胜"，因此第一个异常会得到处理。出现在第一个异常之后的所有其它异常都作为屏蔽异常附加在第一个异常上
 
+```kotlin
+fun main() = runBlocking {
+    val handler = CoroutineExceptionHandler { _, exception ->
+        println("CoroutineExceptionHandler got $exception with suppressed ${exception.suppressed.contentToString()}")
+    }
+    val job = GlobalScope.launch(handler) {
+        launch {
+            try {
+                delay(Long.MAX_VALUE) // it gets cancelled when another sibling fails with IOException
+            } finally {
+                throw ArithmeticException() // the second exception
+            }
+        }
+        launch {
+            delay(100)
+            throw IOException() // the first exception
+        }
+        delay(Long.MAX_VALUE)
+    }
+    job.join()  
+}
+```
 
+注意，上面的代码只有在支持抑制异常的JDK7+上才能正常工作
 
+输出结果：
 
+```
+CoroutineExceptionHandler got java.io.IOException with suppressed [java.lang.ArithmeticException]
+```
 
+注意，该机制目前只适用于Java1.7+版本。JS和原生限制是临时的，将来会被取消
 
+CancellationException是透明的，默认情况下是取消包装的
 
+```kotlin
+fun main() = runBlocking {
+    val handler = CoroutineExceptionHandler { _, exception ->
+        println("CoroutineExceptionHandler got $exception")
+    }
+    val job = GlobalScope.launch(handler) {
+        val inner = launch { // all this stack of coroutines will get cancelled
+            launch {
+                launch {
+                    throw IOException() // the original exception
+                }
+            }
+        }
+        try {
+            inner.join()
+        } catch (e: CancellationException) {
+            println("Rethrowing CancellationException with original cause")
+            throw e // cancellation exception is rethrown, yet the original IOException gets to the handler  
+        }
+    }
+    job.join()    
+}
+```
 
+输出结果：
 
+```
+Rethrowing CancellationException with original cause
+CoroutineExceptionHandler got java.io.IOException
+```
 
-
-
-
+## Supervision
 
 
 
