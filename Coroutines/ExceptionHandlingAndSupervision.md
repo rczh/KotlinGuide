@@ -211,31 +211,117 @@ CoroutineExceptionHandler got java.io.IOException
 ```
 
 ## Supervision
+正如我们之前所学习的，取消是一种通过协程整个层级结构传播的双向关系。让我们看一下需要单向取消的情况
 
+此类需求的一个很好的例子是具有在其作用域内定义Job的UI组件。如果任何UI的子任务失败，并不总是需要取消(杀掉)整个UI组件，但是如果UI组件被销毁(并且它的Job被取消)，那么有必要让所有的子任务失败，因为不再需要它们的结果
 
+另一个例子是一个服务器进程产生了多个子Job，服务器进程需要监控Job的执行，跟踪失败Job并且重新启动它们
 
+**Supervision job**
 
+SupervisorJob可以用于单向取消。它类似于常规Job，唯一的区别是取消只会向下传播。通过下面的例子可以很容易的展示这一点
 
+```kotlin
+fun main() = runBlocking {
+    val supervisor = SupervisorJob()
+    with(CoroutineScope(coroutineContext + supervisor)) {
+        // launch the first child -- its exception is ignored for this example (don't do this in practice!)
+        val firstChild = launch(CoroutineExceptionHandler { _, _ ->  }) {
+            println("The first child is failing")
+            throw AssertionError("The first child is cancelled")
+        }
+        // launch the second child
+        val secondChild = launch {
+            firstChild.join()
+            // Cancellation of the first child is not propagated to the second child
+            println("The first child is cancelled: ${firstChild.isCancelled}, but the second one is still active")
+            try {
+                delay(Long.MAX_VALUE)
+            } finally {
+                // But cancellation of the supervisor is propagated
+                println("The second child is cancelled because the supervisor was cancelled")
+            }
+        }
+        // wait until the first child fails & completes
+        firstChild.join()
+        println("Cancelling the supervisor")
+        supervisor.cancel()
+        secondChild.join()
+    }
+}
+```
 
+输出结果：
 
+```
+The first child is failing
+The first child is cancelled: true, but the second one is still active
+Cancelling the supervisor
+The second child is cancelled because the supervisor was cancelled
+```
 
+**Supervision scope**
 
+代替coroutineScope，我们可以为作用域并发使用supervisorScope。它只在一个方向上传播取消，并且只在自己失败时取消所有子任务。它也像coroutineScope一样等待所有的子任务完成
 
+```kotlin
+fun main() = runBlocking {
+    try {
+        supervisorScope {
+            val child = launch {
+                try {
+                    println("The child is sleeping")
+                    delay(Long.MAX_VALUE)
+                } finally {
+                    println("The child is cancelled")
+                }
+            }
+            // Give our child a chance to execute and print using yield 
+            yield()
+            println("Throwing an exception from the scope")
+            throw AssertionError()
+        }
+    } catch(e: AssertionError) {
+        println("Caught an assertion error")
+    }
+}
+```
 
+输出结果：
 
+```
+The child is sleeping
+Throwing an exception from the scope
+The child is cancelled
+Caught an assertion error
+```
 
+**Exceptions in supervised coroutines**
 
+常规和SupervisorJob之间的另一个关键区别是异常处理。每个子任务都应该通过异常处理机制自己处理异常。造成这种差异的原因是子任务失败不会传播给父任务。这意味着直接在supervisorScope中启动的协程可以像根协程一样使用在它们作用域内注册的CoroutineExceptionHandler
 
+```kotlin
+fun main() = runBlocking {
+    val handler = CoroutineExceptionHandler { _, exception -> 
+        println("CoroutineExceptionHandler got $exception") 
+    }
+    supervisorScope {
+        val child = launch(handler) {
+            println("The child throws an exception")
+            throw AssertionError()
+        }
+        println("The scope is completing")
+    }
+    println("The scope is completed")
+}
+```
 
+输出结果：
 
-
-
-
-
-
-
-
-
-
-
+```
+The scope is completing
+The child throws an exception
+CoroutineExceptionHandler got java.lang.AssertionError
+The scope is completed
+```
 
