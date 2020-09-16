@@ -298,7 +298,7 @@ Caught an assertion error
 
 **Exceptions in supervised coroutines**
 
-常规和SupervisorJob之间的另一个关键区别是异常处理。每个子任务都应该通过异常处理机制自己处理异常。造成这种差异的原因是子任务失败不会传播给父任务。这意味着直接在supervisorScope中启动的协程可以像根协程一样使用在它们作用域内注册的CoroutineExceptionHandler
+常规Job和SupervisorJob之间的另一个关键区别是异常处理。每个子任务都应该通过异常处理机制自己处理异常。造成这种差异的原因是子任务失败不会传播给父任务。这意味着直接在supervisorScope中启动的协程可以像根协程一样使用在它们作用域内注册的CoroutineExceptionHandler
 
 ```kotlin
 fun main() = runBlocking {
