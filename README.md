@@ -108,6 +108,8 @@
 
 [ExceptionHandlingAndSupervision](Coroutines/ExceptionHandlingAndSupervision.md)
 
+[SharedMutableStateAndConcurrency](Coroutines/SharedMutableStateAndConcurrency.md)
+
 ## More Language Constructs
 
 [DestructuringDeclarations](Other/DestructuringDeclarations.md)
