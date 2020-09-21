@@ -193,6 +193,58 @@ fun main() = runBlocking {
 该代码执行更快，并产生正确的结果
 
 ## Mutual exclusion
+这个问题的互斥解决方案是用一个永远不会并发执行的临界区来保护共享变量的所有修改。对于阻塞的解决方案，你通常应该使用synchronized或ReentrantLock。协程的替代方案称为Mutex。它使用lock和unlock函数来分隔临界区。主要区别在于lock是一个挂起函数，它不会阻塞线程
+
+使用withLock扩展函数，可以方便的表示mutex.lock(); try { ... } finally { mutex.unlock() }模式
+
+```kotlin
+suspend fun massiveRun(action: suspend () -> Unit) {
+    val n = 100  // number of coroutines to launch
+    val k = 1000 // times an action is repeated by each coroutine
+    val time = measureTimeMillis {
+        coroutineScope { // scope for coroutines 
+            repeat(n) {
+                launch {
+                    repeat(k) { action() }
+                }
+            }
+        }
+    }
+    println("Completed ${n * k} actions in $time ms")    
+}
+
+val mutex = Mutex()
+var counter = 0
+
+fun main() = runBlocking {
+    withContext(Dispatchers.Default) {
+        massiveRun {
+            // protect each increment with lock
+            mutex.withLock {
+                counter++
+            }
+        }
+    }
+    println("Counter = $counter")
+}
+```
+
+本例中锁是细粒度的，因此它有一些开销。然而在某些情况下它是一个很好的选择，比如你必须定期修改某些共享状态，但是没有任何此状态被限制的自然线程
+
+## Actors
+actor是由协程，被限制和封装到协程中的状态以及与其他协程通信的通道组合而成的实体。简单的actor可以编写为函数，但是具有复杂状态的actor更适合用于类
+
+使用actor协程构建器可以方便的地将actor的接收通道组合到其作用域中用来从中接收消息，并且将发送通道组合到生成的job对象中，以便对actor的单个引用可以作为它的处理程序使用
+
+使用actor的第一步是定义actor将要处理的消息类。Kotlin的封闭类非常适合这个目的。我们定义CounterMsg密闭类，使用IncCounter消息来增加计数器，使用GetCounter消息来获得它的值，后者需要发送一个响应。这里使用了一个CompletableDeferred通信原语来发送响应，它表示一个将被通信的单一值
+
+```kotlin
+// Message types for counterActor
+sealed class CounterMsg
+object IncCounter : CounterMsg() // one-way message to increment counter
+class GetCounter(val response: CompletableDeferred<Int>) : CounterMsg() // a request with reply
+```
+
 
 
 
