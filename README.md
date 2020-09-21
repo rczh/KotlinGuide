@@ -110,6 +110,8 @@
 
 [SharedMutableStateAndConcurrency](Coroutines/SharedMutableStateAndConcurrency.md)
 
+[SelectExpression(experimental)](Coroutines/SelectExpression.md)
+
 ## More Language Constructs
 
 [DestructuringDeclarations](Other/DestructuringDeclarations.md)
