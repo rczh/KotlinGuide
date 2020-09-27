@@ -90,6 +90,92 @@ suspend fun selectAorB(a: ReceiveChannel<String>, b: ReceiveChannel<String>): St
 
 注意，onReceiveOrNull是仅为具有非空元素的通道定义的扩展函数，这样就不会在关闭通道和空值之间产生混淆
 
+让我们将它与生成4次"Hello"字符串的通道a和生成4次"World"字符串的通道b一起使用
 
+```kotlin
+fun main() = runBlocking<Unit> {
+    val a = produce<String> {
+        repeat(4) { send("Hello $it") }
+    }
+    val b = produce<String> {
+        repeat(4) { send("World $it") }
+    }
+    repeat(8) { // print first eight results
+        println(selectAorB(a, b))
+    }
+    coroutineContext.cancelChildren()        
+}
+```
+
+这段代码的结果非常有趣，因此我们将详细分析它
+
+```
+a -> 'Hello 0'
+a -> 'Hello 1'
+b -> 'World 0'
+a -> 'Hello 2'
+a -> 'Hello 3'
+b -> 'World 1'
+Channel 'a' is closed
+Channel 'a' is closed
+```
+
+可以从中观察到两个现象
+
+首先，select偏向于第一个语句。当多个语句同时可以选择时，将选择其中的第一个语句。这里，两个通道不断的产生字符串，因此select中的第一个语句通道a被选中。然而，由于我们使用的是无缓冲通道，所以通道a在调用send时会时常被挂起，从而给通道b提供了调用send的机会
+
+第二个现象是当通道被关闭时，onReceiveOrNull会立即得到选择结果
+
+## Selecting to send
+Select表达式拥有onSend语句，它可以很好的与选择的偏向性结合使用
+
+让我们写一个生成整数的例子，当主通道上的消费者跟不上发送速度时，生成器将值发送到side通道
+
+```kotlin
+fun CoroutineScope.produceNumbers(side: SendChannel<Int>) = produce<Int> {
+    for (num in 1..10) { // produce 10 numbers from 1 to 10
+        delay(100) // every 100 ms
+        select<Unit> {
+            onSend(num) {} // Send to the primary channel
+            side.onSend(num) {} // or to the side channel     
+        }
+    }
+}
+```
+
+消费者非常慢，需要250ms来处理每个数字
+
+```kotlin
+fun main() = runBlocking<Unit> {
+    val side = Channel<Int>() // allocate side channel
+    launch { // this is a very fast consumer for the side channel
+        side.consumeEach { println("Side channel has $it") }
+    }
+    produceNumbers(side).consumeEach { 
+        println("Consuming $it")
+        delay(250) // let us digest the consumed number properly, do not hurry
+    }
+    println("Done consuming")
+    coroutineContext.cancelChildren()        
+}
+```
+
+输出结果：
+
+```
+Consuming 1
+Side channel has 2
+Side channel has 3
+Consuming 4
+Side channel has 5
+Side channel has 6
+Consuming 7
+Side channel has 8
+Side channel has 9
+Consuming 10
+Done consuming
+```
+
+## Selecting deferred values
 
 
