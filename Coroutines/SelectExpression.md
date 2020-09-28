@@ -255,7 +255,7 @@ fun CoroutineScope.asyncString(str: String, time: Long) = async {
 }
 ```
 
-main函数启动一个协程来打印switchmapdeferred的结果并且发送一些测试数据
+main函数启动一个协程来打印switchMapDeferreds的结果并且发送一些测试数据
 
 ```kotlin
 fun main() = runBlocking<Unit> {
