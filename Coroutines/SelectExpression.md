@@ -177,5 +177,113 @@ Done consuming
 ```
 
 ## Selecting deferred values
+可以使用onAwait语句选择延迟值。让我们从一个异步函数开始，它在随机delay一段时间之后返回一个延迟的字符串值
+
+```kotlin
+fun CoroutineScope.asyncString(time: Int) = async {
+    delay(time.toLong())
+    "Waited for $time ms"
+}
+```
+
+让我们使用随机delay来创建12个延迟字符串值
+
+```kotlin
+fun CoroutineScope.asyncStringsList(): List<Deferred<String>> {
+    val random = Random(3)
+    return List(12) { asyncString(random.nextInt(1000)) }
+}
+```
+
+现在，main函数等待其中的第一个延迟函数完成，并统计仍然处于活动状态的延迟值数量。注意，我们在这里将select表达式作为一个Kotlin领域特定语言，因此我们可以使用任意代码为它提供条件。在本例中，我们遍历一个延迟值列表，并为每个延迟值提供onAwait语句
+
+```kotlin
+fun main() = runBlocking<Unit> {
+    val list = asyncStringsList()
+    val result = select<String> {
+        list.withIndex().forEach { (index, deferred) ->
+            deferred.onAwait { answer ->
+                "Deferred $index produced answer '$answer'"
+            }
+        }
+    }
+    println(result)
+    val countActive = list.count { it.isActive }
+    println("$countActive coroutines are still active")
+}
+```
+
+输出结果：
+
+```
+Deferred 4 produced answer 'Waited for 128 ms'
+11 coroutines are still active
+```
+
+## Switch over a channel of deferred values
+让我们编写一个通道生产函数，它消费一个延迟字符串值的通道，它等待每个接收到的延迟值，但是仅到下一个延迟值到来或者通道关闭。这个例子将onReceiveOrNull和onAwait语句放在同一个select中
+
+```kotlin
+fun CoroutineScope.switchMapDeferreds(input: ReceiveChannel<Deferred<String>>) = produce<String> {
+    var current = input.receive() // start with first received deferred value
+    while (isActive) { // loop while not cancelled/closed
+        val next = select<Deferred<String>?> { // return next deferred value from this select or null
+            input.onReceiveOrNull { update ->
+                update // replaces next value to wait
+            }
+            current.onAwait { value ->  
+                send(value) // send value that current deferred has produced
+                input.receiveOrNull() // and use the next deferred from the input channel
+            }
+        }
+        if (next == null) {
+            println("Channel was closed")
+            break // out of loop
+        } else {
+            current = next
+        }
+    }
+}
+```
+
+为了测试它，我们将使用一个简单的async函数，该函数在指定的时间后生成一个指定的字符串
+
+```kotlin
+fun CoroutineScope.asyncString(str: String, time: Long) = async {
+    delay(time)
+    str
+}
+```
+
+main函数启动一个协程来打印switchmapdeferred的结果并且发送一些测试数据
+
+```kotlin
+fun main() = runBlocking<Unit> {
+    val chan = Channel<Deferred<String>>() // the channel for test
+    launch { // launch printing coroutine
+        for (s in switchMapDeferreds(chan)) 
+        println(s) // print each received string
+    }
+    chan.send(asyncString("BEGIN", 100))
+    delay(200) // enough time for "BEGIN" to be produced
+    chan.send(asyncString("Slow", 500))
+    delay(100) // not enough time to produce slow
+    chan.send(asyncString("Replace", 100))
+    delay(500) // give it time before the last one
+    chan.send(asyncString("END", 500))
+    delay(1000) // give it time to process
+    chan.close() // close the channel ... 
+    delay(500) // and wait some time to let it finish
+}
+```
+
+输出结果：
+
+```
+BEGIN
+Replace
+END
+Channel was closed
+```
 
 
