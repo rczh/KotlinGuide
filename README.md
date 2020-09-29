@@ -1,5 +1,5 @@
 # KotlinGuide
-这个是基于kotlin官方文档的中文教程，包括官方文档的几个主要部分，用于快速理解和使用kotlin
+这是基于kotlin官方文档的中文教程，包括官方文档的几个主要部分，用于快速理解和使用kotlin
 
 ## Basic
 
