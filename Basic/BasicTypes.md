@@ -3,10 +3,10 @@ kotlin中一切都是对象
 
 ## 一. 数值
 ### 1.整数
-kotlin提供四种类型表示整数
+kotlin提供了四种数值类型来表示整数
 
-类型|大小bit|最小值|最大值
----|:--:|:--:|---:
+类型|位数|最小值|最大值
+---|:--:|---:|---:
 Byte|	8	 |-128	|127
 Short|16|	-32768|	32767
 Int|	32|	-2,147,483,648  |	2,147,483,647 
@@ -25,19 +25,19 @@ val oneLong = 1L // Long
 ### 2.浮点数
 kotlin提供两种类型浮点数
 
-类型|大小bit|有效位|指数位|小数位
+类型|位数|有效位|指数位|小数位
 ---|:--:|:--:|:--:|---:
 Float	|32|	24|	8|	6-7
 Double|	64|	53|	11	|15-16
 
-使用小数形式初始化时kotlin默认推断类型为Double。可以通过后缀f,F明确指定类型为Float，如果指定的Float小数值超过6位则四舍五入
+使用小数形式初始化时kotlin默认推断类型为Double。可以通过后缀f或F明确指定类型为Float，如果指定的Float小数值超过6位则四舍五入
 
 ```kotlin
 val pi = 3.14 // Double
 val eFloat = 2.7182818284f // Float, actual value is 2.7182817
 ```
 
-kotlin不支持自动的类型转换，不能将Float，Int值自动转换为Double类型
+kotlin不支持自动的类型转换，不能将Float、Int值自动转换为Double类型
 
 ```kotlin
 fun main() {
@@ -54,18 +54,18 @@ fun main() {
 ```
 
 ### 3.数值常量
-整数常量表示支持十进制，二进制和十六进制
+整数常量支持二进制、十进制和十六进制表示
 
+- 二进制
+0b00001011
 - 十进制
 123
 - 十六进制
 0x0F
-- 二进制
-0b00001011
 
-kotlin不支持八进制表示
+注意，kotlin不支持八进制表示
 
-可以使用下划线使数值常量更加可读
+可以使用下划线使数值常量更具有可读性
 
 ```kotlin
 val oneMillion = 1_000_000
@@ -77,7 +77,9 @@ val bytes = 0b11010010_01101001_10010100_10010010
 
 浮点数常量支持科学计数法
 
+```
 123.5e10
+```
 
 ### 4.数值装箱
 默认情况下数值被存储在JVM原始类型中，当使用可空类型时数值会被装箱
@@ -103,7 +105,7 @@ println(boxedA == anotherBoxedA) // Prints 'true'
 使用==时编译器仅仅比较两个原始类型值
 
 ### 5.显示转换
-kotlin不支持自动将小类型转换成到大类型，下面的操作是非法的
+kotlin不支持自动将小类型转换为大类型，下面的操作是非法的
 
 ```kotlin
 fun main() {
@@ -125,17 +127,17 @@ fun main() {
 ### 6.运算符
 kotlin支持标准的数字算数运算符，这些运算符对应相应类中的方法
 
-kotlin不支持单独的位运算符，位运算符是以中缀形式命名的方法
+注意，kotlin中没有单独的位运算符，位运算符是以中缀形式命名的方法
 
 ```kotlin
 val x = (1 shl 2) and 0x000FF000
 ```
 
 ### 7.浮点数比较
-如果已知操作数a和b为Float或者Double时，浮点数的比较遵循浮点算数标准。否则使用Float或者Double的equals和compareTo方法
+如果已知操作数a和b为Float或者Double类型时，浮点数的比较遵循浮点算数标准。否则使用Float或者Double类的equals和compareTo方法进行比较
 
 ## 二. 字符
-kotlin使用Char类型表示字符，在kotlin中字符不能直接作为数值使用，只能通过toInt方法显示转换
+kotlin使用Char类型表示字符，在kotlin中字符不能直接作为数值使用，只能通过toInt方法进行转换
 
 ```kotlin
 fun check(c: Char) {
@@ -145,13 +147,13 @@ fun check(c: Char) {
 }
 ```
 
-字符使用单引号来表示'1'，特殊字符可以使用反斜杠转义\t, \b, \n, \r, \', \", \\, \$
+使用单引号来表示字符'1'，特殊字符可以使用反斜杠转义\t, \b, \n, \r, \\', \\", \\\\, \\$
 
 ## 三. 布尔值
-kotlin使用Boolean类型表示布尔值，支持三种操作符：||, &&, !
+kotlin使用Boolean类型表示布尔值，支持三种操作符：||，&&，!
 
 ## 四. 数组
-kotlin中使用Array类来表示数组，Array类中包含set,get方法，[]操作符会重载为相应的set,get方法
+kotlin中使用Array类来表示数组，Array类中包含set和get方法，[]操作符会重载为相应的set和get方法
 
 创建数组的几种方式：
 * 使用arrayOf方法
@@ -174,7 +176,8 @@ asc.forEach { println(it) }
 
 kotlin中数组是不变的，不能将Array&lt;String>数组赋值给Array&lt;Any>
 
-kotlin也提供原始类型数组ByteArray, ShortArray, IntArray等等，这些数组并不继承Array类，但是它们包含和Array类相同的方法和属性
+kotlin也提供了原始类型数组，比如ByteArray, ShortArray, IntArray等等，这些数组并不继承Array类，但是它们包含和Array类相同的方法和属性
+
 ```kotlin
 val x: IntArray = intArrayOf(1, 2, 3)
 
@@ -183,18 +186,18 @@ val arr = IntArray(5)
 ```
 
 ## 五. 无符号整形
-注意：无符号整形目前处于实验状态，并且仅在kotin1.3中可用
+注意，无符号整形目前处于实验状态，并且仅在kotin1.3中可用
 
 无符号类型支持大部分有符号操作符
 
-类型|大小bit|最大值
+类型|位数|最大值
 ---|:--:|---:
 kotlin.UByte|8| 255
 kotlin.UShort|16|65535
 kotlin.UInt|32| 2^32 - 1
 kotlin.ULong|64|2^64 - 1
 
-kotlin也提供原始类型的无符号数组UByteArray,UShortArray,UIntArray,ULongArray
+kotlin也提供原始类型的无符号数组，比如UByteArray,UShortArray,UIntArray,ULongArray
 
 ### 无符号常量
 kotlin使用后缀u或者U来表示无符号常量，如果没有提供具体类型，kotlin将根据无符号常量值的大小来选择UInt或者ULong类型
@@ -229,7 +232,7 @@ fun main() {
 ```
 
 ### 字符串常量
-kotlin支持两种类型字符串常量，转义字符串和raw原始字符串
+kotlin支持两种类型的字符串常量，转义字符串和raw原始字符串
 
 raw字符串使用"""表示，raw字符串不支持转义字符，可以包含新行和任意其他字符
 
