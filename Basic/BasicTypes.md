@@ -1,4 +1,4 @@
-# basic type
+# Basic Types
 kotlin中一切都是对象
 
 ## 一. 数值
