@@ -18,5 +18,5 @@ fun main(args: Array<String>) {
 kotlinc hello.kt -include-runtime -d hello.jar
 ```
 
--include-runtime选项用来将kotlin运行库打包到jar中，通过java -jar hello.jar直接运行程序。如果jar包中不会包含kotlin运行库，只能通过kotlin -classpath hello.jar HelloKt运行程序
+-include-runtime选项用来将kotlin运行库打包到jar中，通过java -jar hello.jar直接运行程序。如果jar包中不包含kotlin运行库，只能通过kotlin -classpath hello.jar HelloKt运行程序
 
