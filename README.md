@@ -21,6 +21,8 @@
 
 * [Interfaces](ClassAndObject/Interfaces.md)
 
+* [Functional(SAM)Interfaces](ClassAndObject/FunctionalInterfaces.md)
+
 * [VisibilityModifiers](ClassAndObject/VisibilityModifiers.md)
 
 * [Extensions](ClassAndObject/Extensions.md)
