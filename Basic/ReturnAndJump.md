@@ -22,7 +22,7 @@ kotlin支持三种结构跳转表达式
  ```
  
  ## Break label
- 带有标签的break语句跳转到loop标签标识的for语句之后
+ 带有loop标签的break语句跳转到loop标签标识的for语句之后
  
  ```kotlin
  loop@ for (i in 1..100) {
@@ -60,7 +60,7 @@ kotlin支持三种结构跳转表达式
 }
  ```
  
- 使用隐含标签从lamdba表达式返回，隐含标签的名称和传递lamdba表达式的函数名称相同
+ 使用隐含标签从lamdba表达式返回，隐含标签的名称和使用lamdba表达式的函数名称相同
  
  ```kotlin
  fun foo() {
