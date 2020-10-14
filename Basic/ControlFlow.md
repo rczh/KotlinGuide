@@ -30,9 +30,9 @@ val max = if (a > b) {
 注意：当使用if作为表达式为变量赋值时需要提供else分支
 
 ## when表达式
-when表达式用来代替java中的switch语句。when表达式按顺序比较所有分支，直到某个分支与参数相匹配
+when表达式用来代替java中的switch语句。when表达式按顺序比较所有分支，直到某个分支条件与参数相匹配
 
-当when作为表达式为变量赋值时需要提供else分支
+使用when表达式为变量赋值时需要提供else分支
 
 ```kotlin
 var result = when (x) {
@@ -44,7 +44,7 @@ var result = when (x) {
     }
 ```
 
-当多个分支条件使用相同处理语句时，可以将多个条件用逗号分隔
+当多个分支条件使用相同的处理语句时，可以将多个条件用逗号分隔
 
 ```kotlin
 when (x) {
@@ -62,7 +62,7 @@ when (x) {
 }
 ```
 
-可以使用检查值是否在某个范围或者集合中的in语句作为分支条件
+可以使用检查值是否在某个范围，或者集合中的in语句作为分支条件
 
 ```kotlin
 when (x) {
@@ -93,7 +93,7 @@ when {
 }
 ```
 
-从kotlin1.3开始when语句参数允许使用变量定义的方式，变量的作用域被限定在when语句中
+从kotlin1.3开始when语句的参数允许使用变量定义的方式，变量的作用域将被限定在when语句中
 
 ```kotlin
 fun Request.getBody() =
@@ -104,7 +104,7 @@ fun Request.getBody() =
 ```
 
 ## for循环
-for循环遍历目标集合迭代器的所有内容
+可以使用for循环遍历目标集合的所有内容
 
 ```kotlin
     var ints= listOf<Int>(1, 2, 3)
@@ -113,7 +113,7 @@ for循环遍历目标集合迭代器的所有内容
     }
 ```
 
-List集合提供iterator方法返回一个Iterator迭代器对象，Iterator迭代器对象中包含next和hasNext方法
+List集合提供了iterator方法，它返回一个Iterator迭代器对象，Iterator迭代器对象中包含next和hasNext方法
 
 使用for循环遍历范围表达式
 
