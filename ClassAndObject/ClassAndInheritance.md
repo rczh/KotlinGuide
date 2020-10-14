@@ -48,7 +48,7 @@ class Person(val firstName: String, val lastName: String, var age: Int) { /*...*
 如果主构造函数中的所有参数都有默认值，编译器将生成一个额外的使用默认值的无参数构造函数
 
 ### 二级构造函数
-kotlin中可以定义多个以constructor为前缀的二级构造函数。如果类中有一个主构造函数，每个二级构造函数都需要直接或者间接的调用主构造函数。如果类中没有定义主构造函数，每个二级构造函数都会隐含的调用系统默认的主构造函数
+kotlin中可以定义多个以constructor为前缀的二级构造函数。如果类中有一个主构造函数，每个二级构造函数都需要直接或者间接的委托给主构造函数。如果类中没有定义主构造函数，每个二级构造函数都会隐含的委托给系统默认的主构造函数
 
 ```kotlin
 class Person(val name: String) {
@@ -59,7 +59,7 @@ class Person(val name: String) {
 }
 ```
 
-init代码块实际上作为主构造函数的一分部，由于每个二级构造函数在第一条语句调用主构造函数，因此所有的init代码块都会在二级构造函数之前执行
+init代码块实际上是主构造函数的一分部，由于每个二级构造函数在第一条语句调用主构造函数，因此所有的init代码块都会在二级构造函数之前执行
 
 ```kotlin
 class Constructors {
@@ -110,7 +110,7 @@ class MyView : View {
 ### 方法覆盖
 kotlin需要对父类中可被覆盖的方法使用open修饰符，对子类中覆盖的方法使用override修饰符
 
-在一个final类中使用open修饰方法是无效的，由于默认情况下类是final的并且不能被继承，需要使用open声明类使它能够被继承
+在一个final类中使用open修饰方法是无效的，默认情况下类是final的并且不能被继承，需要使用open声明类使它能够被继承
 
 ```kotlin
 open class Shape {
